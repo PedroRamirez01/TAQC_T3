@@ -2,10 +2,15 @@ import asyncio
 import time
 from playwright.async_api import async_playwright
 
-# from pages.login import Login
+from pages.login import LoginPage
 from pages.register import RegisterPage
 
 URL = "https://automation-portal-bootcamp.vercel.app/register"
+
+FIRST_NAME = ""
+LAST_NAME = ""
+EMAIL = ""
+PASSWORD = ""
 
 async def main():
     async with async_playwright() as p:
@@ -19,7 +24,10 @@ async def main():
         # await page.locator("#register > div > div > div.tf-login-form > form > div.bottom > div:nth-child(1) > a").click()
 
         registerPage = RegisterPage(page)
-        await registerPage.register("John", "Doe", "Jhon123@gmail.com", "Password123")
+        await registerPage.register(FIRST_NAME, LAST_NAME, EMAIL, PASSWORD)
+
+        loginPage = LoginPage(page)
+        await loginPage.login(EMAIL, PASSWORD)
 
         time.sleep(5)
 
