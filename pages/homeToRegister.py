@@ -1,7 +1,4 @@
-        # await page.locator("#newsletterPopup > div > div > div.modal-top > span").click()
-        # await page.locator("#header > div > div > div.col-xxl-5.col-md-4.col-3 > ul > li.nav-account > a").click()
-        # await page.locator("#login > div > div > div.tf-login-form > form > div.bottom > div:nth-child(2) > a").click()
-        # await page.locator("#register > div > div > div.tf-login-form > form > div.bottom > div:nth-child(1) > a").click()
+import time
 from playwright.async_api import Page
 
 class HomeToRegisterPage:
@@ -30,5 +27,6 @@ class HomeToRegisterPage:
         await self.btnRegister.click()
         
     async def closePopUpRegister(self):
+        time.sleep(2)
         assert self.popUpRegister, "Pop-up Register is not found"
         await self.popUpRegister.click()

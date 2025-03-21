@@ -6,27 +6,27 @@ from pages.login import LoginPage
 from pages.register import RegisterPage
 from pages.homeToRegister import HomeToRegisterPage
 
-URL = "https://automation-portal-bootcamp.vercel.app/register"
+URL = "https://automation-portal-bootcamp.vercel.app/"
 
 happy_path = [
     {
         "FIRST_NAME": "José",
         "LAST_NAME": "Hernández",
-        "EMAIL": "test1@gmail.com",
+        "EMAIL": "jh_happy_path@gmail.com",
         "PASSWORD": "2&3df5g"
     }
 ]
 
 sad_path = [
     {
-        "FIRST_NAME": "José",
-        "LAST_NAME": "Hernández",
-        "EMAIL": "jh@gmail.com",
-        "PASSWORD": ""
+        "FIRST_NAME": "#",
+        "LAST_NAME": "$",
+        "EMAIL": "jh_sad_path@gmail.com",
+        "PASSWORD": "2&3df5g"
     }
 ]
 
-path = happy_path
+path = sad_path
 
 async def main():
     async with async_playwright() as p:
@@ -34,13 +34,13 @@ async def main():
         page = await browser.new_page()
         await page.goto(URL, wait_until="domcontentloaded")
 
-        # homeToRegisterPage = HomeToRegisterPage(page)
-        # await homeToRegisterPage.closePopUpHomePage()
-        # await homeToRegisterPage.pressBtnLogin()
-        # await homeToRegisterPage.pressLinkRegister()
-        # await homeToRegisterPage.pressBtnRegister()
-        # await homeToRegisterPage.closePopUpRegister()
-        # time.sleep(2)
+        homeToRegisterPage = HomeToRegisterPage(page)
+        await homeToRegisterPage.closePopUpHomePage()
+        await homeToRegisterPage.pressBtnLogin()
+        await homeToRegisterPage.pressLinkRegister()
+        await homeToRegisterPage.pressBtnRegister()
+        await homeToRegisterPage.closePopUpRegister()
+        time.sleep(2)
 
         registerPage = RegisterPage(page)
         await registerPage.registerFirstName(path[0]["FIRST_NAME"])
