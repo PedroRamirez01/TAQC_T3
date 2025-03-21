@@ -27,6 +27,6 @@ class HomeToRegisterPage:
         await self.btnRegister.click()
         
     async def closePopUpRegister(self):
-        time.sleep(2)
+        time.sleep(1)
         assert self.popUpRegister, "Pop-up Register is not found"
         await self.popUpRegister.click()

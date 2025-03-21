@@ -12,7 +12,7 @@ happy_path = [
     {
         "FIRST_NAME": "José",
         "LAST_NAME": "Hernández",
-        "EMAIL": "jh_happy_path@gmail.com",
+        "EMAIL": "jh_happy_path1@gmail.com",
         "PASSWORD": "2&3df5g"
     }
 ]
@@ -21,7 +21,7 @@ sad_path = [
     {
         "FIRST_NAME": "#",
         "LAST_NAME": "$",
-        "EMAIL": "jh_sad_path@gmail.com",
+        "EMAIL": "jh_sad_path1@gmail.com",
         "PASSWORD": "2&3df5g"
     }
 ]
@@ -33,6 +33,7 @@ async def main():
         browser = await p.chromium.launch(headless=False)
         page = await browser.new_page()
         await page.goto(URL, wait_until="domcontentloaded")
+        time.sleep(2)
 
         homeToRegisterPage = HomeToRegisterPage(page)
         await homeToRegisterPage.closePopUpHomePage()
@@ -48,15 +49,13 @@ async def main():
         await registerPage.registerEmail(path[0]["EMAIL"])
         await registerPage.registerPassword(path[0]["PASSWORD"])
         await registerPage.pressBtnRegister()
-
-        time.sleep(5)
+        time.sleep(2)
 
         loginPage = LoginPage(page)
         await loginPage.loginEmail(path[0]["EMAIL"])
         await loginPage.loginPassword(path[0]["PASSWORD"])
         await loginPage.pressBtnLogin()
-
-        time.sleep(5)
+        time.sleep(2)
 
         await browser.close()
 
