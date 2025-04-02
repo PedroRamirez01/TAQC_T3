@@ -12,7 +12,7 @@ happy_path = [
     {
         "FIRST_NAME": "José",
         "LAST_NAME": "Hernández",
-        "EMAIL": "jh_happy_path1@gmail.com",
+        "EMAIL": "jh_happy_path@gmail.com",
         "PASSWORD": "2&3df5g"
     }
 ]
@@ -21,7 +21,7 @@ sad_path = [
     {
         "FIRST_NAME": "#",
         "LAST_NAME": "$",
-        "EMAIL": "jh_sad_path1@gmail.com",
+        "EMAIL": "jh_sad_path@gmail.com",
         "PASSWORD": "2&3df5g"
     }
 ]
