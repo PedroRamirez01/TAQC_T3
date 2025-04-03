@@ -11,8 +11,7 @@ class HomeToRegisterPage:
         self.popUpRegister = self.page.locator("#register > div > div > div.header > span")
 
     async def closePopUpHomePage(self):
-        await self.popUpHomePage.wait_for()
-        assert await self.popUpHomePage, "Pop-up is not found"
+        assert self.popUpHomePage, "Pop-up is not found"
         await self.popUpHomePage.click()
 
     async def pressBtnLogin(self):
