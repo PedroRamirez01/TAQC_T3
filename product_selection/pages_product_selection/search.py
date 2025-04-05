@@ -15,5 +15,5 @@ class HomeToSearchPage:
     async def search_for_item(self, item: str):
         await self.searchIcon.click()
         await self.searchInput.fill(item)
-        await self.searchIcon.click() , "Search icon is not working"
+        #await self.searchIcon.click() , "Search icon is not working"
     
