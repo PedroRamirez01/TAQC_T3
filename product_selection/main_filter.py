@@ -22,11 +22,13 @@ async def main():
         searchProduct = FilterProductPage(page)
         await searchProduct.searchIcon.click()
         await searchProduct.qckLink()
-        await searchProduct.doFilter()
+        await searchProduct.doFilterMen()
         await searchProduct.PopUp()
+        await searchProduct.takeScreenshot(path="same_product1.png", fullPage=True)
+        await searchProduct.doFilterWomen()
+        await searchProduct.PopUp()
+        await searchProduct.takeScreenshot(path="same_product2.png", fullPage=True)
         time.sleep(3)
-
-
         
         await browser.close()
 
