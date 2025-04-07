@@ -24,7 +24,7 @@ class LoginPage:
         await self.fill_password(password)
         await self.submit()
         await self.page.wait_for_timeout(3000)
-        
+
     async def get_field_validation_state(self, field_name: str) -> bool:
         await self.page.screenshot(path=f"error_msg_login_{field_name}.png", full_page=True)
         return await self.page.evaluate(f"document.querySelector('#login{field_name.capitalize()}').validity.valueMissing")

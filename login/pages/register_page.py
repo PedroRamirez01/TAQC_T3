@@ -26,7 +26,7 @@ class RegisterPage:
 
     async def submit(self) -> None:
         await self.btnRegister.click()
-    
+
     async def register(self, firstName: str, lastName: str, email: str, password: str) -> None:
         await self.fill_first_name(firstName)
         await self.fill_last_name(lastName)
