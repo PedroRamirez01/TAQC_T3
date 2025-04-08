@@ -1,4 +1,5 @@
 from playwright.async_api import Page
+from config import utils
 
 class LoginPage:
     def __init__(self, page: Page):
@@ -24,6 +25,7 @@ class LoginPage:
         await self.fill_password(password)
         await self.submit()
         await self.page.wait_for_timeout(3000)
+        
 
     async def get_field_validation_state(self, field_name: str) -> bool:
         await self.page.screenshot(path=f"error_msg_login_{field_name}.png", full_page=True)
