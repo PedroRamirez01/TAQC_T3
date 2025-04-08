@@ -3,9 +3,7 @@ import os
 import time
 import asyncio
 from playwright.async_api import async_playwright
-from pages_product_selection.search import HomeToSearchPage
-from pages_product_selection.filter_product import FilterProductPage
-#from pages_product_selection.add_product import AddProductPage
+from pages.search import HomeToSearchPage
 
 URL = "https://automation-portal-bootcamp.vercel.app/"
 
