@@ -3,7 +3,7 @@ from playwright.async_api import Page
 class RegisterPage:
     def __init__(self, page: Page):
         self.page = page
-        self.fieldFirstName = self.page.locator("input[name='firstName']")
+        self.fieldFirstName = self.page.locator("#register-form > div:nth-child(1) > input")
         self.fieldLastName = self.page.locator("input[name='lastName']")
         self.fieldEmail = self.page.locator("input[name='email'][placeholder=' ']")
         self.fieldPassword = self.page.locator("input[name='password']")
@@ -13,6 +13,8 @@ class RegisterPage:
         await self.page.goto(url, wait_until="domcontentloaded")
 
     async def fill_first_name(self, firstName: str) -> None:
+        await self.fieldFirstName.wait_for(state="visible")
+        await self.page.screenshot(path="error_msg_register.png", full_page=True)
         await self.fieldFirstName.fill(firstName)
 
     async def fill_last_name(self, lastName: str) -> None:
