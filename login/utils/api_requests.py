@@ -10,12 +10,18 @@ HEADERS = {
 }
 
 def get_user_by_email(email):
-    response = requests.get(f"{BASE_URL}api/user?email={email}", headers=HEADERS)
-    response.raise_for_status()
-    return response.json()
+    try:
+        response = requests.get(f"{BASE_URL}api/user?email={email}", headers=HEADERS)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.HTTPError as e:
+        if e.response.status_code == 404:
+            return None
+        raise
 
-def delete_user_by_id(user_id):
-    url = f"{BASE_URL}api/user/{user_id}"
+def delete_user_by_id(email):
+    user = get_user_by_email(email)
+    url = f"{BASE_URL}api/user/{user['id']}"
     try:
         response = requests.delete(url, headers=HEADERS)
         return response.status_code

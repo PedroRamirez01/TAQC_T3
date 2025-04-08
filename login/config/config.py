@@ -13,4 +13,3 @@ class Config:
 
     INVALID_EMAIL = os.getenv("INVALID_EMAIL")
     INVALID_PASSWORD = os.getenv("INVALID_PASSWORD")
-    
