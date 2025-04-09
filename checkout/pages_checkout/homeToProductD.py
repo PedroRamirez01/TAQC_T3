@@ -1,3 +1,4 @@
+import time
 from playwright.async_api import Page
 
 class HomeToProductDetails:
@@ -10,6 +11,7 @@ class HomeToProductDetails:
     async def closePopup(self):
         assert self.popUpHomePage, "No popup found"
         await self.popUpHomePage.click()
+        time.sleep(3)
 
     async def clickFirstCollection(self):
         assert self.firstCollection, "No collection found"

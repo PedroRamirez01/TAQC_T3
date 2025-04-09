@@ -59,6 +59,8 @@ async def main():
         await addToCart.incrementQuantity()
         await addToCart.incrementQuantity()
         await addToCart.incrementQuantity()
+        await addToCart.incrementQuantity()
+        await addToCart.incrementQuantity()
         await addToCart.decrementQuantity()
         await addToCart.addToCart()
 
@@ -79,7 +81,7 @@ async def main():
         await checkoutpage.clickAgreeCheckbox()
         await checkoutpage.clickPlaceOrderButton()
 
-        time.sleep(10)
+        time.sleep(5)
 
         await browser.close()
 
