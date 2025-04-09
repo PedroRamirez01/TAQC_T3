@@ -16,7 +16,7 @@ def get_user_by_email(email):
         return response.json()
     except requests.exceptions.HTTPError as e:
         if e.response.status_code == 404:
-            return None
+            assert False, "Usuario no existe"
         raise
 
 def delete_user_by_id(email):
