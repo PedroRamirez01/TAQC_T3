@@ -16,15 +16,13 @@ def get_user_by_email(email):
         return response.json()
     except requests.exceptions.HTTPError as e:
         if e.response.status_code == 404:
-            assert False, "Usuario no existe"
+            return None
         raise
 
 def delete_user_by_id(email):
-    user = get_user_by_email(email)
-    url = f"{BASE_URL}api/user/{user['id']}"
     try:
-        response = requests.delete(url, headers=HEADERS)
+        user = get_user_by_email(email)
+        response = requests.delete(f"{BASE_URL}api/user/{user["id"]}", headers=HEADERS)
         return response.status_code
     except requests.RequestException as e:
-        print(f"Error al eliminar usuario: {e}")
         return None

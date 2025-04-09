@@ -36,12 +36,3 @@ class RegisterPage:
         await self.fill_password(password)
         await self.submit()
         await self.page.wait_for_timeout(3000)
-
-    async def get_field_validation_state(self, field_name: str) -> bool:
-        await self.page.screenshot(path=f"error_msg_register_{field_name}.png", full_page=True)
-        return await self.page.evaluate(f"""
-            (function() {{
-                const field = document.querySelector("input[name='{field_name}']");
-                return field.validity.typeMismatch || field.validity.valueMissing;
-            }})()
-        """)
