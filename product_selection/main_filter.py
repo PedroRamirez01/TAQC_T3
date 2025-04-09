@@ -16,7 +16,7 @@ async def main():
         await page.wait_for_timeout(3000)
 
         closePopUp = HomeToSearchPage(page)
-        await closePopUp.closePopUpHomePage()
+        closePopUp.closePopUpHomePage()
 
         searchProduct = FilterProductPage(page)
         await searchProduct.searchIcon.click()

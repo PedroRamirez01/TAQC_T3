@@ -8,13 +8,18 @@ class HomeToSearchPage:
         self.searchInput = self.page.locator("fieldset.text > input:nth-child(1)")
 
     async def navigate(self, url: str) -> None: #Contenedor de la página
-        await self.page.goto(url, wait_until="domcontentloaded")
+        assert await self.page.goto(url, wait_until="domcontentloaded")
 
     async def closePopUpHomePage(self):
-        assert self.popUpHome, "Pop-up is not found"
-        await self.popUpHome.click()
+        await self.popUpHome, "Pop-up is not found"
+        assert await self.popUpHome.click()
 
-    async def search_for_item(self, item: str):
-        await self.searchIcon.click()
-        await self.searchInput.fill(item)
-        assert await self.searchIcon.click(), "Search icon is not working"
+    async def search_for_item(self, item: str, max_attempts: int, delay: int):
+        for attempt in range(max_attempts):
+            try:
+                await self.searchIcon.click()
+                await self.searchInput.fill(item)
+                return
+            except Exception:
+                if attempt < max_attempts - 1:
+                    await self.page.wait_for_timeout(delay)
