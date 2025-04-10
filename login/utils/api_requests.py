@@ -11,6 +11,8 @@ HEADERS = {
 
 def get_user_by_email(email):
     try:
+        if email is None or email == "":
+            return None
         response = requests.get(f"{BASE_URL}api/user?email={email}", headers=HEADERS)
         response.raise_for_status()
         return response.json()
@@ -22,6 +24,8 @@ def get_user_by_email(email):
 def delete_user_by_id(email):
     try:
         user = get_user_by_email(email)
+        if user is None:
+            return None
         response = requests.delete(f"{BASE_URL}api/user/{user["id"]}", headers=HEADERS)
         return response.status_code
     except requests.RequestException as e:

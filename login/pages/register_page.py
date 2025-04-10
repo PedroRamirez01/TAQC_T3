@@ -1,4 +1,5 @@
 from playwright.async_api import Page
+import models.register_user as RegisterUser
 
 class RegisterPage:
     def __init__(self, page: Page):
@@ -29,10 +30,10 @@ class RegisterPage:
     async def submit(self) -> None:
         await self.btnRegister.click()
 
-    async def register(self, firstName: str, lastName: str, email: str, password: str) -> None:
-        await self.fill_first_name(firstName)
-        await self.fill_last_name(lastName)
-        await self.fill_email(email)
-        await self.fill_password(password)
+    async def register(self, user: RegisterUser) -> None:
+        await self.fill_first_name(user.first_name)
+        await self.fill_last_name(user.last_name)
+        await self.fill_email(user.email)
+        await self.fill_password(user.password)
         await self.submit()
         await self.page.wait_for_timeout(3000)

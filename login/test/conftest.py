@@ -3,6 +3,7 @@ from playwright.async_api import async_playwright
 from config.config import Config
 from pages.login_page import LoginPage
 from pages.register_page import RegisterPage
+from utils.api_requests import delete_user_by_id
 
 @pytest_asyncio.fixture(scope="function")
 async def page():
@@ -23,3 +24,9 @@ async def login_page(page):
     login_page = LoginPage(page)
     await login_page.navigate(Config.URL_LOGIN_PAGE)
     return login_page
+
+@pytest_asyncio.fixture
+async def delete_user():
+    def _delete_user(email):
+        delete_user_by_id(email)
+    return _delete_user
