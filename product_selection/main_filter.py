@@ -1,9 +1,7 @@
-import sys
-import os
 import asyncio
 from playwright.async_api import async_playwright
-from pages.search import HomeToSearchPage
-from pages.filter_product import FilterProductPage
+from pages.search_page import HomeToSearchPage
+from pages.filter_product_page import FilterProductPage
 
 
 URL = "https://automation-portal-bootcamp.vercel.app/"
@@ -19,16 +17,13 @@ async def main():
         closePopUp.closePopUpHomePage()
 
         searchProduct = FilterProductPage(page)
-        await searchProduct.searchIcon.click()
-        await searchProduct.qckLink()
         await searchProduct.doFilterMen()
         await searchProduct.PopUp()
         await searchProduct.takeScreenshot(path="same_product1.png", fullPage=True)
         await searchProduct.doFilterWomen()
         await searchProduct.PopUp()
         await searchProduct.takeScreenshot(path="same_product2.png", fullPage=True)
-        # Comparar divs, pytest
-        
+
         await browser.close()
 
 if __name__ == "__main_2__":

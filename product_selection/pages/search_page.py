@@ -11,13 +11,17 @@ class HomeToSearchPage:
         assert await self.page.goto(url, wait_until="domcontentloaded")
 
     async def closePopUpHomePage(self):
-        await self.popUpHome, "Pop-up is not found"
-        assert await self.popUpHome.click()
+        self.popUpHome, "Pop-up is not found"
+        await self.popUpHome.click()
+        await self.page.wait_for_timeout(2000)
+    
+    async def searchIcons(self):
+        await self.searchIcon.click()
+        await self.page.wait_for_timeout(2000)
 
     async def search_for_item(self, item: str, max_attempts: int, delay: int):
         for attempt in range(max_attempts):
             try:
-                await self.searchIcon.click()
                 await self.searchInput.fill(item)
                 return
             except Exception:
