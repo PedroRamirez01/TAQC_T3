@@ -5,12 +5,14 @@ import time
 from pages_checkout.homeToProductD import HomeToProductDetails
 from pages_checkout.addToCart import AddToCart
 from pages_checkout.checkoutPage import CheckoutPage
-from utils.test_data import test_data_checkout
+from utils.test_data import valid_checkout_data, invalid_checkout_data
 
 URL = "https://automation-portal-bootcamp.vercel.app/"
 
+test_data = valid_checkout_data + invalid_checkout_data
+
 @pytest.mark.asyncio
-@pytest.mark.parametrize("label,data", test_data_checkout)
+@pytest.mark.parametrize("label,data", test_data)
 async def test_checkout_flow(label,data,page):
         await page.goto(URL, wait_until="domcontentloaded")
 
@@ -38,7 +40,7 @@ async def test_checkout_flow(label,data,page):
         await checkoutpage.fillLastName(data["LAST_NAME"])
         await checkoutpage.fillCountry(data["COUNTRY"])
         await checkoutpage.fillCity(data["CITY"])
-        await checkoutpage.fillAdress(data["ADRESS"])
+        await checkoutpage.fillAdress(data["ADDRESS"])
         await checkoutpage.fillPhoneNumber(data["PHONE_NUMBER"])
         await checkoutpage.fillEmail(data["EMAIL"])  
         await checkoutpage.fillDiscountCode(data["DISCOUNT_CODE"])

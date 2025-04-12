@@ -1,10 +1,10 @@
-test_data_checkout = [
-    ("valid_data", { 
+valid_checkout_data = [
+    ("valid_with_discount", { 
         "FIRST_NAME": "Pedrito",
         "LAST_NAME": "González",
         "COUNTRY": "United States", 
         "CITY": "Springfield",
-        "ADRESS": "Calle siempre viva 123",
+        "ADDRESS": "Calle siempre viva 123",
         "PHONE_NUMBER": "123456789",
         "EMAIL": "pedritogonzalez123@gmail.com",
         "DISCOUNT_CODE": "123",
@@ -12,7 +12,218 @@ test_data_checkout = [
         "CARD_EXPIRATION": "12/25",
         "CARD_CVV": "123"
     }),
-    ("invalid_data",{
+    ("valid_without_discount", { 
+        "FIRST_NAME": "Pedrito",
+        "LAST_NAME": "González",
+        "COUNTRY": "United States", 
+        "CITY": "Springfield",
+        "ADDRESS": "Calle siempre viva 123",
+        "PHONE_NUMBER": "123456789",
+        "EMAIL": "pedritogonzalez123@gmail.com",
+        "DISCOUNT_CODE": "",
+        "CARD_NUMBER": "4242424242424242",
+        "CARD_EXPIRATION": "12/25",
+        "CARD_CVV": "123"
+    })
+]
+
+invalid_checkout_data = [
+    ("missing_first_name", {
+        "FIRST_NAME": "",
+        "LAST_NAME": "González",
+        "COUNTRY": "United States",
+        "CITY": "Springfield",
+        "ADDRESS": "Calle siempre viva 123",
+        "PHONE_NUMBER": "123456789",
+        "EMAIL": "pedritogonzalez123@gmail.com",
+        "DISCOUNT_CODE": "123",
+        "CARD_NUMBER": "4242424242424242",
+        "CARD_EXPIRATION": "12/25",
+        "CARD_CVV": "123"
+    }),
+    ("missing_last_name", {
+        "FIRST_NAME": "Pedrito",
+        "LAST_NAME": "",
+        "COUNTRY": "United States",
+        "CITY": "Springfield",
+        "ADDRESS": "Calle siempre viva 123",
+        "PHONE_NUMBER": "123456789",
+        "EMAIL": "pedritogonzalez123@gmail.com",
+        "DISCOUNT_CODE": "123",
+        "CARD_NUMBER": "4242424242424242",
+        "CARD_EXPIRATION": "12/25",
+        "CARD_CVV": "123"
+    }),
+    ("missing_country", {
+        "FIRST_NAME": "Pedrito",
+        "LAST_NAME": "González",
+        "COUNTRY": "",
+        "CITY": "Springfield",
+        "ADDRESS": "Calle siempre viva 123",
+        "PHONE_NUMBER": "123456789",
+        "EMAIL": "pedritogonzalez123@gmail.com",
+        "DISCOUNT_CODE": "123",
+        "CARD_NUMBER": "4242424242424242",
+        "CARD_EXPIRATION": "12/25",
+        "CARD_CVV": "123"
+    }),
+    ("missing_city", {
+        "FIRST_NAME": "Pedrito",
+        "LAST_NAME": "González",
+        "COUNTRY": "United States",
+        "CITY": "",
+        "ADDRESS": "Calle siempre viva 123",
+        "PHONE_NUMBER": "123456789",
+        "EMAIL": "pedritogonzalez123@gmail.com",
+        "DISCOUNT_CODE": "123",
+        "CARD_NUMBER": "4242424242424242",
+        "CARD_EXPIRATION": "12/25",
+        "CARD_CVV": "123"
+    }),
+    ("missing_address", {
+        "FIRST_NAME": "Pedrito",
+        "LAST_NAME": "González",
+        "COUNTRY": "United States",
+        "CITY": "Springfield",
+        "ADDRESS": "",
+        "PHONE_NUMBER": "123456789",
+        "EMAIL": "pedritogonzalez123@gmail.com",
+        "DISCOUNT_CODE": "123",
+        "CARD_NUMBER": "4242424242424242",
+        "CARD_EXPIRATION": "12/25",
+        "CARD_CVV": "123"
+    }),
+    ("missing_phone_number", {
+        "FIRST_NAME": "Pedrito",
+        "LAST_NAME": "González",
+        "COUNTRY": "United States",
+        "CITY": "Springfield",
+        "ADDRESS": "Calle siempre viva 123",
+        "PHONE_NUMBER": "",
+        "EMAIL": "pedritogonzalez123@gmail.com",
+        "DISCOUNT_CODE": "123",
+        "CARD_NUMBER": "4242424242424242",
+        "CARD_EXPIRATION": "12/25",
+        "CARD_CVV": "123"
+    }),
+    ("missing_email", {
+        "FIRST_NAME": "Pedrito",
+        "LAST_NAME": "González",
+        "COUNTRY": "United States",
+        "CITY": "Springfield",
+        "ADDRESS": "Calle siempre viva 123",
+        "PHONE_NUMBER": "123456789",
+        "EMAIL": "",
+        "DISCOUNT_CODE": "123",
+        "CARD_NUMBER": "4242424242424242",
+        "CARD_EXPIRATION": "12/25",
+        "CARD_CVV": "123"
+    }),
+    ("missing_card_number", {
+        "FIRST_NAME": "Pedrito",
+        "LAST_NAME": "González",
+        "COUNTRY": "United States",
+        "CITY": "Springfield",
+        "ADDRESS": "Calle siempre viva 123",
+        "PHONE_NUMBER": "123456789",
+        "EMAIL": "pedritogonzalez123@gmail.com",
+        "DISCOUNT_CODE": "123",
+        "CARD_NUMBER": "",
+        "CARD_EXPIRATION": "12/25",
+        "CARD_CVV": "123"
+    }),
+    ("missing_card_expiration", {
+        "FIRST_NAME": "Pedrito",
+        "LAST_NAME": "González",
+        "COUNTRY": "United States",
+        "CITY": "Springfield",
+        "ADDRESS": "Calle siempre viva 123",
+        "PHONE_NUMBER": "123456789",
+        "EMAIL": "pedritogonzalez123@gmail.com",
+        "DISCOUNT_CODE": "123",
+        "CARD_NUMBER": "4242424242424242",
+        "CARD_EXPIRATION": "",
+        "CARD_CVV": "123"
+    }),
+    ("missing_card_cvv", {
+        "FIRST_NAME": "Pedrito",
+        "LAST_NAME": "González",
+        "COUNTRY": "United States",
+        "CITY": "Springfield",
+        "ADDRESS": "Calle siempre viva 123",
+        "PHONE_NUMBER": "123456789",
+        "EMAIL": "pedritogonzalez123@gmail.com",
+        "DISCOUNT_CODE": "123",
+        "CARD_NUMBER": "4242424242424242",
+        "CARD_EXPIRATION": "12/25",
+        "CARD_CVV": ""
+    }),
+    ("invalid_email", {
+        "FIRST_NAME": "Pedrito",
+        "LAST_NAME": "González",
+        "COUNTRY": "United States",
+        "CITY": "Springfield",
+        "ADDRESS": "Calle siempre viva 123",
+        "PHONE_NUMBER": "123456789",
+        "EMAIL": "pedritogonzalez123",
+        "DISCOUNT_CODE": "123",
+        "CARD_NUMBER": "4242424242424242",
+        "CARD_EXPIRATION": "12/25",
+        "CARD_CVV": "123"
+    }),
+    ("invalid_card_number", {
+        "FIRST_NAME": "Pedrito",
+        "LAST_NAME": "González",
+        "COUNTRY": "United States",
+        "CITY": "Springfield",
+        "ADDRESS": "Calle siempre viva 123",
+        "PHONE_NUMBER": "123456789",
+        "EMAIL": "pedritogonzalez123",
+        "DISCOUNT_CODE": "123",
+        "CARD_NUMBER": "123",
+        "CARD_EXPIRATION": "12/25",
+        "CARD_CVV": "123"
+    }),
+    ("invalid_card_expiration", {
+        "FIRST_NAME": "Pedrito",
+        "LAST_NAME": "González",
+        "COUNTRY": "United States",
+        "CITY": "Springfield",
+        "ADDRESS": "Calle siempre viva 123",
+        "PHONE_NUMBER": "123456789",
+        "EMAIL": "pedritogonzalez123",
+        "DISCOUNT_CODE": "123",
+        "CARD_NUMBER": "4242424242424242",
+        "CARD_EXPIRATION": "12342234324",
+        "CARD_CVV": "123"
+    }),
+    ("invalid_card_cvv", {
+        "FIRST_NAME": "Pedrito",
+        "LAST_NAME": "González",
+        "COUNTRY": "United States",
+        "CITY": "Springfield",
+        "ADDRESS": "Calle siempre viva 123",
+        "PHONE_NUMBER": "123456789",
+        "EMAIL": "pedritogonzalez123",
+        "DISCOUNT_CODE": "123",
+        "CARD_NUMBER": "4242424242424242",
+        "CARD_EXPIRATION": "12/25",
+        "CARD_CVV": "1234567"
+    }),
+    ("invalid_phone_number", {
+        "FIRST_NAME": "Pedrito",
+        "LAST_NAME": "González",
+        "COUNTRY": "United States",
+        "CITY": "Springfield",
+        "ADDRESS": "Calle siempre viva 123",
+        "PHONE_NUMBER": "12324234324234234324234",
+        "EMAIL": "pedritogonzalez123", 
+        "DISCOUNT_CODE": "123",
+        "CARD_NUMBER": "4242424242424242",
+        "CARD_EXPIRATION": "12/25",
+        "CARD_CVV": "123"
+    }),
+    ("symbols_in_fields",{
         "FIRST_NAME": "#",
         "LAST_NAME": "$",
         "COUNTRY": "United States", 
@@ -25,7 +236,7 @@ test_data_checkout = [
         "CARD_EXPIRATION": "12/25",
         "CARD_CVV": "123"
     }),
-    ("no_data", {
+    ("all_fields_empty", {
         "FIRST_NAME": "",
         "LAST_NAME": "",
         "COUNTRY": "", 
