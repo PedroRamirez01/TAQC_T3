@@ -1,7 +1,6 @@
 import pytest
 from playwright.async_api import Page
 from models.register_user import RegisterUser
-from typing import Callable
 from utils.users_data import register_valid_users, register_empty_fields_users, register_invalid_email_users, register_invalid_password_users
 
 @pytest.mark.asyncio
@@ -10,7 +9,7 @@ from utils.users_data import register_valid_users, register_empty_fields_users, 
     [(user, user) for user in register_valid_users],
     indirect=["auto_delete_user"]
 )
-async def test_successful_registration(register_page: Page, user: RegisterUser, auto_delete_user: Callable):
+async def test_successful_registration(register_page: Page, user: RegisterUser, auto_delete_user):
     await register_page.register(user)
     assert "/login" in register_page.page.url, f"Usuario valido no creado: {user}"
 
@@ -20,7 +19,7 @@ async def test_successful_registration(register_page: Page, user: RegisterUser, 
     [(user, user) for user in register_empty_fields_users],
     indirect=["auto_delete_user"]
 )
-async def test_registration_with_empty_fields(register_page: Page, user: RegisterUser, auto_delete_user: Callable):
+async def test_registration_with_empty_fields(register_page: Page, user: RegisterUser, auto_delete_user):
     await register_page.register(user)
     assert "/register" in register_page.page.url, f"Se creó un usuario con 1 o más campos vacíos: {user}"
 
@@ -30,7 +29,7 @@ async def test_registration_with_empty_fields(register_page: Page, user: Registe
     [(user, user) for user in register_invalid_email_users],
     indirect=["auto_delete_user"]
 )
-async def test_registration_with_invalid_email(register_page: Page, user: RegisterUser, auto_delete_user: Callable):
+async def test_registration_with_invalid_email(register_page: Page, user: RegisterUser, auto_delete_user):
     await register_page.register(user)
     assert "/register" in register_page.page.url, f"Se creó un usuario con un email inválido: {user}"
 
@@ -40,6 +39,6 @@ async def test_registration_with_invalid_email(register_page: Page, user: Regist
     [(user, user) for user in register_invalid_password_users],
     indirect=["auto_delete_user"]
 )
-async def test_registration_with_invalid_password_security(register_page: Page, user: RegisterUser, auto_delete_user: Callable):
+async def test_registration_with_invalid_password_security(register_page: Page, user: RegisterUser, auto_delete_user):
     await register_page.register(user)
     assert "/register" in register_page.page.url, f"Se creó un usuario con una contraseña inválida: {user}"

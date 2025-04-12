@@ -84,7 +84,6 @@ register_login_valid_new_users = [
     ),
 ]
 
-
 register_login_invalid_new_users = [
     RegisterLoginUser(
         register=RegisterUser(

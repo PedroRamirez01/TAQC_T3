@@ -2,14 +2,15 @@ from playwright.async_api import Page
 from models.login_user import LoginUser
 
 class LoginPage:
-    def __init__(self, page: Page):
+    def __init__(self, page: Page, URL: str):
+        self.URL = URL
         self.page = page
         self.field_email = page.locator("#loginEmail")
         self.field_password = page.locator("#loginPassword")
         self.btn_login = page.locator("#login > div > form > div:nth-child(4) > button")
 
-    async def navigate(self, url: str) -> None:
-        await self.page.goto(url, wait_until="domcontentloaded")
+    async def navigate(self, URL: str) -> None:
+        await self.page.goto(URL, wait_until="domcontentloaded")
 
     async def fill_email(self, email: str) -> None:
         await self.field_email.fill(email)
@@ -21,6 +22,7 @@ class LoginPage:
         await self.btn_login.click()
 
     async def login(self, user: LoginUser) -> None:
+        await self.navigate(self.URL)
         await self.fill_email(user.email)
         await self.fill_password(user.password)
         await self.submit()
