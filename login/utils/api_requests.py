@@ -26,7 +26,7 @@ def delete_user_by_id(email):
         user = get_user_by_email(email)
         if user is None:
             return None
-        response = requests.delete(f"{BASE_URL}api/user/{user["id"]}", headers=HEADERS)
+        response = requests.delete(f"{BASE_URL}api/user/{user['id']}", headers=HEADERS)
         return response.status_code
     except requests.RequestException as e:
         return None

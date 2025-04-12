@@ -1,51 +1,34 @@
-# import pytest
-# from config.config import Config
-# from utils.api_requests import get_user_by_email
+import pytest
+from playwright.async_api import Page
+from models.login_user import LoginUser
+from utils.users_data import login_valid_users, login_no_register_users, login_user_invalid_email, login_user_empty_email, login_user_empty_password
 
-# # Total pruebas: 7
-# # Pruba 1: Login exitoso
-# # Prueba 2: Login con credenciales inválidas
-# # Prueba 3: Login con email inválido
-# # Prueba 4: Login con email no registrado
-# # Prueba 5: Login con email vacío
-# # Prueba 6: Login con password vacío
+@pytest.mark.asyncio
+@pytest.mark.parametrize("user", login_valid_users)
+async def test_login_successful(login_page: Page, user: LoginUser):
+    await login_page.login(user)
+    assert "/my-account" in login_page.page.url, f"El inicio de sesión no fue exitoso: {user}"
 
-# @pytest.mark.asyncio
-# async def test_successful_login(login_page):
-#     try:
-#         await login_page.login(Config.OLD_USER_EMAIL, Config.OLD_USER_PASSWORD)
-#         assert "/my-account" in login_page.page.url, "El inicio de sesión no fue exitoso"
-#     except KeyError:
-#         assert False, "Usuario no existe"
+@pytest.mark.asyncio
+@pytest.mark.parametrize("user", login_no_register_users)
+async def test_login_no_register_user(login_page: Page, user: LoginUser):
+    await login_page.login(user)
+    assert "/login" in login_page.page.url, f"Se inició sesión con credenciales inválidas: {user}"
 
-# @pytest.mark.asyncio
-# async def test_login_whit_email_not_valid(login_page):
-#     try:
-#         await login_page.login(Config.USER_INVALID_EMAIL, Config.USER_INVALID_PASSWORD)
-#         assert "/my-account" in login_page.page.url, "Se inicio sesión con email inválido"
-#     except KeyError:
-#         assert False, "Usuario no existe"
+@pytest.mark.asyncio
+@pytest.mark.parametrize("user", login_user_invalid_email)
+async def test_login_invalid_email(login_page: Page, user: LoginUser):
+    await login_page.login(user)
+    assert "/login" in login_page.page.url, f"Se inició sesión con email inválido: {user}"
 
-# @pytest.mark.asyncio
-# async def test_login_whit_email_not_registered(login_page):
-#     try:
-#         await login_page.login(Config.NOT_REGISTERED_EMAIL, Config.NOT_REGISTERED_PASSWORD)
-#         assert "/login" in login_page.page.url, "Email no registrado"
-#     except KeyError:
-#         assert False, "Usuario no existe"
+@pytest.mark.asyncio
+@pytest.mark.parametrize("user", login_user_empty_email)
+async def test_login_empty_email(login_page: Page, user: LoginUser):
+    await login_page.login(user)
+    assert "/login" in login_page.page.url, f"Se inició sesión con email vacío: {user}"
 
-# @pytest.mark.asyncio
-# async def test_login_with_empty_email(login_page):
-#     try:
-#         await login_page.login("", Config.OLD_USER_PASSWORD)
-#         assert "/login" in login_page.page.url, "Email no ingresado"
-#     except KeyError:
-#         assert False, "Usuario no existe"
-
-# @pytest.mark.asyncio
-# async def test_login_with_empty_password(login_page):
-#     try:
-#         await login_page.login(Config.OLD_USER_EMAIL, "")
-#         assert "/login" in login_page.page.url, "Contraseña no ingresada"
-#     except KeyError:
-#         assert False, "Usuario no existe"
+@pytest.mark.asyncio
+@pytest.mark.parametrize("user", login_user_empty_password)
+async def test_login_empty_email(login_page: Page, user: LoginUser):
+    await login_page.login(user)
+    assert "/login" in login_page.page.url, f"Se inició sesión con password vacía: {user}"
