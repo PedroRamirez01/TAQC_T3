@@ -5,53 +5,12 @@ import time
 from pages_checkout.homeToProductD import HomeToProductDetails
 from pages_checkout.addToCart import AddToCart
 from pages_checkout.checkoutPage import CheckoutPage
+from utils.test_data import test_data_checkout
 
 URL = "https://automation-portal-bootcamp.vercel.app/"
 
-test_data = [
-    ("valid_data", { # no pasa porque el discount code está vacío
-        "FIRST_NAME": "Pedrito",
-        "LAST_NAME": "González",
-        "COUNTRY": "United States", 
-        "CITY": "Springfield",
-        "ADRESS": "Calle siempre viva 123",
-        "PHONE_NUMBER": "123456789",
-        "EMAIL": "pedritogonzalez123@gmail.com",
-        "DISCOUNT_CODE": "",
-        "CARD_NUMBER": "4242424242424242",
-        "CARD_EXPIRATION": "12/25",
-        "CARD_CVV": "123"
-    }),
-    ("invalid_data",{
-        "FIRST_NAME": "#",
-        "LAST_NAME": "$",
-        "COUNTRY": "United States", 
-        "CITY": "?",
-        "ADRESS": "#",
-        "PHONE_NUMBER": "&",
-        "EMAIL": "pedritogonzalez123@gmail.com",
-        "DISCOUNT_CODE": "123456",
-        "CARD_NUMBER": "4242424242424242",
-        "CARD_EXPIRATION": "12/25",
-        "CARD_CVV": "123"
-    }),
-    ("no_data", {
-        "FIRST_NAME": "",
-        "LAST_NAME": "",
-        "COUNTRY": "", 
-        "CITY": "",
-        "ADRESS": "",
-        "PHONE_NUMBER": "",
-        "EMAIL": "",
-        "DISCOUNT_CODE": "",
-        "CARD_NUMBER": "",
-        "CARD_EXPIRATION": "",
-        "CARD_CVV": ""
-    }),
-]
-
 @pytest.mark.asyncio
-@pytest.mark.parametrize("label,data", test_data)
+@pytest.mark.parametrize("label,data", test_data_checkout)
 async def test_checkout_flow(label,data,page):
         await page.goto(URL, wait_until="domcontentloaded")
 
