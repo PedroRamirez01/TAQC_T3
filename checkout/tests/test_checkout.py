@@ -1,3 +1,4 @@
+import pytest
 import asyncio
 from playwright.async_api import async_playwright
 import time
@@ -7,8 +8,8 @@ from pages_checkout.checkoutPage import CheckoutPage
 
 URL = "https://automation-portal-bootcamp.vercel.app/"
 
-happy_path = [ # no pasa porque el discount code está vacío
-    {
+test_data = [
+    ("valid_data", { # no pasa porque el discount code está vacío
         "FIRST_NAME": "Pedrito",
         "LAST_NAME": "González",
         "COUNTRY": "United States", 
@@ -20,11 +21,8 @@ happy_path = [ # no pasa porque el discount code está vacío
         "CARD_NUMBER": "4242424242424242",
         "CARD_EXPIRATION": "12/25",
         "CARD_CVV": "123"
-    }
-]
-
-sad_path = [
-    {
+    }),
+    ("invalid_data",{
         "FIRST_NAME": "#",
         "LAST_NAME": "$",
         "COUNTRY": "United States", 
@@ -36,15 +34,25 @@ sad_path = [
         "CARD_NUMBER": "4242424242424242",
         "CARD_EXPIRATION": "12/25",
         "CARD_CVV": "123"
-    }
+    }),
+    ("no_data", {
+        "FIRST_NAME": "",
+        "LAST_NAME": "",
+        "COUNTRY": "", 
+        "CITY": "",
+        "ADRESS": "",
+        "PHONE_NUMBER": "",
+        "EMAIL": "",
+        "DISCOUNT_CODE": "",
+        "CARD_NUMBER": "",
+        "CARD_EXPIRATION": "",
+        "CARD_CVV": ""
+    }),
 ]
 
-path = sad_path
-
-async def main():
-    async with async_playwright() as p:   
-        browser = await p.chromium.launch(headless=False)
-        page = await browser.new_page()
+@pytest.mark.asyncio
+@pytest.mark.parametrize("label,data", test_data)
+async def test_checkout_flow(label,data,page):
         await page.goto(URL, wait_until="domcontentloaded")
 
 
@@ -67,25 +75,25 @@ async def main():
         checkoutpage = CheckoutPage(page)
         await checkoutpage.clickTermsAndConditionsCheckbox()
         await checkoutpage.clickProceedToCheckoutButton()
-        await checkoutpage.fillFirstName(path[0]["FIRST_NAME"])
-        await checkoutpage.fillLastName(path[0]["LAST_NAME"])
-        await checkoutpage.fillCountry(path[0]["COUNTRY"])
-        await checkoutpage.fillCity(path[0]["CITY"])
-        await checkoutpage.fillAdress(path[0]["ADRESS"])
-        await checkoutpage.fillPhoneNumber(path[0]["PHONE_NUMBER"])
-        await checkoutpage.fillEmail(path[0]["EMAIL"])  
-        await checkoutpage.fillDiscountCode(path[0]["DISCOUNT_CODE"])
-        await checkoutpage.fillCardNumber(path[0]["CARD_NUMBER"])
-        await checkoutpage.fillCardExpiration(path[0]["CARD_EXPIRATION"])
-        await checkoutpage.fillCardCVV(path[0]["CARD_CVV"])
+        await checkoutpage.fillFirstName(data["FIRST_NAME"])
+        await checkoutpage.fillLastName(data["LAST_NAME"])
+        await checkoutpage.fillCountry(data["COUNTRY"])
+        await checkoutpage.fillCity(data["CITY"])
+        await checkoutpage.fillAdress(data["ADRESS"])
+        await checkoutpage.fillPhoneNumber(data["PHONE_NUMBER"])
+        await checkoutpage.fillEmail(data["EMAIL"])  
+        await checkoutpage.fillDiscountCode(data["DISCOUNT_CODE"])
+        await checkoutpage.fillCardNumber(data["CARD_NUMBER"])
+        await checkoutpage.fillCardExpiration(data["CARD_EXPIRATION"])
+        await checkoutpage.fillCardCVV(data["CARD_CVV"])
         await checkoutpage.clickAgreeCheckbox()
         await checkoutpage.clickPlaceOrderButton()
 
+        success_message = page.locator("text=Order saved successfully!")
+
+        if label == "valid_data":
+            assert await success_message.is_visible(), "Expected success message not found."
+        else:
+            assert not await success_message.is_visible(), "Unexpected success message found for invalid input."
+
         time.sleep(5)
-
-        await browser.close()
-
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
