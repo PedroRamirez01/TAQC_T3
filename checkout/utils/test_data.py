@@ -1,5 +1,5 @@
 test_data_checkout = [
-    ("valid_data", { # no pasa porque el discount code está vacío
+    ("valid_data", { 
         "FIRST_NAME": "Pedrito",
         "LAST_NAME": "González",
         "COUNTRY": "United States", 
@@ -7,7 +7,7 @@ test_data_checkout = [
         "ADRESS": "Calle siempre viva 123",
         "PHONE_NUMBER": "123456789",
         "EMAIL": "pedritogonzalez123@gmail.com",
-        "DISCOUNT_CODE": "",
+        "DISCOUNT_CODE": "123",
         "CARD_NUMBER": "4242424242424242",
         "CARD_EXPIRATION": "12/25",
         "CARD_CVV": "123"
