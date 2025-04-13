@@ -1,13 +1,14 @@
 import pytest
 import asyncio
 from playwright.async_api import async_playwright
+from playwright.async_api import Page
 import time
 from pages_checkout.homeToProductD import HomeToProductDetails
 from pages_checkout.addToCart import AddToCart
 from pages_checkout.checkoutPage import CheckoutPage
 from utils.test_data import valid_checkout_data, invalid_checkout_data
 
-URL = "https://automation-portal-bootcamp.vercel.app/"
+URL = "https://automation-portal-bootcamp.vercel.app/product-detail/1"
 
 test_data = valid_checkout_data + invalid_checkout_data
 
@@ -16,11 +17,10 @@ test_data = valid_checkout_data + invalid_checkout_data
 async def test_checkout_flow(label,data,page):
         await page.goto(URL, wait_until="domcontentloaded")
 
-
-        homeToProductDetails = HomeToProductDetails(page)
-        await homeToProductDetails.closePopup()
-        await homeToProductDetails.clickFirstCollection()
-        await homeToProductDetails.clickFirstProduct()
+        # homeToProductDetails = HomeToProductDetails(page)
+        # await homeToProductDetails.closePopup()
+        # await homeToProductDetails.clickFirstCollection()
+        # await homeToProductDetails.clickFirstProduct()
 
         addToCart = AddToCart(page)
         await addToCart.changeColor()
@@ -50,11 +50,10 @@ async def test_checkout_flow(label,data,page):
         await checkoutpage.clickAgreeCheckbox()
         await checkoutpage.clickPlaceOrderButton()
 
-        success_message = page.locator("text=Order saved successfully!")
+        success_message = page.locator("#wrapper > section > div > div > div.tf-page-cart-footer > div > form > p:nth-child(9)")
 
-        if label == "valid_data":
-            assert await success_message.is_visible(), "Expected success message not found."
+        if "valid" in label:
+            assert await success_message.is_visible(), f"[{label}] Expected success message not found."
         else:
-            assert not await success_message.is_visible(), "Unexpected success message found for invalid input."
-
+            assert not await success_message.is_visible(), f"[{label}] Unexpected success message for invalid input."
         time.sleep(5)
