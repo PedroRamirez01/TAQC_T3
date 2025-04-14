@@ -50,10 +50,12 @@ async def test_checkout_flow(label,data,page):
         await checkoutpage.clickAgreeCheckbox()
         await checkoutpage.clickPlaceOrderButton()
 
+        await page.wait_for_timeout(5000)  # Wait for 2 seconds to allow the success message to appear
+
         success_message = page.locator("#wrapper > section > div > div > div.tf-page-cart-footer > div > form > p:nth-child(9)")
 
-        if "valid" in label:
+        if label.startswith("valid"):
             assert await success_message.is_visible(), f"[{label}] Expected success message not found."
         else:
             assert not await success_message.is_visible(), f"[{label}] Unexpected success message for invalid input."
-        time.sleep(5)
+
