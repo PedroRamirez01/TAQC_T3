@@ -1,7 +1,7 @@
 import pytest_asyncio
 from playwright.async_api import async_playwright
 from config.config import Config
-from pages.search_page import HomeToSearchPage
+from pages.homePage_page import HomeToPage
 from pages.filter_product_page import FilterProductPage
 
 @pytest_asyncio.fixture(scope="function") # Inicializa el navegador y la página para cada prueba 
@@ -13,13 +13,13 @@ async def page():
         await browser.close()
 
 @pytest_asyncio.fixture
-async def search_page(page):
-    search_page = HomeToSearchPage(page)
-    await search_page.navigate(Config.URL)
-    return search_page
+async def homeTo_page(page):
+    home_page = HomeToPage(page)
+    await home_page.navigate(Config.URL_BASE)
+    return home_page
 
 @pytest_asyncio.fixture
 async def filter_page(page):
     filter_page = FilterProductPage(page)
-    await filter_page.navigate(Config.URL)
+    await filter_page.navigate(Config.URL_FILTER)
     return filter_page

@@ -1,4 +1,6 @@
 from playwright.async_api import Page
+DELAY = 1000
+MAX_ATTEMPTS = 1
 
 class FilterProductPage:
     def __init__(self, page: Page):
@@ -7,40 +9,86 @@ class FilterProductPage:
         self.filterBttn = self.page.locator(".tf-btn-filter")
         self.filterMen = self.page.locator("li.cate-item:nth-child(2) > a:nth-child(1) > span:nth-child(1)")
         self.filterWomen = self.page.locator("li.cate-item:nth-child(3) > a:nth-child(1) > span:nth-child(1)")
+        self.filterDenim = self.page.locator("li.cate-item:nth-child(4) > a:nth-child(1) > span:nth-child(1)")
+        self.filterDress = self.page.locator("li.cate-item:nth-child(5) > a:nth-child(1) > span:nth-child(1)")
         self.closePopUp = self.page.locator(".offcanvas-backdrop")
+        self.quickAdd = self.page.locator("div.card-product:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)")
+        self.addToCart = self.page.locator("div.tf-product-info-buy-button:nth-child(4) > form:nth-child(1) > a:nth-child(1)")
         self.shopCategories = self.page.locator(".tf-sw-collection > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)")
-        self.div1 = None
-        self.div2 = None
-        self.div3 = None
+        self.outOfStockFilter = self.page.locator("#availability > ul:nth-child(1) > li:nth-child(2) > input:nth-child(1)")
+        self.producto = self.page.locator("div.card-product:nth-child(1) > div:nth-child(1) > a:nth-child(1) > img:nth-child(2)")
+        self.avaliable = self.page.locator("#availability > ul:nth-child(1) > li:nth-child(1) > input:nth-child(1)")
+        self.slider = self.page.locator("#slider")
+        self.brand = self.page.locator("#brand > ul:nth-child(1) > li:nth-child(1) > input:nth-child(1)")
+        self.color = self.page.locator("input.bg_brown")
+        self.size = self.page.locator("#size > ul:nth-child(1) > li:nth-child(2) > input:nth-child(1)")
+        self.clearFilter = self.page.locator("a.tf-btn:nth-child(4)")
+        self.totalCart = None
+
+
+    async def doFilter(self):
+        await self.filterBttn.click()
+        await self.filterWomen.click()
+        await self.closePopUp.click()
+        await self.filterBttn.click()
+        await self.avaliable.click()
+        await self.brand.click()
+        await self.color.click()
+        await self.size.click()
     
-    async def closePopUpHomePage(self):
-        self.popUpHome, "Pop-up is not found"
-        await self.popUpHome.click()
-        await self.page.wait_for_timeout(2000)
+    async def clear_Filter(self):
+        await self.filterBttn.click()
+        await self.clearFilter.click()
+
+    async def addCart(self):
+        await self.producto.hover()
+        await self.producto.wait_for(state="visible")
+        await self.quickAdd.click()
+        await self.addToCart.click()
+        self.totalCart = self.page.locator(".tf-totals-total-value")
+        await self.totalCart.wait_for(state="visible")
+    
+    async def totalCart_value(self):
+        total_value = await self.totalCart.inner_text()
+        return total_value
+
+    async def outOfStock(self):
+        await self.filterBttn.click()
+        await self.outOfStockFilter.click()
 
     async def navigate(self, url: str) -> None: #Contenedor de la página
         await self.page.goto(url, wait_until="domcontentloaded")
     
     async def doFilterMen(self):
-        assert self.filterBttn, "Filter button is not found"
         await self.filterBttn.click()
         await self.filterMen.click()
-        self.div1 = self.page.locator("div.card-product:nth-child(1) > div:nth-child(2) > a:nth-child(1)")
-        await self.div1.wait_for(state="visible")
+        await self.closePopUp.click()
     
     async def doFilterWomen(self):
-        assert self.filterBttn, "Filter button is not found"
         await self.filterBttn.click()
         await self.filterWomen.click()
-        self.div2 = self.page.locator("div.card-product:nth-child(1) > div:nth-child(2) > a:nth-child(1)")
-        await self.div2.wait_for(state="visible")
+        await self.closePopUp.click()
     
-    async def shopByCategories(self):
-        assert self.shopCategories, "Shop by categories is not found"
-        await self.shopCategories.click()
-        self.div3 = self.page.locator("div.card-product:nth-child(1) > div:nth-child(2) > a:nth-child(1)")
-        await self.div3.wait_for(state="visible")
-    
+    async def doFilterDenim(self):
+        await self.filterBttn.click()
+        for attempy in range(MAX_ATTEMPTS):
+            try:
+                await self.filterDenim.click()
+                return
+            except Exception:
+                if attempy < MAX_ATTEMPTS - 1:
+                    await self.page.wait_for_timeout(DELAY)
+
+    async def doFilterDress(self):
+        await self.filterBttn.click()
+        for attempy in range(MAX_ATTEMPTS):
+            try:
+                await self.filterDress.click()
+                return
+            except Exception:
+                if attempy < MAX_ATTEMPTS - 1:
+                    await self.page.wait_for_timeout(DELAY)
+
     async def PopUp(self):
         if await self.closePopUp.count() > 0 and await self.closePopUp.is_visible():
             await self.closePopUp.click()
@@ -48,21 +96,32 @@ class FilterProductPage:
     
     async def takeScreenshot(self, path, fullPage=False):
         await self.page.screenshot(path=path, full_page=fullPage)
+    
 
-    async def compare_div(self):
-        assert self.div1 is not None, "div1 is not found"
-        assert self.div2 is not None, "div2 is not found"
-        assert self.div3 is not None, "div3 is not found"
+    """Flujos optimizados para el test de pytest"""
+    # Test de clearFilter
+    async def clearFilterStep1(self):
+        await self.filterBttn.click()
+        await self.outOfStockFilter.click()
+        await self.closePopUp.click()
+    
+    # Test de clearFilter
+    async def clearFilterStep2(self):
+        await self.clear_Filter()
+        await self.PopUp()
 
-        div1_text = await self.div1.inner_text()
-        div2_text = await self.div2.inner_text()
-        div3_text = await self.div3.inner_text()
+    # Test de Denim
+    async def filterNotWorkingDenim(self):
+        await self.doFilterDenim()
+        await self.PopUp()
 
-        #print(f"Div1 Text in Test: {div1_text}")
-        #print(f"Div2 Text in Test: {div2_text}")
-        #print(f"Div3 Text in Test: {div3_text}")
-
-        if div1_text == div2_text and div1_text == div3_text:
-            return True
-        else:
-            return False
+    # Test de Dress
+    async def filterNotWorkingDress(self):
+        await self.doFilterDress()
+        await self.PopUp()
+    
+    # Test de filter Out of stock
+    async def outOfStockFlow(self):
+        await self.outOfStock()
+        await self.PopUp()
+        await self.addCart()
