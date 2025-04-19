@@ -1,8 +1,8 @@
 import pytest_asyncio
 from playwright.async_api import async_playwright
 from config.config import Config
-from pages.homePage_page import HomeToPage
-from pages.filter_product_page import FilterProductPage
+from pages.home_page import HomeToPage
+from pages.filterProduct_page import FilterProductPage
 
 @pytest_asyncio.fixture(scope="function") # Inicializa el navegador y la página para cada prueba 
 async def page():
