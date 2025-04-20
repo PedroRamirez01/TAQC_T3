@@ -8,7 +8,8 @@ from pages_checkout.addToCart import AddToCart
 from pages_checkout.checkoutPage import CheckoutPage
 from utils.test_data import valid_checkout_data, invalid_checkout_data
 
-URL = "https://automation-portal-bootcamp.vercel.app/product-detail/1"
+product_id = 1
+URL = f"https://automation-portal-bootcamp.vercel.app/product-detail/{product_id}"
 
 test_data = valid_checkout_data + invalid_checkout_data
 
@@ -60,9 +61,6 @@ async def test_checkout_flow(label,data,page):
             assert await success_message.is_visible(), f"[{label}] Expected success message not found."
         else:
             assert not await success_message.is_visible(), f"[{label}] Unexpected success message for invalid input."
-
-        #empty cart 
-
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("label,data", valid_checkout_data)
