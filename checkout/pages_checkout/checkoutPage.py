@@ -19,6 +19,7 @@ class CheckoutPage:
         self.fieldCardCVV = self.page.locator("#wrapper > section > div > div > div.tf-page-cart-footer > div > form > div.box.grid-2 > div:nth-child(2) > input[type=text]")
         self.agreeCheckbox = self.page.locator("#check-agree")
         self.placeOrderButton = self.page.locator("#wrapper > section > div > div > div.tf-page-cart-footer > div > form > button")
+        self.success_message = self.page.locator('p[style*="color: green"]:has-text("Order saved successfully!")')
 
     async def clickTermsAndConditionsCheckbox(self):
         assert self.termsAndConditionsCheckbox, "No terms and conditions checkbox found"
@@ -83,5 +84,25 @@ class CheckoutPage:
     async def clickPlaceOrderButton(self):
         assert self.placeOrderButton, "No place order button found"
         await self.placeOrderButton.click()
+
+    async def fill_checkout_form(self, data):
+        await self.fillFirstName(data["FIRST_NAME"])
+        await self.fillLastName(data["LAST_NAME"])
+        await self.fillCountry(data["COUNTRY"])
+        await self.fillCity(data["CITY"])
+        await self.fillAdress(data["ADDRESS"])
+        await self.fillPhoneNumber(data["PHONE_NUMBER"])
+        await self.fillEmail(data["EMAIL"])  
+        await self.fillDiscountCode(data["DISCOUNT_CODE"])
+        await self.fillCardNumber(data["CARD_NUMBER"])
+        await self.fillCardExpiration(data["CARD_EXPIRATION"])
+        await self.fillCardCVV(data["CARD_CVV"])
+
+    async def assert_success_message(self, label):
+
+        if label.startswith("valid"):
+            assert await self.success_message.is_visible(), f"[{label}] Expected success message not found."
+        else:
+            assert not await self.success_message.is_visible(), f"[{label}] Unexpected success message for invalid input."
 
     
