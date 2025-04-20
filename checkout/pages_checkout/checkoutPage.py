@@ -12,7 +12,7 @@ class CheckoutPage:
         self.fieldAdress = self.page.locator("#address")
         self.fieldPhoneNumber = self.page.locator("#phone")
         self.fieldEmail = self.page.locator("#email")
-        self.fieldDiscountCode = self.page.locator("#wrapper > section > div > div > div.tf-page-cart-footer > div > form > div:nth-child(2) > input[type=text]")
+        self.fieldDiscountCode = self.page.locator('.coupon-box input[placeholder="Discount code"]')
         self.discontCodeButton = self.page.locator("a.tf-btn btn-sm radius-3 btn-fill btn-icon animate-hover-btn")
         self.fieldCardNumber = self.page.locator("#wrapper > section > div > div > div.tf-page-cart-footer > div > form > div.coupon-box.mb_20 > input[type=text]")
         self.fieldCardExpiration = self.page.locator("#wrapper > section > div > div > div.tf-page-cart-footer > div > form > div.box.grid-2 > div:nth-child(1) > input[type=text]")
