@@ -55,7 +55,7 @@ async def test_checkout_flow(label,data,page):
 
         # Los label con missing pasan, ya que no se hace la compra, pero deberian mostrar un mensaje de "invalid input ??"
 
-        success_message = page.locator("#wrapper > section > div > div > div.tf-page-cart-footer > div > form > p:nth-child(9)")
+        success_message = page.locator('p[style*="color: green"]:has-text("Order saved successfully!")')
 
         if label.startswith("valid"):
             assert await success_message.is_visible(), f"[{label}] Expected success message not found."
