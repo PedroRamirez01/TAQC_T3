@@ -24,6 +24,18 @@ register_invalid_email_users = [
     RegisterUser(first_name="Firstname", last_name="Lastname", email="@gmail.com", password="StrongPass123"),
 ]
 
+register_invalid_firstname_users = [
+    RegisterUser(first_name="#", last_name="Lastname", email="team_3_RIFU1@gmail.com", password="StrongPass123"),
+    RegisterUser(first_name="$", last_name="Lastname", email="team_3_RIFU2@gmail.com", password="StrongPass123"),
+    RegisterUser(first_name="!$#%", last_name="Lastname", email="team_3_RIFU3@gmail.com", password="StrongPass123"),
+]
+
+register_invalid_lastname_users = [
+    RegisterUser(first_name="Firstname", last_name="$", email="team_3_RILU1@gmail.com", password="StrongPass123"),
+    RegisterUser(first_name="Firstname", last_name="#", email="team_3_RIFU2@gmail.com", password="StrongPass123"),
+    RegisterUser(first_name="Firstname", last_name="!$%&", email="team_3_RIFU3@gmail.com", password="StrongPass123"),
+]
+
 register_invalid_password_users = [
     RegisterUser(first_name="Firstname", last_name="Lastname", email="team_3_RIPU1@gmail.com", password="aaaaaaaaaaaaaaaaaaaaaaa"),
     RegisterUser(first_name="Firstname", last_name="Lastname", email="team_3_RIPU2@gmail.com", password="1"),
@@ -105,4 +117,13 @@ register_login_invalid_new_users = [
             email="team_3_RLVU2@gmail.com",
             password="1")
     ),
+]
+
+# Data for test_product_detail.py
+product_detail_quantity_btn = [
+    1, 3, -10, 0, 10, "Hola"
+]
+
+product_detail_quantity_input = [
+    1, 3, -1000000000, 0, 1000000000000000000000, "Hola"
 ]

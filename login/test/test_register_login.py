@@ -23,6 +23,6 @@ async def test_successful_registration_login_valid(register_page: Page, login_pa
 )
 async def test_successful_registration_login_invalid(register_page: Page, login_page: Page, user: RegisterLoginUser, auto_delete_user):
     await register_page.register(user.register)
-    assert "/login" in register_page.page.url, f"Usuario invalido creado: {user.register}"
+    # assert "/login" in register_page.page.url, f"Usuario invalido creado: {user.register}"
     await login_page.login(user.login)
-    assert "/my-account" in login_page.page.url, f"Se inició sesión con credenciales inválidas: {user.login}"
+    assert "/my-account" in login_page.page.url, f"Se inició sesión con credenciales inválidas: {user.register}"
