@@ -34,5 +34,5 @@ El objetivo de este proyecto es automatizar el proceso de compra de un producto 
 
 3. Ejecutar las pruebas:
 ```
-  usaremos pytest?
+  pytest --html=login/report/report.html --self-contained-html
 ```
