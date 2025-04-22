@@ -120,10 +120,18 @@ register_login_invalid_new_users = [
 ]
 
 # Data for test_product_detail.py
-product_detail_quantity_btn = [
-    1, 3, -10, 0, 10, "Hola"
+product_detail_quantity_input = [
+    1, 3, 1000000000000000000000
 ]
 
-product_detail_quantity_input = [
-    1, 3, -1000000000, 0, 1000000000000000000000, "Hola"
+product_detail_negative_quantity_input = [
+    -1, -3, 0, -1000000000000000000000
+]
+
+product_detail_free_shipping = [
+    1, 3, 10
+]
+
+product_detail_cart_close_cart = [
+    1, 3, 4
 ]

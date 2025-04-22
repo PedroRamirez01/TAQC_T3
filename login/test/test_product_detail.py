@@ -1,38 +1,33 @@
 import pytest
 from playwright.async_api import Page
-from utils.users_data import product_detail_quantity_btn, product_detail_quantity_input
-
-#*
-# Test a realizar
-# Probar boton cambio de producto
-# Compara span de precio y rebaja, y ver si corresponde al porcentaje puesto
-# Seleccionar producto(Para todos los test, seleccionar varios productos y dar info del producto en caso de error) 
-# Probar cambio de color y verificar span de color
-# Cambiar tamaño y verificar span de tamaño
-# Ingresar valores a input de Quality con diferentes productos, y diferentes cantidades
-# Añadir al carro, validar que numero de productos ingresados, correspondan a los que se encuentran en el carro
-# Añadir a favoritos
-# Comparacion de diferentes productos
-# Probar funcionalidad buy with ******
-# boton more payments option
-# Compare color
-# ask questions
-# Delivery and Return
-# Share option
-# *#
+from utils.users_data import product_detail_quantity_input, product_detail_negative_quantity_input, product_detail_free_shipping, product_detail_cart_close_cart
 
 @pytest.mark.asyncio
 async def test_verify_discount(product_detail_page: Page):
     assert await product_detail_page.verify_discount(), f"El descuento no es correcto. Precio sin descuento: {await product_detail_page.price.inner_text()}, Precio con descuento: {await product_detail_page.price_on_sale.inner_text()}, Descuento: {await product_detail_page.discount.inner_text()}%."
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("quantity", product_detail_quantity_btn)
-async def test_product_detail_quantity_with_btn_add_normal_quantity(product_detail_page: Page, quantity):
-    await product_detail_page.add_to_cart_with_btn_add(quantity)
-    assert await product_detail_page.quantity_cart.input_value() == str(quantity+1), f"Cantidad en el carrito no coincide con la cantidad añadida: {await product_detail_page.quantity_cart.input_value()} != {quantity+1}"
+@pytest.mark.parametrize("quantity", product_detail_quantity_input)
+async def test_product_detail_quantity_with_input_normal_quantity(product_detail_page: Page, quantity: int):
+    assert await product_detail_page.add_to_cart_with_input(quantity), f"No se pudo añadir correctamente la cantidad: {quantity}"
+    cantidad = int(float(await product_detail_page.quantity_cart.input_value()))
+    assert 0 < cantidad < 10000, f"Cantidad en el carrito fuera de rango."
+    assert cantidad == quantity, f"Cantidad en el carrito no coincide con la cantidad añadida: {cantidad} != {quantity}"
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("quantity", product_detail_quantity_input)
-async def test_product_detail_quantity_with_input_normal_quantity(product_detail_page: Page, quantity):
-    await product_detail_page.add_to_cart_with_input(quantity)
-    assert await product_detail_page.quantity_cart.input_value() == str(quantity), f"Cantidad en el carrito no coincide con la cantidad añadida: {await product_detail_page.quantity_cart.input_value()} != {quantity+1}"
+@pytest.mark.parametrize("quantity", product_detail_negative_quantity_input)
+async def test_product_detail_negative_quantity_with_input_normal_quantity(product_detail_page: Page, quantity: int):
+    assert not await product_detail_page.add_to_cart_with_input(quantity), f"Se aceptó una cantidad negativa o 0."
+    cantidad = int(float(await product_detail_page.quantity_cart.input_value()))
+    assert cantidad == 1, f"Se puede ingresar valores negativos en input de cantidad."
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("quantity", product_detail_free_shipping)
+async def test_verify_free_shipping(product_detail_page: Page, quantity: int):
+    assert await product_detail_page.verify_free_shipping(quantity), "El valor que se muestra en el 'Free Shipping' no cambia despues de añadir más productos."
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("quantity", product_detail_cart_close_cart)
+async def test_product_detail_add_to_cart_close_add_to_cart(product_detail_page: Page, quantity: int):
+    assert await product_detail_page.cart_add_cart(quantity), f"Se añade {quantity+1} productos, se presiona añadir al carrito, se cierra carrito, se añade nuevamente el mismo valor al carrito, pero el valor no cambia en el carrito."
+
