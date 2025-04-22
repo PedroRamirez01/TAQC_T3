@@ -1,11 +1,6 @@
 import pytest
-import asyncio
-from playwright.async_api import async_playwright
-from playwright.async_api import Page
-import time
-from pages_checkout.homeToProductD import HomeToProductDetails
-from pages_checkout.addToCart import AddToCart
-from pages_checkout.checkoutPage import CheckoutPage
+from pages.addToCart import AddToCart
+from pages.checkoutPage import CheckoutPage
 from utils.test_data import valid_checkout_data, invalid_checkout_data
 
 product_id = 1
