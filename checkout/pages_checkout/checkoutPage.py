@@ -1,6 +1,49 @@
 from playwright.async_api import Page
 
 class CheckoutPage:
+    """
+    CheckoutPage class to handle checkout page interactions.
+    
+    Attributes:
+        page (Page): The Playwright Page object.
+        termsAndConditionsCheckbox (Locator): Locator for the terms and conditions checkbox.
+        proceedToCheckoutButton (Locator): Locator for the proceed to checkout button.
+        fieldFirstName (Locator): Locator for the first name input field.
+        fieldLastName (Locator): Locator for the last name input field.
+        fieldCountry (Locator): Locator for the country input field.
+        fieldCity (Locator): Locator for the city input field.
+        fieldAdress (Locator): Locator for the address input field.
+        fieldPhoneNumber (Locator): Locator for the phone number input field.
+        fieldEmail (Locator): Locator for the email input field.
+        fieldDiscountCode (Locator): Locator for the discount code input field.
+        discontCodeButton (Locator): Locator for the discount code button.
+        fieldCardNumber (Locator): Locator for the card number input field.
+        fieldCardExpiration (Locator): Locator for the card expiration input field.
+        fieldCardCVV (Locator): Locator for the card CVV input field.
+        agreeCheckbox (Locator): Locator for the agree checkbox.
+        placeOrderButton (Locator): Locator for the place order button.
+        success_message (Locator): Locator for the success message after placing an order.
+        
+        Methods:
+        clickTermsAndConditionsCheckbox: Clicks the terms and conditions checkbox.
+        clickProceedToCheckoutButton: Clicks the proceed to checkout button.
+        fillFirstName: Fills the first name input field.
+        fillLastName: Fills the last name input field.
+        fillCountry: Fills the country input field.
+        fillCity: Fills the city input field.
+        fillAdress: Fills the address input field.
+        fillPhoneNumber: Fills the phone number input field.
+        fillEmail: Fills the email input field.
+        fillDiscountCode: Fills the discount code input field.
+        fillCardNumber: Fills the card number input field.
+        fillCardExpiration: Fills the card expiration input field.
+        fillCardCVV: Fills the card CVV input field.
+        clickAgreeCheckbox: Clicks the agree checkbox.
+        clickPlaceOrderButton: Clicks the place order button.
+        fill_checkout_form: Fills the checkout form with provided data.
+        assert_success_message: Asserts the visibility of the success message after placing an order.
+    """
+
     def __init__(self, page: Page):
         self.page = page
         self.termsAndConditionsCheckbox = self.page.locator('#CartDrawer-Form_agree')
@@ -42,7 +85,6 @@ class CheckoutPage:
         if country_value:
             await self.page.select_option("#country", value=country_value)
         else:
-            # Selecciona la primera opción (índice 0)
             await self.page.select_option("#country", index=0)
 
     async def fillCity(self, city): 
