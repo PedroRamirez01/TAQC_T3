@@ -12,12 +12,6 @@ test_data = valid_checkout_data + invalid_checkout_data
 @pytest.mark.parametrize("label,data", test_data)
 async def test_checkout_flow(label,data,page):
         await page.goto(URL, wait_until="domcontentloaded")
-
-        # homeToProductDetails = HomeToProductDetails(page)
-        # await homeToProductDetails.closePopup()
-        # await homeToProductDetails.clickFirstCollection()
-        # await homeToProductDetails.clickFirstProduct()
-
         addToCart = AddToCart(page)
         await addToCart.changeColor()
         await addToCart.changeSize()
