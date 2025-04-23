@@ -10,6 +10,9 @@ from utils.users_data import register_login_valid_new_users, register_login_inva
     indirect=["auto_delete_user"]
 )
 async def test_successful_registration_login_valid(register_page: Page, login_page: Page, user: RegisterLoginUser, auto_delete_user):
+    """
+    Verifica que el registro sea exitoso y redirija a la página de inicio de sesión.
+    """
     await register_page.register(user.register)
     assert "/login" in register_page.page.url, f"Usuario valido no creado: {user.register}"
     await login_page.login(user.login)
@@ -22,7 +25,9 @@ async def test_successful_registration_login_valid(register_page: Page, login_pa
     indirect=["auto_delete_user"]
 )
 async def test_successful_registration_login_invalid(register_page: Page, login_page: Page, user: RegisterLoginUser, auto_delete_user):
+    """
+    Verifica que el registro falle si hay campos vacíos o inválidos.
+    """
     await register_page.register(user.register)
-    # assert "/login" in register_page.page.url, f"Usuario invalido creado: {user.register}"
     await login_page.login(user.login)
     assert "/my-account" in login_page.page.url, f"Se inició sesión con credenciales inválidas: {user.register}"

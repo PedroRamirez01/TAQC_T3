@@ -1,10 +1,13 @@
 import pytest_asyncio
 from playwright.async_api import Page
 from playwright.async_api import async_playwright
+from pages.home_page import HomeToPage
+from pages.filterProduct_page import FilterProductPage
 from pages.login_page import LoginPage
 from pages.register_page import RegisterPage
 from pages.product_detail_page import ProductDetailPage
 from utils.api_requests import delete_user_by_id
+from config.config import Config
 
 @pytest_asyncio.fixture(scope="function")
 async def page():
@@ -13,6 +16,18 @@ async def page():
         page = await browser.new_page()
         yield page
         await browser.close()
+
+@pytest_asyncio.fixture
+async def homeTo_page(page):
+    home_page = HomeToPage(page)
+    await home_page.navigate(Config.URL_BASE)
+    return home_page
+
+@pytest_asyncio.fixture
+async def filter_page(page):
+    filter_page = FilterProductPage(page)
+    await filter_page.navigate(Config.URL_FILTER)
+    return filter_page
 
 @pytest_asyncio.fixture
 async def register_page(page: Page):

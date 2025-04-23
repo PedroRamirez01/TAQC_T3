@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title id="head-title">report.html</title>
+      <style type="text/css">body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  /* do not increase min-width as some may use split screens */
+  min-width: 800px;
+  color: #999;
+}
+
+h1 {
+  font-size: 24px;
+  color: black;
+}
+
+h2 {
+  font-size: 16px;
+  color: black;
+}
+
+p {
+  color: black;
+}
+
+a {
+  color: #999;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+/******************************
+ * SUMMARY INFORMATION
+ ******************************/
+#environment td {
+  padding: 5px;
+  border: 1px solid #e6e6e6;
+  vertical-align: top;
+}
+#environment tr:nth-child(odd) {
+  background-color: #f6f6f6;
+}
+#environment ul {
+  margin: 0;
+  padding: 0 20px;
+}
+
+/******************************
+ * TEST RESULT COLORS
+ ******************************/
+span.passed,
+.passed .col-result {
+  color: green;
+}
+
+span.skipped,
+span.xfailed,
+span.rerun,
+.skipped .col-result,
+.xfailed .col-result,
+.rerun .col-result {
+  color: orange;
+}
+
+span.error,
+span.failed,
+span.xpassed,
+.error .col-result,
+.failed .col-result,
+.xpassed .col-result {
+  color: red;
+}
+
+.col-links__extra {
+  margin-right: 3px;
+}
+
+/******************************
+ * RESULTS TABLE
+ *
+ * 1. Table Layout
+ * 2. Extra
+ * 3. Sorting items
+ *
+ ******************************/
+/*------------------
+ * 1. Table Layout
+ *------------------*/
+#results-table {
+  border: 1px solid #e6e6e6;
+  color: #999;
+  font-size: 12px;
+  width: 100%;
+}
+#results-table th,
+#results-table td {
+  padding: 5px;
+  border: 1px solid #e6e6e6;
+  text-align: left;
+}
+#results-table th {
+  font-weight: bold;
+}
+
+/*------------------
+ * 2. Extra
+ *------------------*/
+.logwrapper {
+  max-height: 230px;
+  overflow-y: scroll;
+  background-color: #e6e6e6;
+}
+.logwrapper.expanded {
+  max-height: none;
+}
+.logwrapper.expanded .logexpander:after {
+  content: "collapse [-]";
+}
+.logwrapper .logexpander {
+  z-index: 1;
+  position: sticky;
+  top: 10px;
+  width: max-content;
+  border: 1px solid;
+  border-radius: 3px;
+  padding: 5px 7px;
+  margin: 10px 0 10px calc(100% - 80px);
+  cursor: pointer;
+  background-color: #e6e6e6;
+}
+.logwrapper .logexpander:after {
+  content: "expand [+]";
+}
+.logwrapper .logexpander:hover {
+  color: #000;
+  border-color: #000;
+}
+.logwrapper .log {
+  min-height: 40px;
+  position: relative;
+  top: -50px;
+  height: calc(100% + 50px);
+  border: 1px solid #e6e6e6;
+  color: black;
+  display: block;
+  font-family: "Courier New", Courier, monospace;
+  padding: 5px;
+  padding-right: 80px;
+  white-space: pre-wrap;
+}
+
+div.media {
+  border: 1px solid #e6e6e6;
+  float: right;
+  height: 240px;
+  margin: 0 5px;
+  overflow: hidden;
+  width: 320px;
+}
+
+.media-container {
+  display: grid;
+  grid-template-columns: 25px auto 25px;
+  align-items: center;
+  flex: 1 1;
+  overflow: hidden;
+  height: 200px;
+}
+
+.media-container--fullscreen {
+  grid-template-columns: 0px auto 0px;
+}
+
+.media-container__nav--right,
+.media-container__nav--left {
+  text-align: center;
+  cursor: pointer;
+}
+
+.media-container__viewport {
+  cursor: pointer;
+  text-align: center;
+  height: inherit;
+}
+.media-container__viewport img,
+.media-container__viewport video {
+  object-fit: cover;
+  width: 100%;
+  max-height: 100%;
+}
+
+.media__name,
+.media__counter {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  flex: 0 0 25px;
+  align-items: center;
+}
+
+.collapsible td:not(.col-links) {
+  cursor: pointer;
+}
+.collapsible td:not(.col-links):hover::after {
+  color: #bbb;
+  font-style: italic;
+  cursor: pointer;
+}
+
+.col-result {
+  width: 130px;
+}
+.col-result:hover::after {
+  content: " (hide details)";
+}
+
+.col-result.collapsed:hover::after {
+  content: " (show details)";
+}
+
+#environment-header h2:hover::after {
+  content: " (hide details)";
+  color: #bbb;
+  font-style: italic;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+#environment-header.collapsed h2:hover::after {
+  content: " (show details)";
+  color: #bbb;
+  font-style: italic;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/*------------------
+ * 3. Sorting items
+ *------------------*/
+.sortable {
+  cursor: pointer;
+}
+.sortable.desc:after {
+  content: " ";
+  position: relative;
+  left: 5px;
+  bottom: -12.5px;
+  border: 10px solid #4caf50;
+  border-bottom: 0;
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
+.sortable.asc:after {
+  content: " ";
+  position: relative;
+  left: 5px;
+  bottom: 12.5px;
+  border: 10px solid #4caf50;
+  border-top: 0;
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
+
+.hidden, .summary__reload__button.hidden {
+  display: none;
+}
+
+.summary__data {
+  flex: 0 0 550px;
+}
+.summary__reload {
+  flex: 1 1;
+  display: flex;
+  justify-content: center;
+}
+.summary__reload__button {
+  flex: 0 0 300px;
+  display: flex;
+  color: white;
+  font-weight: bold;
+  background-color: #4caf50;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.summary__reload__button:hover {
+  background-color: #46a049;
+}
+.summary__spacer {
+  flex: 0 0 550px;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+}
+
+.filters,
+.collapse {
+  display: flex;
+  align-items: center;
+}
+.filters button,
+.collapse button {
+  color: #999;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.filters button:hover,
+.collapse button:hover {
+  color: #ccc;
+}
+
+.filter__label {
+  margin-right: 10px;
+}
+
+      </style>
+    
+  </head>
+  <body>
+    <h1 id="title">report.html</h1>
+    <p>Report generated on 22-Apr-2025 at 22:08:36 by <a href="https://pypi.python.org/pypi/pytest-html">pytest-html</a>
+        v4.1.1</p>
+    <div id="environment-header">
+      <h2>Environment</h2>
+    </div>
+    <table id="environment"></table>
+    <!-- TEMPLATES -->
+      <template id="template_environment_row">
+      <tr>
+        <td></td>
+        <td></td>
+      </tr>
+    </template>
+    <template id="template_results-table__body--empty">
+      <tbody class="results-table-row">
+        <tr id="not-found-message">
+          <td colspan="4">No results found. Check the filters.</th>
+        </tr>
+    </template>
+    <template id="template_results-table__tbody">
+      <tbody class="results-table-row">
+        <tr class="collapsible">
+        </tr>
+        <tr class="extras-row">
+          <td class="extra" colspan="4">
+            <div class="extraHTML"></div>
+            <div class="media">
+              <div class="media-container">
+                  <div class="media-container__nav--left"><</div>
+                  <div class="media-container__viewport">
+                    <img src="" />
+                    <video controls>
+                      <source src="" type="video/mp4">
+                    </video>
+                  </div>
+                  <div class="media-container__nav--right">></div>
+                </div>
+                <div class="media__name"></div>
+                <div class="media__counter"></div>
+            </div>
+            <div class="logwrapper">
+              <div class="logexpander"></div>
+              <div class="log"></div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </template>
+    <!-- END TEMPLATES -->
+    <div class="summary">
+      <div class="summary__data">
+        <h2>Summary</h2>
+        <div class="additional-summary prefix">
+        </div>
+        <p class="run-count">82 tests took 00:13:35.</p>
+        <p class="filter">(Un)check the boxes to filter the results.</p>
+        <div class="summary__reload">
+          <div class="summary__reload__button hidden" onclick="location.reload()">
+            <div>There are still tests running. <br />Reload this page to get the latest results!</div>
+          </div>
+        </div>
+        <div class="summary__spacer"></div>
+        <div class="controls">
+          <div class="filters">
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="failed" />
+            <span class="failed">46 Failed,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="passed" />
+            <span class="passed">36 Passed,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="skipped" disabled/>
+            <span class="skipped">0 Skipped,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="xfailed" disabled/>
+            <span class="xfailed">0 Expected failures,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="xpassed" disabled/>
+            <span class="xpassed">0 Unexpected passes,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="error" disabled/>
+            <span class="error">0 Errors,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="rerun" disabled/>
+            <span class="rerun">0 Reruns</span>
+          </div>
+          <div class="collapse">
+            <button id="show_all_details">Show all details</button>&nbsp;/&nbsp;<button id="hide_all_details">Hide all details</button>
+          </div>
+        </div>
+      </div>
+      <div class="additional-summary summary">
+      </div>
+      <div class="additional-summary postfix">
+      </div>
+    </div>
+    <table id="results-table">
+      <thead id="results-table-head">
+        <tr>
+          <th class="sortable" data-column-type="result">Result</th>
+          <th class="sortable" data-column-type="testId">Test</th>
+          <th class="sortable" data-column-type="duration">Duration</th>
+          <th>Links</th>
+        </tr>
+      </thead>
+    </table>
+  </body>
+  <footer>
+    <div id="data-container" data-jsonblob="{&#34;environment&#34;: {&#34;Python&#34;: &#34;3.13.0&#34;, &#34;Platform&#34;: &#34;Windows-11-10.0.26100-SP0&#34;, &#34;Packages&#34;: {&#34;pytest&#34;: &#34;8.3.5&#34;, &#34;pluggy&#34;: &#34;1.5.0&#34;}, &#34;Plugins&#34;: {&#34;anyio&#34;: &#34;4.9.0&#34;, &#34;asyncio&#34;: &#34;0.26.0&#34;, &#34;base-url&#34;: &#34;2.1.0&#34;, &#34;html&#34;: &#34;4.1.1&#34;, &#34;metadata&#34;: &#34;3.1.1&#34;, &#34;playwright&#34;: &#34;0.7.0&#34;}, &#34;Base URL&#34;: &#34;&#34;}, &#34;tests&#34;: {&#34;ecomus/test/test_checkout.py::test_checkout_flow[valid_with_discount-data0]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_checkout.py::test_checkout_flow[valid_with_discount-data0]&#34;, &#34;duration&#34;: &#34;00:00:14&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_checkout.py::test_checkout_flow[valid_with_discount-data0]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:14&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_checkout.py::test_checkout_flow[valid_without_discount-data1]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_checkout.py::test_checkout_flow[valid_without_discount-data1]&#34;, &#34;duration&#34;: &#34;00:00:13&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_checkout.py::test_checkout_flow[valid_without_discount-data1]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:13&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;label = &amp;#x27;valid_without_discount&amp;#x27;\ndata = {&amp;#x27;ADDRESS&amp;#x27;: &amp;#x27;Calle siempre viva 123&amp;#x27;, &amp;#x27;CARD_CVV&amp;#x27;: &amp;#x27;123&amp;#x27;, &amp;#x27;CARD_EXPIRATION&amp;#x27;: &amp;#x27;12/25&amp;#x27;, &amp;#x27;CARD_NUMBER&amp;#x27;: &amp;#x27;4242424242424242&amp;#x27;, ...}\npage = &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/checkout&amp;#x27;&amp;gt;\n\n&amp;gt;   ???\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_checkout.py:36: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = &amp;lt;pages.checkoutPage.CheckoutPage object at 0x000002793EE15950&amp;gt;, label = &amp;#x27;valid_without_discount&amp;#x27;\n\n    async def assert_success_message(self, label):\n    \n        if label.startswith(&amp;quot;valid&amp;quot;):\n&amp;gt;           assert await self.success_message.is_visible(), f&amp;quot;[{label}] Expected success message not found.&amp;quot;\nE           AssertionError: [valid_without_discount] Expected success message not found.\n\necomus\\pages\\checkoutPage.py:146: AssertionError\n&#34;}], &#34;ecomus/test/test_checkout.py::test_checkout_flow[missing_first_name-data2]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_checkout.py::test_checkout_flow[missing_first_name-data2]&#34;, &#34;duration&#34;: &#34;00:00:14&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_checkout.py::test_checkout_flow[missing_first_name-data2]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:14&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;label = &amp;#x27;missing_first_name&amp;#x27;\ndata = {&amp;#x27;ADDRESS&amp;#x27;: &amp;#x27;Calle siempre viva 123&amp;#x27;, &amp;#x27;CARD_CVV&amp;#x27;: &amp;#x27;123&amp;#x27;, &amp;#x27;CARD_EXPIRATION&amp;#x27;: &amp;#x27;12/25&amp;#x27;, &amp;#x27;CARD_NUMBER&amp;#x27;: &amp;#x27;4242424242424242&amp;#x27;, ...}\npage = &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/checkout&amp;#x27;&amp;gt;\n\n&amp;gt;   ???\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_checkout.py:36: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = &amp;lt;pages.checkoutPage.CheckoutPage object at 0x000002793EE99450&amp;gt;, label = &amp;#x27;missing_first_name&amp;#x27;\n\n    async def assert_success_message(self, label):\n    \n        if label.startswith(&amp;quot;valid&amp;quot;):\n            assert await self.success_message.is_visible(), f&amp;quot;[{label}] Expected success message not found.&amp;quot;\n        else:\n&amp;gt;           assert not await self.success_message.is_visible(), f&amp;quot;[{label}] Unexpected success message for invalid input.&amp;quot;\nE           AssertionError: [missing_first_name] Unexpected success message for invalid input.\n\necomus\\pages\\checkoutPage.py:148: AssertionError\n&#34;}], &#34;ecomus/test/test_checkout.py::test_checkout_flow[missing_last_name-data3]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_checkout.py::test_checkout_flow[missing_last_name-data3]&#34;, &#34;duration&#34;: &#34;00:00:14&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_checkout.py::test_checkout_flow[missing_last_name-data3]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:14&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;label = &amp;#x27;missing_last_name&amp;#x27;\ndata = {&amp;#x27;ADDRESS&amp;#x27;: &amp;#x27;Calle siempre viva 123&amp;#x27;, &amp;#x27;CARD_CVV&amp;#x27;: &amp;#x27;123&amp;#x27;, &amp;#x27;CARD_EXPIRATION&amp;#x27;: &amp;#x27;12/25&amp;#x27;, &amp;#x27;CARD_NUMBER&amp;#x27;: &amp;#x27;4242424242424242&amp;#x27;, ...}\npage = &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/checkout&amp;#x27;&amp;gt;\n\n&amp;gt;   ???\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_checkout.py:36: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = &amp;lt;pages.checkoutPage.CheckoutPage object at 0x000002793EEF0C30&amp;gt;, label = &amp;#x27;missing_last_name&amp;#x27;\n\n    async def assert_success_message(self, label):\n    \n        if label.startswith(&amp;quot;valid&amp;quot;):\n            assert await self.success_message.is_visible(), f&amp;quot;[{label}] Expected success message not found.&amp;quot;\n        else:\n&amp;gt;           assert not await self.success_message.is_visible(), f&amp;quot;[{label}] Unexpected success message for invalid input.&amp;quot;\nE           AssertionError: [missing_last_name] Unexpected success message for invalid input.\n\necomus\\pages\\checkoutPage.py:148: AssertionError\n&#34;}], &#34;ecomus/test/test_checkout.py::test_checkout_flow[missing_country-data4]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_checkout.py::test_checkout_flow[missing_country-data4]&#34;, &#34;duration&#34;: &#34;00:00:14&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_checkout.py::test_checkout_flow[missing_country-data4]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:14&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;label = &amp;#x27;missing_country&amp;#x27;\ndata = {&amp;#x27;ADDRESS&amp;#x27;: &amp;#x27;Calle siempre viva 123&amp;#x27;, &amp;#x27;CARD_CVV&amp;#x27;: &amp;#x27;123&amp;#x27;, &amp;#x27;CARD_EXPIRATION&amp;#x27;: &amp;#x27;12/25&amp;#x27;, &amp;#x27;CARD_NUMBER&amp;#x27;: &amp;#x27;4242424242424242&amp;#x27;, ...}\npage = &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/checkout&amp;#x27;&amp;gt;\n\n&amp;gt;   ???\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_checkout.py:36: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = &amp;lt;pages.checkoutPage.CheckoutPage object at 0x000002793EE003E0&amp;gt;, label = &amp;#x27;missing_country&amp;#x27;\n\n    async def assert_success_message(self, label):\n    \n        if label.startswith(&amp;quot;valid&amp;quot;):\n            assert await self.success_message.is_visible(), f&amp;quot;[{label}] Expected success message not found.&amp;quot;\n        else:\n&amp;gt;           assert not await self.success_message.is_visible(), f&amp;quot;[{label}] Unexpected success message for invalid input.&amp;quot;\nE           AssertionError: [missing_country] Unexpected success message for invalid input.\n\necomus\\pages\\checkoutPage.py:148: AssertionError\n&#34;}], &#34;ecomus/test/test_checkout.py::test_checkout_flow[missing_city-data5]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_checkout.py::test_checkout_flow[missing_city-data5]&#34;, &#34;duration&#34;: &#34;00:00:14&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_checkout.py::test_checkout_flow[missing_city-data5]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:14&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;label = &amp;#x27;missing_city&amp;#x27;\ndata = {&amp;#x27;ADDRESS&amp;#x27;: &amp;#x27;Calle siempre viva 123&amp;#x27;, &amp;#x27;CARD_CVV&amp;#x27;: &amp;#x27;123&amp;#x27;, &amp;#x27;CARD_EXPIRATION&amp;#x27;: &amp;#x27;12/25&amp;#x27;, &amp;#x27;CARD_NUMBER&amp;#x27;: &amp;#x27;4242424242424242&amp;#x27;, ...}\npage = &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/checkout&amp;#x27;&amp;gt;\n\n&amp;gt;   ???\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_checkout.py:36: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = &amp;lt;pages.checkoutPage.CheckoutPage object at 0x000002793EF38290&amp;gt;, label = &amp;#x27;missing_city&amp;#x27;\n\n    async def assert_success_message(self, label):\n    \n        if label.startswith(&amp;quot;valid&amp;quot;):\n            assert await self.success_message.is_visible(), f&amp;quot;[{label}] Expected success message not found.&amp;quot;\n        else:\n&amp;gt;           assert not await self.success_message.is_visible(), f&amp;quot;[{label}] Unexpected success message for invalid input.&amp;quot;\nE           AssertionError: [missing_city] Unexpected success message for invalid input.\n\necomus\\pages\\checkoutPage.py:148: AssertionError\n&#34;}], &#34;ecomus/test/test_checkout.py::test_checkout_flow[missing_address-data6]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_checkout.py::test_checkout_flow[missing_address-data6]&#34;, &#34;duration&#34;: &#34;00:00:14&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_checkout.py::test_checkout_flow[missing_address-data6]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:14&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;label = &amp;#x27;missing_address&amp;#x27;\ndata = {&amp;#x27;ADDRESS&amp;#x27;: &amp;#x27;&amp;#x27;, &amp;#x27;CARD_CVV&amp;#x27;: &amp;#x27;123&amp;#x27;, &amp;#x27;CARD_EXPIRATION&amp;#x27;: &amp;#x27;12/25&amp;#x27;, &amp;#x27;CARD_NUMBER&amp;#x27;: &amp;#x27;4242424242424242&amp;#x27;, ...}\npage = &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/checkout&amp;#x27;&amp;gt;\n\n&amp;gt;   ???\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_checkout.py:36: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = &amp;lt;pages.checkoutPage.CheckoutPage object at 0x000002793ED5B570&amp;gt;, label = &amp;#x27;missing_address&amp;#x27;\n\n    async def assert_success_message(self, label):\n    \n        if label.startswith(&amp;quot;valid&amp;quot;):\n            assert await self.success_message.is_visible(), f&amp;quot;[{label}] Expected success message not found.&amp;quot;\n        else:\n&amp;gt;           assert not await self.success_message.is_visible(), f&amp;quot;[{label}] Unexpected success message for invalid input.&amp;quot;\nE           AssertionError: [missing_address] Unexpected success message for invalid input.\n\necomus\\pages\\checkoutPage.py:148: AssertionError\n&#34;}], &#34;ecomus/test/test_checkout.py::test_checkout_flow[missing_phone_number-data7]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_checkout.py::test_checkout_flow[missing_phone_number-data7]&#34;, &#34;duration&#34;: &#34;00:00:13&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_checkout.py::test_checkout_flow[missing_phone_number-data7]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:13&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;label = &amp;#x27;missing_phone_number&amp;#x27;\ndata = {&amp;#x27;ADDRESS&amp;#x27;: &amp;#x27;Calle siempre viva 123&amp;#x27;, &amp;#x27;CARD_CVV&amp;#x27;: &amp;#x27;123&amp;#x27;, &amp;#x27;CARD_EXPIRATION&amp;#x27;: &amp;#x27;12/25&amp;#x27;, &amp;#x27;CARD_NUMBER&amp;#x27;: &amp;#x27;4242424242424242&amp;#x27;, ...}\npage = &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/checkout&amp;#x27;&amp;gt;\n\n&amp;gt;   ???\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_checkout.py:36: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = &amp;lt;pages.checkoutPage.CheckoutPage object at 0x000002793EED7790&amp;gt;, label = &amp;#x27;missing_phone_number&amp;#x27;\n\n    async def assert_success_message(self, label):\n    \n        if label.startswith(&amp;quot;valid&amp;quot;):\n            assert await self.success_message.is_visible(), f&amp;quot;[{label}] Expected success message not found.&amp;quot;\n        else:\n&amp;gt;           assert not await self.success_message.is_visible(), f&amp;quot;[{label}] Unexpected success message for invalid input.&amp;quot;\nE           AssertionError: [missing_phone_number] Unexpected success message for invalid input.\n\necomus\\pages\\checkoutPage.py:148: AssertionError\n&#34;}], &#34;ecomus/test/test_checkout.py::test_checkout_flow[missing_email-data8]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_checkout.py::test_checkout_flow[missing_email-data8]&#34;, &#34;duration&#34;: &#34;00:00:14&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_checkout.py::test_checkout_flow[missing_email-data8]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:14&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;label = &amp;#x27;missing_email&amp;#x27;\ndata = {&amp;#x27;ADDRESS&amp;#x27;: &amp;#x27;Calle siempre viva 123&amp;#x27;, &amp;#x27;CARD_CVV&amp;#x27;: &amp;#x27;123&amp;#x27;, &amp;#x27;CARD_EXPIRATION&amp;#x27;: &amp;#x27;12/25&amp;#x27;, &amp;#x27;CARD_NUMBER&amp;#x27;: &amp;#x27;4242424242424242&amp;#x27;, ...}\npage = &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/checkout&amp;#x27;&amp;gt;\n\n&amp;gt;   ???\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_checkout.py:36: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = &amp;lt;pages.checkoutPage.CheckoutPage object at 0x000002793EECC250&amp;gt;, label = &amp;#x27;missing_email&amp;#x27;\n\n    async def assert_success_message(self, label):\n    \n        if label.startswith(&amp;quot;valid&amp;quot;):\n            assert await self.success_message.is_visible(), f&amp;quot;[{label}] Expected success message not found.&amp;quot;\n        else:\n&amp;gt;           assert not await self.success_message.is_visible(), f&amp;quot;[{label}] Unexpected success message for invalid input.&amp;quot;\nE           AssertionError: [missing_email] Unexpected success message for invalid input.\n\necomus\\pages\\checkoutPage.py:148: AssertionError\n&#34;}], &#34;ecomus/test/test_checkout.py::test_checkout_flow[missing_card_number-data9]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_checkout.py::test_checkout_flow[missing_card_number-data9]&#34;, &#34;duration&#34;: &#34;00:00:14&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_checkout.py::test_checkout_flow[missing_card_number-data9]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:14&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_checkout.py::test_checkout_flow[missing_card_expiration-data10]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_checkout.py::test_checkout_flow[missing_card_expiration-data10]&#34;, &#34;duration&#34;: &#34;00:00:14&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_checkout.py::test_checkout_flow[missing_card_expiration-data10]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:14&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_checkout.py::test_checkout_flow[missing_card_cvv-data11]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_checkout.py::test_checkout_flow[missing_card_cvv-data11]&#34;, &#34;duration&#34;: &#34;00:00:14&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_checkout.py::test_checkout_flow[missing_card_cvv-data11]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:14&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_checkout.py::test_checkout_flow[invalid_email-data12]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_checkout.py::test_checkout_flow[invalid_email-data12]&#34;, &#34;duration&#34;: &#34;00:00:13&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_checkout.py::test_checkout_flow[invalid_email-data12]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:13&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;label = &amp;#x27;invalid_email&amp;#x27;\ndata = {&amp;#x27;ADDRESS&amp;#x27;: &amp;#x27;Calle siempre viva 123&amp;#x27;, &amp;#x27;CARD_CVV&amp;#x27;: &amp;#x27;123&amp;#x27;, &amp;#x27;CARD_EXPIRATION&amp;#x27;: &amp;#x27;12/25&amp;#x27;, &amp;#x27;CARD_NUMBER&amp;#x27;: &amp;#x27;4242424242424242&amp;#x27;, ...}\npage = &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/checkout&amp;#x27;&amp;gt;\n\n&amp;gt;   ???\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_checkout.py:36: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = &amp;lt;pages.checkoutPage.CheckoutPage object at 0x000002793EDE0320&amp;gt;, label = &amp;#x27;invalid_email&amp;#x27;\n\n    async def assert_success_message(self, label):\n    \n        if label.startswith(&amp;quot;valid&amp;quot;):\n            assert await self.success_message.is_visible(), f&amp;quot;[{label}] Expected success message not found.&amp;quot;\n        else:\n&amp;gt;           assert not await self.success_message.is_visible(), f&amp;quot;[{label}] Unexpected success message for invalid input.&amp;quot;\nE           AssertionError: [invalid_email] Unexpected success message for invalid input.\n\necomus\\pages\\checkoutPage.py:148: AssertionError\n&#34;}], &#34;ecomus/test/test_checkout.py::test_checkout_flow[invalid_card_number-data13]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_checkout.py::test_checkout_flow[invalid_card_number-data13]&#34;, &#34;duration&#34;: &#34;00:00:14&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_checkout.py::test_checkout_flow[invalid_card_number-data13]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:14&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_checkout.py::test_checkout_flow[invalid_card_expiration-data14]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_checkout.py::test_checkout_flow[invalid_card_expiration-data14]&#34;, &#34;duration&#34;: &#34;00:00:14&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_checkout.py::test_checkout_flow[invalid_card_expiration-data14]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:14&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;label = &amp;#x27;invalid_card_expiration&amp;#x27;\ndata = {&amp;#x27;ADDRESS&amp;#x27;: &amp;#x27;Calle siempre viva 123&amp;#x27;, &amp;#x27;CARD_CVV&amp;#x27;: &amp;#x27;123&amp;#x27;, &amp;#x27;CARD_EXPIRATION&amp;#x27;: &amp;#x27;12342234324&amp;#x27;, &amp;#x27;CARD_NUMBER&amp;#x27;: &amp;#x27;4242424242424242&amp;#x27;, ...}\npage = &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/checkout&amp;#x27;&amp;gt;\n\n&amp;gt;   ???\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_checkout.py:36: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = &amp;lt;pages.checkoutPage.CheckoutPage object at 0x000002793EE4AC60&amp;gt;, label = &amp;#x27;invalid_card_expiration&amp;#x27;\n\n    async def assert_success_message(self, label):\n    \n        if label.startswith(&amp;quot;valid&amp;quot;):\n            assert await self.success_message.is_visible(), f&amp;quot;[{label}] Expected success message not found.&amp;quot;\n        else:\n&amp;gt;           assert not await self.success_message.is_visible(), f&amp;quot;[{label}] Unexpected success message for invalid input.&amp;quot;\nE           AssertionError: [invalid_card_expiration] Unexpected success message for invalid input.\n\necomus\\pages\\checkoutPage.py:148: AssertionError\n&#34;}], &#34;ecomus/test/test_checkout.py::test_checkout_flow[invalid_card_cvv-data15]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_checkout.py::test_checkout_flow[invalid_card_cvv-data15]&#34;, &#34;duration&#34;: &#34;00:00:14&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_checkout.py::test_checkout_flow[invalid_card_cvv-data15]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:14&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;label = &amp;#x27;invalid_card_cvv&amp;#x27;\ndata = {&amp;#x27;ADDRESS&amp;#x27;: &amp;#x27;Calle siempre viva 123&amp;#x27;, &amp;#x27;CARD_CVV&amp;#x27;: &amp;#x27;1234567&amp;#x27;, &amp;#x27;CARD_EXPIRATION&amp;#x27;: &amp;#x27;12/25&amp;#x27;, &amp;#x27;CARD_NUMBER&amp;#x27;: &amp;#x27;4242424242424242&amp;#x27;, ...}\npage = &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/checkout&amp;#x27;&amp;gt;\n\n&amp;gt;   ???\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_checkout.py:36: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = &amp;lt;pages.checkoutPage.CheckoutPage object at 0x000002793CD485F0&amp;gt;, label = &amp;#x27;invalid_card_cvv&amp;#x27;\n\n    async def assert_success_message(self, label):\n    \n        if label.startswith(&amp;quot;valid&amp;quot;):\n            assert await self.success_message.is_visible(), f&amp;quot;[{label}] Expected success message not found.&amp;quot;\n        else:\n&amp;gt;           assert not await self.success_message.is_visible(), f&amp;quot;[{label}] Unexpected success message for invalid input.&amp;quot;\nE           AssertionError: [invalid_card_cvv] Unexpected success message for invalid input.\n\necomus\\pages\\checkoutPage.py:148: AssertionError\n&#34;}], &#34;ecomus/test/test_checkout.py::test_checkout_flow[invalid_phone_number-data16]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_checkout.py::test_checkout_flow[invalid_phone_number-data16]&#34;, &#34;duration&#34;: &#34;00:00:14&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_checkout.py::test_checkout_flow[invalid_phone_number-data16]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:14&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;label = &amp;#x27;invalid_phone_number&amp;#x27;\ndata = {&amp;#x27;ADDRESS&amp;#x27;: &amp;#x27;Calle siempre viva 123&amp;#x27;, &amp;#x27;CARD_CVV&amp;#x27;: &amp;#x27;123&amp;#x27;, &amp;#x27;CARD_EXPIRATION&amp;#x27;: &amp;#x27;12/25&amp;#x27;, &amp;#x27;CARD_NUMBER&amp;#x27;: &amp;#x27;4242424242424242&amp;#x27;, ...}\npage = &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/checkout&amp;#x27;&amp;gt;\n\n&amp;gt;   ???\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_checkout.py:36: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = &amp;lt;pages.checkoutPage.CheckoutPage object at 0x000002793EE4A6C0&amp;gt;, label = &amp;#x27;invalid_phone_number&amp;#x27;\n\n    async def assert_success_message(self, label):\n    \n        if label.startswith(&amp;quot;valid&amp;quot;):\n            assert await self.success_message.is_visible(), f&amp;quot;[{label}] Expected success message not found.&amp;quot;\n        else:\n&amp;gt;           assert not await self.success_message.is_visible(), f&amp;quot;[{label}] Unexpected success message for invalid input.&amp;quot;\nE           AssertionError: [invalid_phone_number] Unexpected success message for invalid input.\n\necomus\\pages\\checkoutPage.py:148: AssertionError\n&#34;}], &#34;ecomus/test/test_checkout.py::test_checkout_flow[symbols_in_fields-data17]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_checkout.py::test_checkout_flow[symbols_in_fields-data17]&#34;, &#34;duration&#34;: &#34;00:00:14&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_checkout.py::test_checkout_flow[symbols_in_fields-data17]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:14&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;label = &amp;#x27;symbols_in_fields&amp;#x27;\ndata = {&amp;#x27;ADDRESS&amp;#x27;: &amp;#x27;#&amp;#x27;, &amp;#x27;CARD_CVV&amp;#x27;: &amp;#x27;123&amp;#x27;, &amp;#x27;CARD_EXPIRATION&amp;#x27;: &amp;#x27;12/25&amp;#x27;, &amp;#x27;CARD_NUMBER&amp;#x27;: &amp;#x27;4242424242424242&amp;#x27;, ...}\npage = &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/checkout&amp;#x27;&amp;gt;\n\n&amp;gt;   ???\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_checkout.py:36: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = &amp;lt;pages.checkoutPage.CheckoutPage object at 0x000002793EE48F50&amp;gt;, label = &amp;#x27;symbols_in_fields&amp;#x27;\n\n    async def assert_success_message(self, label):\n    \n        if label.startswith(&amp;quot;valid&amp;quot;):\n            assert await self.success_message.is_visible(), f&amp;quot;[{label}] Expected success message not found.&amp;quot;\n        else:\n&amp;gt;           assert not await self.success_message.is_visible(), f&amp;quot;[{label}] Unexpected success message for invalid input.&amp;quot;\nE           AssertionError: [symbols_in_fields] Unexpected success message for invalid input.\n\necomus\\pages\\checkoutPage.py:148: AssertionError\n&#34;}], &#34;ecomus/test/test_checkout.py::test_checkout_flow[all_fields_empty-data18]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_checkout.py::test_checkout_flow[all_fields_empty-data18]&#34;, &#34;duration&#34;: &#34;00:00:14&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_checkout.py::test_checkout_flow[all_fields_empty-data18]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:14&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_checkout.py::test_checkout_with_empty_cart[valid_with_discount-data0]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_checkout.py::test_checkout_with_empty_cart[valid_with_discount-data0]&#34;, &#34;duration&#34;: &#34;00:00:11&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_checkout.py::test_checkout_with_empty_cart[valid_with_discount-data0]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:11&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_checkout.py::test_checkout_with_empty_cart[valid_without_discount-data1]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_checkout.py::test_checkout_with_empty_cart[valid_without_discount-data1]&#34;, &#34;duration&#34;: &#34;00:00:11&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_checkout.py::test_checkout_with_empty_cart[valid_without_discount-data1]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:11&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;label = &amp;#x27;valid_without_discount&amp;#x27;\ndata = {&amp;#x27;ADDRESS&amp;#x27;: &amp;#x27;Calle siempre viva 123&amp;#x27;, &amp;#x27;CARD_CVV&amp;#x27;: &amp;#x27;123&amp;#x27;, &amp;#x27;CARD_EXPIRATION&amp;#x27;: &amp;#x27;12/25&amp;#x27;, &amp;#x27;CARD_NUMBER&amp;#x27;: &amp;#x27;4242424242424242&amp;#x27;, ...}\npage = &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/checkout&amp;#x27;&amp;gt;\n\n&amp;gt;   ???\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_checkout.py:56: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n\nself = &amp;lt;pages.checkoutPage.CheckoutPage object at 0x000002793E943890&amp;gt;, label = &amp;#x27;valid_without_discount&amp;#x27;\n\n    async def assert_success_message(self, label):\n    \n        if label.startswith(&amp;quot;valid&amp;quot;):\n&amp;gt;           assert await self.success_message.is_visible(), f&amp;quot;[{label}] Expected success message not found.&amp;quot;\nE           AssertionError: [valid_without_discount] Expected success message not found.\n\necomus\\pages\\checkoutPage.py:146: AssertionError\n&#34;}], &#34;ecomus/test/test_filter.py::test_clearFilter&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_filter.py::test_clearFilter&#34;, &#34;duration&#34;: &#34;00:00:05&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_filter.py::test_clearFilter&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:05&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;----------------------------- Captured stdout call -----------------------------\n2 product(s) found\n12 product(s) found\n&#34;}], &#34;ecomus/test/test_filter.py::test_compare_div&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_filter.py::test_compare_div&#34;, &#34;duration&#34;: &#34;00:00:04&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_filter.py::test_compare_div&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:04&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;filter_page = &amp;lt;pages.filterProduct_page.FilterProductPage object at 0x000002793EE17390&amp;gt;\n\n&amp;gt;   ???\nE   AssertionError: The filter is not working \nE   assert 2 == 1\nE    +  where 2 = len([&amp;#x27;Ribbed Tank Top&amp;#x27;, &amp;#x27;Ribbed Tank Top&amp;#x27;])\nE    +  and   1 = len({&amp;#x27;Ribbed Tank Top&amp;#x27;})\nE    +    where {&amp;#x27;Ribbed Tank Top&amp;#x27;} = set([&amp;#x27;Ribbed Tank Top&amp;#x27;, &amp;#x27;Ribbed Tank Top&amp;#x27;])\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_filter.py:17: AssertionError\n\n----------------------------- Captured stdout call -----------------------------\nRibbed Tank Top\nRibbed Tank Top\n&#34;}], &#34;ecomus/test/test_filter.py::test_outOfStock&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_filter.py::test_outOfStock&#34;, &#34;duration&#34;: &#34;00:00:06&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_filter.py::test_outOfStock&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:06&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;filter_page = &amp;lt;pages.filterProduct_page.FilterProductPage object at 0x000002793EE15590&amp;gt;\n\n&amp;gt;   ???\nE   AssertionError: The cart is not empty, the product still available\nE   assert &amp;#x27;$18.95 USD&amp;#x27; &amp;gt; &amp;#x27;0&amp;#x27;\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_filter.py:25: AssertionError\n\n----------------------------- Captured stdout call -----------------------------\nTotal cart value: $18.95 USD\n&#34;}], &#34;ecomus/test/test_filter.py::test_filterWomen&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_filter.py::test_filterWomen&#34;, &#34;duration&#34;: &#34;00:00:03&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_filter.py::test_filterWomen&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:03&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;----------------------------- Captured stdout call -----------------------------\nhttps://automation-portal-bootcamp.vercel.app/shop-default\nhttps://automation-portal-bootcamp.vercel.app/shop-women\n&#34;}], &#34;ecomus/test/test_filter.py::test_filterMen&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_filter.py::test_filterMen&#34;, &#34;duration&#34;: &#34;00:00:03&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_filter.py::test_filterMen&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:03&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;----------------------------- Captured stdout call -----------------------------\nhttps://automation-portal-bootcamp.vercel.app/shop-default\nhttps://automation-portal-bootcamp.vercel.app/shop-men\n&#34;}], &#34;ecomus/test/test_filter.py::test_filterDenim&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_filter.py::test_filterDenim&#34;, &#34;duration&#34;: &#34;00:00:03&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_filter.py::test_filterDenim&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:03&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;filter_page = &amp;lt;pages.filterProduct_page.FilterProductPage object at 0x000002793EEC4EF0&amp;gt;\n\n&amp;gt;   ???\nE   AssertionError: Filter not working\nE   assert 2 == 1\nE    +  where 2 = len([&amp;#x27;https://automation-portal-bootcamp.vercel.app/shop-default&amp;#x27;, &amp;#x27;https://automation-portal-bootcamp.vercel.app/shop-default&amp;#x27;])\nE    +  and   1 = len({&amp;#x27;https://automation-portal-bootcamp.vercel.app/shop-default&amp;#x27;})\nE    +    where {&amp;#x27;https://automation-portal-bootcamp.vercel.app/shop-default&amp;#x27;} = set([&amp;#x27;https://automation-portal-bootcamp.vercel.app/shop-default&amp;#x27;, &amp;#x27;https://automation-portal-bootcamp.vercel.app/shop-default&amp;#x27;])\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_filter.py:49: AssertionError\n\n----------------------------- Captured stdout call -----------------------------\nhttps://automation-portal-bootcamp.vercel.app/shop-default\nhttps://automation-portal-bootcamp.vercel.app/shop-default\n&#34;}], &#34;ecomus/test/test_filter.py::test_filterDress&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_filter.py::test_filterDress&#34;, &#34;duration&#34;: &#34;00:00:03&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_filter.py::test_filterDress&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:03&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;filter_page = &amp;lt;pages.filterProduct_page.FilterProductPage object at 0x000002793ED59E10&amp;gt;\n\n&amp;gt;   ???\nE   AssertionError: Filter not working\nE   assert 2 == 1\nE    +  where 2 = len([&amp;#x27;https://automation-portal-bootcamp.vercel.app/shop-default&amp;#x27;, &amp;#x27;https://automation-portal-bootcamp.vercel.app/shop-default&amp;#x27;])\nE    +  and   1 = len({&amp;#x27;https://automation-portal-bootcamp.vercel.app/shop-default&amp;#x27;})\nE    +    where {&amp;#x27;https://automation-portal-bootcamp.vercel.app/shop-default&amp;#x27;} = set([&amp;#x27;https://automation-portal-bootcamp.vercel.app/shop-default&amp;#x27;, &amp;#x27;https://automation-portal-bootcamp.vercel.app/shop-default&amp;#x27;])\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_filter.py:57: AssertionError\n\n----------------------------- Captured stdout call -----------------------------\nhttps://automation-portal-bootcamp.vercel.app/shop-default\nhttps://automation-portal-bootcamp.vercel.app/shop-default\n&#34;}], &#34;ecomus/test/test_homePage.py::test_searchProduct&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_homePage.py::test_searchProduct&#34;, &#34;duration&#34;: &#34;00:00:06&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_homePage.py::test_searchProduct&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:06&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;homeTo_page = &amp;lt;pages.home_page.HomeToPage object at 0x000002793E9E2120&amp;gt;\n\n&amp;gt;   ???\nE   AssertionError: The URLs are the same, so search doesn&amp;#x27;t work\nE   assert 2 == 1\nE    +  where 2 = len([&amp;#x27;https://automation-portal-bootcamp.vercel.app/&amp;#x27;, &amp;#x27;https://automation-portal-bootcamp.vercel.app/&amp;#x27;])\nE    +  and   1 = len({&amp;#x27;https://automation-portal-bootcamp.vercel.app/&amp;#x27;})\nE    +    where {&amp;#x27;https://automation-portal-bootcamp.vercel.app/&amp;#x27;} = set([&amp;#x27;https://automation-portal-bootcamp.vercel.app/&amp;#x27;, &amp;#x27;https://automation-portal-bootcamp.vercel.app/&amp;#x27;])\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_homePage.py:9: AssertionError\n&#34;}], &#34;ecomus/test/test_homePage.py::test_descoveryItems&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_homePage.py::test_descoveryItems&#34;, &#34;duration&#34;: &#34;00:00:34&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_homePage.py::test_descoveryItems&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:34&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;----------------------------- Captured stdout call -----------------------------\nError durante la secuencia de navegaci\u00f3n: Locator.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(&amp;quot;.discovery-new-item &amp;gt; a:nth-child(2)&amp;quot;)\n  -     - locator resolved to &amp;lt;a href=&amp;quot;/shop-collection-list&amp;quot;&amp;gt;\u2026&amp;lt;/a&amp;gt;\n  -   - attempting click action\n  -     2 \u00d7 waiting for element to be visible, enabled and stable\n  -       - element is visible, enabled and stable\n  -       - scrolling into view if needed\n  -       - done scrolling\n  -       - &amp;lt;div role=&amp;quot;dialog&amp;quot; aria-modal=&amp;quot;true&amp;quot; id=&amp;quot;newsletterPopup&amp;quot; class=&amp;quot;modal modalCentered fade auto-popup modal-newleter show&amp;quot;&amp;gt;\u2026&amp;lt;/div&amp;gt; intercepts pointer events\n  -     - retrying click action\n  -     - waiting 20ms\n  -     2 \u00d7 waiting for element to be visible, enabled and stable\n  -       - element is not stable\n  -     - retrying click action\n  -       - waiting 100ms\n  -     - waiting for element to be visible, enabled and stable\n  -     - element is not stable\n  -   54 \u00d7 retrying click action\n  -        - waiting 500ms\n  -        - waiting for element to be visible, enabled and stable\n  -        - element is visible, enabled and stable\n  -        - scrolling into view if needed\n  -        - done scrolling\n  -        - &amp;lt;div role=&amp;quot;dialog&amp;quot; aria-modal=&amp;quot;true&amp;quot; id=&amp;quot;newsletterPopup&amp;quot; class=&amp;quot;modal modalCentered fade auto-popup modal-newleter show&amp;quot;&amp;gt;\u2026&amp;lt;/div&amp;gt; intercepts pointer events\n  -   - retrying click action\n  -     - waiting 500ms\n\n&#34;}], &#34;ecomus/test/test_homePage.py::test_categoryItems&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_homePage.py::test_categoryItems&#34;, &#34;duration&#34;: &#34;00:00:34&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_homePage.py::test_categoryItems&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:34&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;----------------------------- Captured stdout call -----------------------------\nError al recolectar urls: Locator.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(&amp;quot;.tf-sw-collection &amp;gt; div:nth-child(1) &amp;gt; div:nth-child(1) &amp;gt; div:nth-child(1) &amp;gt; div:nth-child(1) &amp;gt; div:nth-child(2) &amp;gt; a:nth-child(1)&amp;quot;)\n  -     - locator resolved to &amp;lt;a href=&amp;quot;/shop-default&amp;quot; class=&amp;quot;tf-btn collection-title hover-icon fs-15&amp;quot;&amp;gt;\u2026&amp;lt;/a&amp;gt;\n  -   - attempting click action\n  -     2 \u00d7 waiting for element to be visible, enabled and stable\n  -       - element is visible, enabled and stable\n  -       - scrolling into view if needed\n  -       - done scrolling\n  -       - &amp;lt;div role=&amp;quot;dialog&amp;quot; aria-modal=&amp;quot;true&amp;quot; id=&amp;quot;newsletterPopup&amp;quot; class=&amp;quot;modal modalCentered fade auto-popup modal-newleter show&amp;quot;&amp;gt;\u2026&amp;lt;/div&amp;gt; intercepts pointer events\n  -     - retrying click action\n  -     - waiting 20ms\n  -     2 \u00d7 waiting for element to be visible, enabled and stable\n  -       - element is not stable\n  -     - retrying click action\n  -       - waiting 100ms\n  -     - waiting for element to be visible, enabled and stable\n  -     - element is not stable\n  -   54 \u00d7 retrying click action\n  -        - waiting 500ms\n  -        - waiting for element to be visible, enabled and stable\n  -        - element is visible, enabled and stable\n  -        - scrolling into view if needed\n  -        - done scrolling\n  -        - &amp;lt;div role=&amp;quot;dialog&amp;quot; aria-modal=&amp;quot;true&amp;quot; id=&amp;quot;newsletterPopup&amp;quot; class=&amp;quot;modal modalCentered fade auto-popup modal-newleter show&amp;quot;&amp;gt;\u2026&amp;lt;/div&amp;gt; intercepts pointer events\n  -   - retrying click action\n  -     - waiting 500ms\n  -     - waiting for element to be visible, enabled and stable\n\n&#34;}], &#34;ecomus/test/test_homePage.py::test_hoverAddCart&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_homePage.py::test_hoverAddCart&#34;, &#34;duration&#34;: &#34;00:00:34&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_homePage.py::test_hoverAddCart&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:34&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;homeTo_page = &amp;lt;pages.home_page.HomeToPage object at 0x000002793EEF1CD0&amp;gt;\n\n&amp;gt;   ???\nE   AssertionError: El contenido del popup de Quick Add no se hizo visible despu\u00e9s de hacer hover y clic.\nE   assert False\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_homePage.py:35: AssertionError\n\n----------------------------- Captured stdout call -----------------------------\nError al intentar hacer hover y a\u00f1adir al carrito: Locator.hover: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(&amp;quot;div.card-product:nth-child(1) &amp;gt; div:nth-child(1) &amp;gt; a:nth-child(1) &amp;gt; img:nth-child(2)&amp;quot;)\n  -     - locator resolved to &amp;lt;img width=&amp;quot;676&amp;quot; height=&amp;quot;944&amp;quot; data-nimg=&amp;quot;1&amp;quot; loading=&amp;quot;lazy&amp;quot; decoding=&amp;quot;async&amp;quot; alt=&amp;quot;image-product&amp;quot; class=&amp;quot;lazyload img-hover&amp;quot; src=&amp;quot;/images/products/pickleball-blue-1.jpg&amp;quot; data-src=&amp;quot;/images/products/pickleball-blue-1.jpg&amp;quot;/&amp;gt;\n  -   - attempting hover action\n  -     2 \u00d7 waiting for element to be visible and stable\n  -       - element is visible and stable\n  -       - scrolling into view if needed\n  -       - done scrolling\n  -       - &amp;lt;div role=&amp;quot;dialog&amp;quot; aria-modal=&amp;quot;true&amp;quot; id=&amp;quot;newsletterPopup&amp;quot; class=&amp;quot;modal modalCentered fade auto-popup modal-newleter show&amp;quot;&amp;gt;\u2026&amp;lt;/div&amp;gt; intercepts pointer events\n  -     - retrying hover action\n  -     - waiting 20ms\n  -     2 \u00d7 waiting for element to be visible and stable\n  -       - element is not stable\n  -     - retrying hover action\n  -       - waiting 100ms\n  -     55 \u00d7 waiting for element to be visible and stable\n  -        - element is visible and stable\n  -        - scrolling into view if needed\n  -        - done scrolling\n  -        - &amp;lt;div role=&amp;quot;dialog&amp;quot; aria-modal=&amp;quot;true&amp;quot; id=&amp;quot;newsletterPopup&amp;quot; class=&amp;quot;modal modalCentered fade auto-popup modal-newleter show&amp;quot;&amp;gt;\u2026&amp;lt;/div&amp;gt; intercepts pointer events\n  -      - retrying hover action\n  -        - waiting 500ms\n\n&#34;}], &#34;ecomus/test/test_homePage.py::test_hoverAddFav&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_homePage.py::test_hoverAddFav&#34;, &#34;duration&#34;: &#34;00:00:34&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_homePage.py::test_hoverAddFav&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:34&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;homeTo_page = &amp;lt;pages.home_page.HomeToPage object at 0x000002793EEF2060&amp;gt;\n\n&amp;gt;   ???\nE   AssertionError: El contenido del popup de Quick Fav no se hizo visible despu\u00e9s de hacer hover y clic.\nE   assert False\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_homePage.py:43: AssertionError\n\n----------------------------- Captured stdout call -----------------------------\nError al intentar hacer hover y a\u00f1adir a favoritos: Locator.hover: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(&amp;quot;div.card-product:nth-child(1) &amp;gt; div:nth-child(1) &amp;gt; a:nth-child(1) &amp;gt; img:nth-child(2)&amp;quot;)\n  -     - locator resolved to &amp;lt;img width=&amp;quot;676&amp;quot; height=&amp;quot;944&amp;quot; data-nimg=&amp;quot;1&amp;quot; loading=&amp;quot;lazy&amp;quot; decoding=&amp;quot;async&amp;quot; alt=&amp;quot;image-product&amp;quot; class=&amp;quot;lazyload img-hover&amp;quot; src=&amp;quot;/images/products/pickleball-blue-1.jpg&amp;quot; data-src=&amp;quot;/images/products/pickleball-blue-1.jpg&amp;quot;/&amp;gt;\n  -   - attempting hover action\n  -     2 \u00d7 waiting for element to be visible and stable\n  -       - element is visible and stable\n  -       - scrolling into view if needed\n  -       - done scrolling\n  -       - &amp;lt;div role=&amp;quot;dialog&amp;quot; aria-modal=&amp;quot;true&amp;quot; id=&amp;quot;newsletterPopup&amp;quot; class=&amp;quot;modal modalCentered fade auto-popup modal-newleter show&amp;quot;&amp;gt;\u2026&amp;lt;/div&amp;gt; intercepts pointer events\n  -     - retrying hover action\n  -     - waiting 20ms\n  -     2 \u00d7 waiting for element to be visible and stable\n  -       - element is not stable\n  -     - retrying hover action\n  -       - waiting 100ms\n  -     55 \u00d7 waiting for element to be visible and stable\n  -        - element is visible and stable\n  -        - scrolling into view if needed\n  -        - done scrolling\n  -        - &amp;lt;div role=&amp;quot;dialog&amp;quot; aria-modal=&amp;quot;true&amp;quot; id=&amp;quot;newsletterPopup&amp;quot; class=&amp;quot;modal modalCentered fade auto-popup modal-newleter show&amp;quot;&amp;gt;\u2026&amp;lt;/div&amp;gt; intercepts pointer events\n  -      - retrying hover action\n  -        - waiting 500ms\n\n&#34;}], &#34;ecomus/test/test_homePage.py::test_hoverAddCompare&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_homePage.py::test_hoverAddCompare&#34;, &#34;duration&#34;: &#34;00:00:34&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_homePage.py::test_hoverAddCompare&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:34&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;homeTo_page = &amp;lt;pages.home_page.HomeToPage object at 0x000002793EEF0180&amp;gt;\n\n&amp;gt;   ???\nE   AssertionError: Quick Add to Compare is not visible\nE   assert False\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_homePage.py:51: AssertionError\n\n----------------------------- Captured stdout call -----------------------------\nError al intentar hacer hover y a\u00f1adir a comparar: Locator.hover: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(&amp;quot;div.card-product:nth-child(1) &amp;gt; div:nth-child(1) &amp;gt; a:nth-child(1) &amp;gt; img:nth-child(2)&amp;quot;)\n  -     - locator resolved to &amp;lt;img width=&amp;quot;676&amp;quot; height=&amp;quot;944&amp;quot; data-nimg=&amp;quot;1&amp;quot; loading=&amp;quot;lazy&amp;quot; decoding=&amp;quot;async&amp;quot; alt=&amp;quot;image-product&amp;quot; class=&amp;quot;lazyload img-hover&amp;quot; src=&amp;quot;/images/products/pickleball-blue-1.jpg&amp;quot; data-src=&amp;quot;/images/products/pickleball-blue-1.jpg&amp;quot;/&amp;gt;\n  -   - attempting hover action\n  -     2 \u00d7 waiting for element to be visible and stable\n  -       - element is visible and stable\n  -       - scrolling into view if needed\n  -       - done scrolling\n  -       - &amp;lt;div role=&amp;quot;dialog&amp;quot; aria-modal=&amp;quot;true&amp;quot; id=&amp;quot;newsletterPopup&amp;quot; class=&amp;quot;modal modalCentered fade auto-popup modal-newleter show&amp;quot;&amp;gt;\u2026&amp;lt;/div&amp;gt; intercepts pointer events\n  -     - retrying hover action\n  -     - waiting 20ms\n  -     2 \u00d7 waiting for element to be visible and stable\n  -       - element is not stable\n  -     - retrying hover action\n  -       - waiting 100ms\n  -     55 \u00d7 waiting for element to be visible and stable\n  -        - element is visible and stable\n  -        - scrolling into view if needed\n  -        - done scrolling\n  -        - &amp;lt;div role=&amp;quot;dialog&amp;quot; aria-modal=&amp;quot;true&amp;quot; id=&amp;quot;newsletterPopup&amp;quot; class=&amp;quot;modal modalCentered fade auto-popup modal-newleter show&amp;quot;&amp;gt;\u2026&amp;lt;/div&amp;gt; intercepts pointer events\n  -      - retrying hover action\n  -        - waiting 500ms\n\n&#34;}], &#34;ecomus/test/test_homePage.py::test_hoverView&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_homePage.py::test_hoverView&#34;, &#34;duration&#34;: &#34;00:00:34&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_homePage.py::test_hoverView&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:34&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;homeTo_page = &amp;lt;pages.home_page.HomeToPage object at 0x000002793EEF3BB0&amp;gt;\n\n&amp;gt;   ???\nE   AssertionError: Quick View is not visible\nE   assert False\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_homePage.py:59: AssertionError\n\n----------------------------- Captured stdout call -----------------------------\nError al intentar hacer hover y ver el producto: Locator.hover: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator(&amp;quot;div.card-product:nth-child(1) &amp;gt; div:nth-child(1) &amp;gt; a:nth-child(1) &amp;gt; img:nth-child(2)&amp;quot;)\n  -     - locator resolved to &amp;lt;img width=&amp;quot;676&amp;quot; height=&amp;quot;944&amp;quot; data-nimg=&amp;quot;1&amp;quot; loading=&amp;quot;lazy&amp;quot; decoding=&amp;quot;async&amp;quot; alt=&amp;quot;image-product&amp;quot; class=&amp;quot;lazyload img-hover&amp;quot; src=&amp;quot;/images/products/pickleball-blue-1.jpg&amp;quot; data-src=&amp;quot;/images/products/pickleball-blue-1.jpg&amp;quot;/&amp;gt;\n  -   - attempting hover action\n  -     2 \u00d7 waiting for element to be visible and stable\n  -       - element is visible and stable\n  -       - scrolling into view if needed\n  -       - done scrolling\n  -       - &amp;lt;div role=&amp;quot;dialog&amp;quot; aria-modal=&amp;quot;true&amp;quot; id=&amp;quot;newsletterPopup&amp;quot; class=&amp;quot;modal modalCentered fade auto-popup modal-newleter show&amp;quot;&amp;gt;\u2026&amp;lt;/div&amp;gt; intercepts pointer events\n  -     - retrying hover action\n  -     - waiting 20ms\n  -     2 \u00d7 waiting for element to be visible and stable\n  -       - element is not stable\n  -     - retrying hover action\n  -       - waiting 100ms\n  -     55 \u00d7 waiting for element to be visible and stable\n  -        - element is visible and stable\n  -        - scrolling into view if needed\n  -        - done scrolling\n  -        - &amp;lt;div role=&amp;quot;dialog&amp;quot; aria-modal=&amp;quot;true&amp;quot; id=&amp;quot;newsletterPopup&amp;quot; class=&amp;quot;modal modalCentered fade auto-popup modal-newleter show&amp;quot;&amp;gt;\u2026&amp;lt;/div&amp;gt; intercepts pointer events\n  -      - retrying hover action\n  -        - waiting 500ms\n\n&#34;}], &#34;ecomus/test/test_login.py::test_login_successful[user0]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_login.py::test_login_successful[user0]&#34;, &#34;duration&#34;: &#34;00:00:04&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_login.py::test_login_successful[user0]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:04&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_login.py::test_login_no_register_user[user0]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_login.py::test_login_no_register_user[user0]&#34;, &#34;duration&#34;: &#34;00:00:04&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_login.py::test_login_no_register_user[user0]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:04&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_login.py::test_login_no_register_user[user1]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_login.py::test_login_no_register_user[user1]&#34;, &#34;duration&#34;: &#34;00:00:04&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_login.py::test_login_no_register_user[user1]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:04&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_login.py::test_login_no_register_user[user2]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_login.py::test_login_no_register_user[user2]&#34;, &#34;duration&#34;: &#34;00:00:04&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_login.py::test_login_no_register_user[user2]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:04&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_login.py::test_login_invalid_email[user0]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_login.py::test_login_invalid_email[user0]&#34;, &#34;duration&#34;: &#34;00:00:04&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_login.py::test_login_invalid_email[user0]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:04&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_login.py::test_login_invalid_email[user1]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_login.py::test_login_invalid_email[user1]&#34;, &#34;duration&#34;: &#34;00:00:04&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_login.py::test_login_invalid_email[user1]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:04&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_login.py::test_login_invalid_email[user2]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_login.py::test_login_invalid_email[user2]&#34;, &#34;duration&#34;: &#34;00:00:04&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_login.py::test_login_invalid_email[user2]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:04&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_login.py::test_login_empty_email[user0]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_login.py::test_login_empty_email[user0]&#34;, &#34;duration&#34;: &#34;00:00:04&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_login.py::test_login_empty_email[user0]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:04&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_login.py::test_login_empty_email[user1]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_login.py::test_login_empty_email[user1]&#34;, &#34;duration&#34;: &#34;00:00:04&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_login.py::test_login_empty_email[user1]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:04&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_product_detail.py::test_verify_discount&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_product_detail.py::test_verify_discount&#34;, &#34;duration&#34;: &#34;00:00:02&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_product_detail.py::test_verify_discount&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:02&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;product_detail_page = &amp;lt;pages.product_detail_page.ProductDetailPage object at 0x000002793E9E2510&amp;gt;\n\n&amp;gt;   ???\nE   AssertionError: El descuento no es correcto. Precio sin descuento: $10.00, Precio con descuento: $100.00, Descuento: 20%.\nE   assert False\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_product_detail.py:10: AssertionError\n&#34;}], &#34;ecomus/test/test_product_detail.py::test_product_detail_quantity_with_input_normal_quantity[1]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_product_detail.py::test_product_detail_quantity_with_input_normal_quantity[1]&#34;, &#34;duration&#34;: &#34;00:00:05&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_product_detail.py::test_product_detail_quantity_with_input_normal_quantity[1]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:05&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_product_detail.py::test_product_detail_quantity_with_input_normal_quantity[3]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_product_detail.py::test_product_detail_quantity_with_input_normal_quantity[3]&#34;, &#34;duration&#34;: &#34;00:00:05&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_product_detail.py::test_product_detail_quantity_with_input_normal_quantity[3]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:05&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_product_detail.py::test_product_detail_quantity_with_input_normal_quantity[1000000000000000000000]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_product_detail.py::test_product_detail_quantity_with_input_normal_quantity[1000000000000000000000]&#34;, &#34;duration&#34;: &#34;00:00:05&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_product_detail.py::test_product_detail_quantity_with_input_normal_quantity[1000000000000000000000]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:05&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;product_detail_page = &amp;lt;pages.product_detail_page.ProductDetailPage object at 0x000002793ED39940&amp;gt;\nquantity = 1000000000000000000000\n\n&amp;gt;   ???\nE   AssertionError: Cantidad en el carrito fuera de rango.\nE   assert 1000000000000000000000 &amp;lt; 10000\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_product_detail.py:20: AssertionError\n&#34;}], &#34;ecomus/test/test_product_detail.py::test_product_detail_negative_quantity_with_input_normal_quantity[-1]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_product_detail.py::test_product_detail_negative_quantity_with_input_normal_quantity[-1]&#34;, &#34;duration&#34;: &#34;00:00:05&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_product_detail.py::test_product_detail_negative_quantity_with_input_normal_quantity[-1]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:05&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;product_detail_page = &amp;lt;pages.product_detail_page.ProductDetailPage object at 0x000002793EEF3100&amp;gt;, quantity = -1\n\n&amp;gt;   ???\nE   AssertionError: Se acept\u00f3 una cantidad negativa o 0.\nE   assert not True\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_product_detail.py:29: AssertionError\n&#34;}], &#34;ecomus/test/test_product_detail.py::test_product_detail_negative_quantity_with_input_normal_quantity[-3]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_product_detail.py::test_product_detail_negative_quantity_with_input_normal_quantity[-3]&#34;, &#34;duration&#34;: &#34;00:00:05&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_product_detail.py::test_product_detail_negative_quantity_with_input_normal_quantity[-3]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:05&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;product_detail_page = &amp;lt;pages.product_detail_page.ProductDetailPage object at 0x000002793F279370&amp;gt;, quantity = -3\n\n&amp;gt;   ???\nE   AssertionError: Se acept\u00f3 una cantidad negativa o 0.\nE   assert not True\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_product_detail.py:29: AssertionError\n&#34;}], &#34;ecomus/test/test_product_detail.py::test_product_detail_negative_quantity_with_input_normal_quantity[0]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_product_detail.py::test_product_detail_negative_quantity_with_input_normal_quantity[0]&#34;, &#34;duration&#34;: &#34;00:00:05&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_product_detail.py::test_product_detail_negative_quantity_with_input_normal_quantity[0]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:05&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;product_detail_page = &amp;lt;pages.product_detail_page.ProductDetailPage object at 0x000002793ED58160&amp;gt;, quantity = 0\n\n&amp;gt;   ???\nE   AssertionError: Se acept\u00f3 una cantidad negativa o 0.\nE   assert not True\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_product_detail.py:29: AssertionError\n&#34;}], &#34;ecomus/test/test_product_detail.py::test_product_detail_negative_quantity_with_input_normal_quantity[-1000000000000000000000]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_product_detail.py::test_product_detail_negative_quantity_with_input_normal_quantity[-1000000000000000000000]&#34;, &#34;duration&#34;: &#34;00:00:05&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_product_detail.py::test_product_detail_negative_quantity_with_input_normal_quantity[-1000000000000000000000]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:05&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;product_detail_page = &amp;lt;pages.product_detail_page.ProductDetailPage object at 0x000002793ED58D10&amp;gt;\nquantity = -1000000000000000000000\n\n&amp;gt;   ???\nE   AssertionError: Se acept\u00f3 una cantidad negativa o 0.\nE   assert not True\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_product_detail.py:29: AssertionError\n&#34;}], &#34;ecomus/test/test_product_detail.py::test_verify_free_shipping[1]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_product_detail.py::test_verify_free_shipping[1]&#34;, &#34;duration&#34;: &#34;00:00:05&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_product_detail.py::test_verify_free_shipping[1]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:05&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;product_detail_page = &amp;lt;pages.product_detail_page.ProductDetailPage object at 0x000002793F18D550&amp;gt;, quantity = 1\n\n&amp;gt;   ???\nE   AssertionError: El valor que se muestra en el &amp;#x27;Free Shipping&amp;#x27; no cambia despues de a\u00f1adir m\u00e1s productos.\nE   assert False\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_product_detail.py:39: AssertionError\n&#34;}], &#34;ecomus/test/test_product_detail.py::test_verify_free_shipping[3]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_product_detail.py::test_verify_free_shipping[3]&#34;, &#34;duration&#34;: &#34;00:00:05&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_product_detail.py::test_verify_free_shipping[3]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:05&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;product_detail_page = &amp;lt;pages.product_detail_page.ProductDetailPage object at 0x000002793F18E550&amp;gt;, quantity = 3\n\n&amp;gt;   ???\nE   AssertionError: El valor que se muestra en el &amp;#x27;Free Shipping&amp;#x27; no cambia despues de a\u00f1adir m\u00e1s productos.\nE   assert False\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_product_detail.py:39: AssertionError\n&#34;}], &#34;ecomus/test/test_product_detail.py::test_verify_free_shipping[10]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_product_detail.py::test_verify_free_shipping[10]&#34;, &#34;duration&#34;: &#34;00:00:06&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_product_detail.py::test_verify_free_shipping[10]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:06&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;product_detail_page = &amp;lt;pages.product_detail_page.ProductDetailPage object at 0x000002793EE48AA0&amp;gt;, quantity = 10\n\n&amp;gt;   ???\nE   AssertionError: El valor que se muestra en el &amp;#x27;Free Shipping&amp;#x27; no cambia despues de a\u00f1adir m\u00e1s productos.\nE   assert False\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_product_detail.py:39: AssertionError\n&#34;}], &#34;ecomus/test/test_product_detail.py::test_product_detail_add_to_cart_close_add_to_cart[1]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_product_detail.py::test_product_detail_add_to_cart_close_add_to_cart[1]&#34;, &#34;duration&#34;: &#34;00:00:09&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_product_detail.py::test_product_detail_add_to_cart_close_add_to_cart[1]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:09&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;product_detail_page = &amp;lt;pages.product_detail_page.ProductDetailPage object at 0x000002793EE48050&amp;gt;, quantity = 1\n\n&amp;gt;   ???\nE   AssertionError: Se a\u00f1ade 2 productos, se presiona a\u00f1adir al carrito, se cierra carrito, se a\u00f1ade nuevamente el mismo valor al carrito, pero el valor no cambia en el carrito.\nE   assert False\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_product_detail.py:47: AssertionError\n&#34;}], &#34;ecomus/test/test_product_detail.py::test_product_detail_add_to_cart_close_add_to_cart[3]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_product_detail.py::test_product_detail_add_to_cart_close_add_to_cart[3]&#34;, &#34;duration&#34;: &#34;00:00:09&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_product_detail.py::test_product_detail_add_to_cart_close_add_to_cart[3]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:09&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;product_detail_page = &amp;lt;pages.product_detail_page.ProductDetailPage object at 0x000002793ED848C0&amp;gt;, quantity = 3\n\n&amp;gt;   ???\nE   AssertionError: Se a\u00f1ade 4 productos, se presiona a\u00f1adir al carrito, se cierra carrito, se a\u00f1ade nuevamente el mismo valor al carrito, pero el valor no cambia en el carrito.\nE   assert False\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_product_detail.py:47: AssertionError\n&#34;}], &#34;ecomus/test/test_product_detail.py::test_product_detail_add_to_cart_close_add_to_cart[4]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_product_detail.py::test_product_detail_add_to_cart_close_add_to_cart[4]&#34;, &#34;duration&#34;: &#34;00:00:08&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_product_detail.py::test_product_detail_add_to_cart_close_add_to_cart[4]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:08&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;product_detail_page = &amp;lt;pages.product_detail_page.ProductDetailPage object at 0x000002793ED85130&amp;gt;, quantity = 4\n\n&amp;gt;   ???\nE   AssertionError: Se a\u00f1ade 5 productos, se presiona a\u00f1adir al carrito, se cierra carrito, se a\u00f1ade nuevamente el mismo valor al carrito, pero el valor no cambia en el carrito.\nE   assert False\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_product_detail.py:47: AssertionError\n&#34;}], &#34;ecomus/test/test_register.py::test_successful_registration[user0-auto_delete_user0]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_register.py::test_successful_registration[user0-auto_delete_user0]&#34;, &#34;duration&#34;: &#34;00:00:07&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_register.py::test_successful_registration[user0-auto_delete_user0]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:07&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_register.py::test_successful_registration[user1-auto_delete_user1]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_register.py::test_successful_registration[user1-auto_delete_user1]&#34;, &#34;duration&#34;: &#34;00:00:07&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_register.py::test_successful_registration[user1-auto_delete_user1]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:07&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_register.py::test_registration_with_empty_fields[user0-auto_delete_user0]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_register.py::test_registration_with_empty_fields[user0-auto_delete_user0]&#34;, &#34;duration&#34;: &#34;00:00:06&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_register.py::test_registration_with_empty_fields[user0-auto_delete_user0]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:06&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_register.py::test_registration_with_empty_fields[user1-auto_delete_user1]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_register.py::test_registration_with_empty_fields[user1-auto_delete_user1]&#34;, &#34;duration&#34;: &#34;00:00:06&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_register.py::test_registration_with_empty_fields[user1-auto_delete_user1]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:06&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_register.py::test_registration_with_empty_fields[user2-auto_delete_user2]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_register.py::test_registration_with_empty_fields[user2-auto_delete_user2]&#34;, &#34;duration&#34;: &#34;00:00:06&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_register.py::test_registration_with_empty_fields[user2-auto_delete_user2]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:06&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_register.py::test_registration_with_empty_fields[user3-auto_delete_user3]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_register.py::test_registration_with_empty_fields[user3-auto_delete_user3]&#34;, &#34;duration&#34;: &#34;00:00:06&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_register.py::test_registration_with_empty_fields[user3-auto_delete_user3]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:06&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_register.py::test_registration_with_invalid_firstname[user0-auto_delete_user0]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_register.py::test_registration_with_invalid_firstname[user0-auto_delete_user0]&#34;, &#34;duration&#34;: &#34;00:00:07&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_register.py::test_registration_with_invalid_firstname[user0-auto_delete_user0]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:07&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;register_page = &amp;lt;pages.register_page.RegisterPage object at 0x000002793E8978A0&amp;gt;\nuser = RegisterUser(first_name=&amp;#x27;#&amp;#x27;, last_name=&amp;#x27;Lastname&amp;#x27;, email=&amp;#x27;team_3_RIFU1@gmail.com&amp;#x27;, password=&amp;#x27;StrongPass123&amp;#x27;)\nauto_delete_user = None\n\n&amp;gt;   ???\nE   AssertionError: Se cre\u00f3 un usuario con un firstname inv\u00e1lido: RegisterUser(first_name=&amp;#x27;#&amp;#x27;, last_name=&amp;#x27;Lastname&amp;#x27;, email=&amp;#x27;team_3_RIFU1@gmail.com&amp;#x27;, password=&amp;#x27;StrongPass123&amp;#x27;)\nE   assert &amp;#x27;/register&amp;#x27; in &amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;\nE    +  where &amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27; = &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;&amp;gt;.url\nE    +    where &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;&amp;gt; = &amp;lt;pages.register_page.RegisterPage object at 0x000002793E8978A0&amp;gt;.page\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_register.py:42: AssertionError\n&#34;}], &#34;ecomus/test/test_register.py::test_registration_with_invalid_firstname[user1-auto_delete_user1]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_register.py::test_registration_with_invalid_firstname[user1-auto_delete_user1]&#34;, &#34;duration&#34;: &#34;00:00:07&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_register.py::test_registration_with_invalid_firstname[user1-auto_delete_user1]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:07&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;register_page = &amp;lt;pages.register_page.RegisterPage object at 0x000002793E897350&amp;gt;\nuser = RegisterUser(first_name=&amp;#x27;$&amp;#x27;, last_name=&amp;#x27;Lastname&amp;#x27;, email=&amp;#x27;team_3_RIFU2@gmail.com&amp;#x27;, password=&amp;#x27;StrongPass123&amp;#x27;)\nauto_delete_user = None\n\n&amp;gt;   ???\nE   AssertionError: Se cre\u00f3 un usuario con un firstname inv\u00e1lido: RegisterUser(first_name=&amp;#x27;$&amp;#x27;, last_name=&amp;#x27;Lastname&amp;#x27;, email=&amp;#x27;team_3_RIFU2@gmail.com&amp;#x27;, password=&amp;#x27;StrongPass123&amp;#x27;)\nE   assert &amp;#x27;/register&amp;#x27; in &amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;\nE    +  where &amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27; = &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;&amp;gt;.url\nE    +    where &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;&amp;gt; = &amp;lt;pages.register_page.RegisterPage object at 0x000002793E897350&amp;gt;.page\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_register.py:42: AssertionError\n&#34;}], &#34;ecomus/test/test_register.py::test_registration_with_invalid_firstname[user2-auto_delete_user2]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_register.py::test_registration_with_invalid_firstname[user2-auto_delete_user2]&#34;, &#34;duration&#34;: &#34;00:00:07&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_register.py::test_registration_with_invalid_firstname[user2-auto_delete_user2]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:07&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;register_page = &amp;lt;pages.register_page.RegisterPage object at 0x000002793F18DD50&amp;gt;\nuser = RegisterUser(first_name=&amp;#x27;!$#%&amp;#x27;, last_name=&amp;#x27;Lastname&amp;#x27;, email=&amp;#x27;team_3_RIFU3@gmail.com&amp;#x27;, password=&amp;#x27;StrongPass123&amp;#x27;)\nauto_delete_user = None\n\n&amp;gt;   ???\nE   AssertionError: Se cre\u00f3 un usuario con un firstname inv\u00e1lido: RegisterUser(first_name=&amp;#x27;!$#%&amp;#x27;, last_name=&amp;#x27;Lastname&amp;#x27;, email=&amp;#x27;team_3_RIFU3@gmail.com&amp;#x27;, password=&amp;#x27;StrongPass123&amp;#x27;)\nE   assert &amp;#x27;/register&amp;#x27; in &amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;\nE    +  where &amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27; = &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;&amp;gt;.url\nE    +    where &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;&amp;gt; = &amp;lt;pages.register_page.RegisterPage object at 0x000002793F18DD50&amp;gt;.page\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_register.py:42: AssertionError\n&#34;}], &#34;ecomus/test/test_register.py::test_registration_with_invalid_lastname[user0-auto_delete_user0]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_register.py::test_registration_with_invalid_lastname[user0-auto_delete_user0]&#34;, &#34;duration&#34;: &#34;00:00:07&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_register.py::test_registration_with_invalid_lastname[user0-auto_delete_user0]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:07&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;register_page = &amp;lt;pages.register_page.RegisterPage object at 0x000002793EECDC50&amp;gt;\nuser = RegisterUser(first_name=&amp;#x27;Firstname&amp;#x27;, last_name=&amp;#x27;$&amp;#x27;, email=&amp;#x27;team_3_RILU1@gmail.com&amp;#x27;, password=&amp;#x27;StrongPass123&amp;#x27;)\nauto_delete_user = None\n\n&amp;gt;   ???\nE   AssertionError: Se cre\u00f3 un usuario con un lastname inv\u00e1lido: RegisterUser(first_name=&amp;#x27;Firstname&amp;#x27;, last_name=&amp;#x27;$&amp;#x27;, email=&amp;#x27;team_3_RILU1@gmail.com&amp;#x27;, password=&amp;#x27;StrongPass123&amp;#x27;)\nE   assert &amp;#x27;/register&amp;#x27; in &amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;\nE    +  where &amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27; = &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;&amp;gt;.url\nE    +    where &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;&amp;gt; = &amp;lt;pages.register_page.RegisterPage object at 0x000002793EECDC50&amp;gt;.page\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_register.py:55: AssertionError\n&#34;}], &#34;ecomus/test/test_register.py::test_registration_with_invalid_lastname[user1-auto_delete_user1]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_register.py::test_registration_with_invalid_lastname[user1-auto_delete_user1]&#34;, &#34;duration&#34;: &#34;00:00:07&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_register.py::test_registration_with_invalid_lastname[user1-auto_delete_user1]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:07&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;register_page = &amp;lt;pages.register_page.RegisterPage object at 0x000002793E943890&amp;gt;\nuser = RegisterUser(first_name=&amp;#x27;Firstname&amp;#x27;, last_name=&amp;#x27;#&amp;#x27;, email=&amp;#x27;team_3_RIFU2@gmail.com&amp;#x27;, password=&amp;#x27;StrongPass123&amp;#x27;)\nauto_delete_user = None\n\n&amp;gt;   ???\nE   AssertionError: Se cre\u00f3 un usuario con un lastname inv\u00e1lido: RegisterUser(first_name=&amp;#x27;Firstname&amp;#x27;, last_name=&amp;#x27;#&amp;#x27;, email=&amp;#x27;team_3_RIFU2@gmail.com&amp;#x27;, password=&amp;#x27;StrongPass123&amp;#x27;)\nE   assert &amp;#x27;/register&amp;#x27; in &amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;\nE    +  where &amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27; = &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;&amp;gt;.url\nE    +    where &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;&amp;gt; = &amp;lt;pages.register_page.RegisterPage object at 0x000002793E943890&amp;gt;.page\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_register.py:55: AssertionError\n&#34;}], &#34;ecomus/test/test_register.py::test_registration_with_invalid_lastname[user2-auto_delete_user2]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_register.py::test_registration_with_invalid_lastname[user2-auto_delete_user2]&#34;, &#34;duration&#34;: &#34;00:00:08&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_register.py::test_registration_with_invalid_lastname[user2-auto_delete_user2]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:08&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;register_page = &amp;lt;pages.register_page.RegisterPage object at 0x000002793EE4A8A0&amp;gt;\nuser = RegisterUser(first_name=&amp;#x27;Firstname&amp;#x27;, last_name=&amp;#x27;!$%&amp;amp;&amp;#x27;, email=&amp;#x27;team_3_RIFU3@gmail.com&amp;#x27;, password=&amp;#x27;StrongPass123&amp;#x27;)\nauto_delete_user = None\n\n&amp;gt;   ???\nE   AssertionError: Se cre\u00f3 un usuario con un lastname inv\u00e1lido: RegisterUser(first_name=&amp;#x27;Firstname&amp;#x27;, last_name=&amp;#x27;!$%&amp;amp;&amp;#x27;, email=&amp;#x27;team_3_RIFU3@gmail.com&amp;#x27;, password=&amp;#x27;StrongPass123&amp;#x27;)\nE   assert &amp;#x27;/register&amp;#x27; in &amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;\nE    +  where &amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27; = &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;&amp;gt;.url\nE    +    where &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;&amp;gt; = &amp;lt;pages.register_page.RegisterPage object at 0x000002793EE4A8A0&amp;gt;.page\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_register.py:55: AssertionError\n&#34;}], &#34;ecomus/test/test_register.py::test_registration_with_invalid_email[user0-auto_delete_user0]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_register.py::test_registration_with_invalid_email[user0-auto_delete_user0]&#34;, &#34;duration&#34;: &#34;00:00:07&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_register.py::test_registration_with_invalid_email[user0-auto_delete_user0]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:07&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_register.py::test_registration_with_invalid_email[user1-auto_delete_user1]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_register.py::test_registration_with_invalid_email[user1-auto_delete_user1]&#34;, &#34;duration&#34;: &#34;00:00:06&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_register.py::test_registration_with_invalid_email[user1-auto_delete_user1]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:06&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_register.py::test_registration_with_invalid_email[user2-auto_delete_user2]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_register.py::test_registration_with_invalid_email[user2-auto_delete_user2]&#34;, &#34;duration&#34;: &#34;00:00:07&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_register.py::test_registration_with_invalid_email[user2-auto_delete_user2]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:07&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;register_page = &amp;lt;pages.register_page.RegisterPage object at 0x000002793EFAA680&amp;gt;\nuser = RegisterUser(first_name=&amp;#x27;Firstname&amp;#x27;, last_name=&amp;#x27;Lastname&amp;#x27;, email=&amp;#x27;team_3_RIEU6@gmailcom&amp;#x27;, password=&amp;#x27;StrongPass123&amp;#x27;)\nauto_delete_user = None\n\n&amp;gt;   ???\nE   AssertionError: Se cre\u00f3 un usuario con un email inv\u00e1lido: RegisterUser(first_name=&amp;#x27;Firstname&amp;#x27;, last_name=&amp;#x27;Lastname&amp;#x27;, email=&amp;#x27;team_3_RIEU6@gmailcom&amp;#x27;, password=&amp;#x27;StrongPass123&amp;#x27;)\nE   assert &amp;#x27;/register&amp;#x27; in &amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;\nE    +  where &amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27; = &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;&amp;gt;.url\nE    +    where &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;&amp;gt; = &amp;lt;pages.register_page.RegisterPage object at 0x000002793EFAA680&amp;gt;.page\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_register.py:68: AssertionError\n&#34;}], &#34;ecomus/test/test_register.py::test_registration_with_invalid_email[user3-auto_delete_user3]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_register.py::test_registration_with_invalid_email[user3-auto_delete_user3]&#34;, &#34;duration&#34;: &#34;00:00:06&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_register.py::test_registration_with_invalid_email[user3-auto_delete_user3]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:06&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_register.py::test_registration_with_invalid_email[user4-auto_delete_user4]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_register.py::test_registration_with_invalid_email[user4-auto_delete_user4]&#34;, &#34;duration&#34;: &#34;00:00:06&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_register.py::test_registration_with_invalid_email[user4-auto_delete_user4]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:06&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_register.py::test_registration_with_invalid_email[user5-auto_delete_user5]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_register.py::test_registration_with_invalid_email[user5-auto_delete_user5]&#34;, &#34;duration&#34;: &#34;00:00:06&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_register.py::test_registration_with_invalid_email[user5-auto_delete_user5]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:06&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_register.py::test_registration_with_invalid_password_security[user0-auto_delete_user0]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_register.py::test_registration_with_invalid_password_security[user0-auto_delete_user0]&#34;, &#34;duration&#34;: &#34;00:00:07&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_register.py::test_registration_with_invalid_password_security[user0-auto_delete_user0]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:07&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;register_page = &amp;lt;pages.register_page.RegisterPage object at 0x000002793D309860&amp;gt;\nuser = RegisterUser(first_name=&amp;#x27;Firstname&amp;#x27;, last_name=&amp;#x27;Lastname&amp;#x27;, email=&amp;#x27;team_3_RIPU1@gmail.com&amp;#x27;, password=&amp;#x27;aaaaaaaaaaaaaaaaaaaaaaa&amp;#x27;)\nauto_delete_user = None\n\n&amp;gt;   ???\nE   AssertionError: Se cre\u00f3 un usuario con una contrase\u00f1a inv\u00e1lida: RegisterUser(first_name=&amp;#x27;Firstname&amp;#x27;, last_name=&amp;#x27;Lastname&amp;#x27;, email=&amp;#x27;team_3_RIPU1@gmail.com&amp;#x27;, password=&amp;#x27;aaaaaaaaaaaaaaaaaaaaaaa&amp;#x27;)\nE   assert &amp;#x27;/register&amp;#x27; in &amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;\nE    +  where &amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27; = &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;&amp;gt;.url\nE    +    where &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;&amp;gt; = &amp;lt;pages.register_page.RegisterPage object at 0x000002793D309860&amp;gt;.page\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_register.py:81: AssertionError\n&#34;}], &#34;ecomus/test/test_register.py::test_registration_with_invalid_password_security[user1-auto_delete_user1]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_register.py::test_registration_with_invalid_password_security[user1-auto_delete_user1]&#34;, &#34;duration&#34;: &#34;00:00:07&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_register.py::test_registration_with_invalid_password_security[user1-auto_delete_user1]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:07&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;register_page = &amp;lt;pages.register_page.RegisterPage object at 0x000002793EE18230&amp;gt;\nuser = RegisterUser(first_name=&amp;#x27;Firstname&amp;#x27;, last_name=&amp;#x27;Lastname&amp;#x27;, email=&amp;#x27;team_3_RIPU2@gmail.com&amp;#x27;, password=&amp;#x27;1&amp;#x27;)\nauto_delete_user = None\n\n&amp;gt;   ???\nE   AssertionError: Se cre\u00f3 un usuario con una contrase\u00f1a inv\u00e1lida: RegisterUser(first_name=&amp;#x27;Firstname&amp;#x27;, last_name=&amp;#x27;Lastname&amp;#x27;, email=&amp;#x27;team_3_RIPU2@gmail.com&amp;#x27;, password=&amp;#x27;1&amp;#x27;)\nE   assert &amp;#x27;/register&amp;#x27; in &amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;\nE    +  where &amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27; = &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;&amp;gt;.url\nE    +    where &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;&amp;gt; = &amp;lt;pages.register_page.RegisterPage object at 0x000002793EE18230&amp;gt;.page\n\nC:\\Softserve\\Demo_1\\TAQC_T3\\login\\test\\test_register.py:81: AssertionError\n&#34;}], &#34;ecomus/test/test_register_login.py::test_successful_registration_login_valid[user0-auto_delete_user0]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_register_login.py::test_successful_registration_login_valid[user0-auto_delete_user0]&#34;, &#34;duration&#34;: &#34;00:00:11&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_register_login.py::test_successful_registration_login_valid[user0-auto_delete_user0]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:11&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_register_login.py::test_successful_registration_login_valid[user1-auto_delete_user1]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_register_login.py::test_successful_registration_login_valid[user1-auto_delete_user1]&#34;, &#34;duration&#34;: &#34;00:00:11&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_register_login.py::test_successful_registration_login_valid[user1-auto_delete_user1]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:11&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;ecomus/test/test_register_login.py::test_successful_registration_login_invalid[user0-auto_delete_user0]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_register_login.py::test_successful_registration_login_invalid[user0-auto_delete_user0]&#34;, &#34;duration&#34;: &#34;00:00:10&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_register_login.py::test_successful_registration_login_invalid[user0-auto_delete_user0]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:10&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;register_page = &amp;lt;pages.register_page.RegisterPage object at 0x000002793F22A150&amp;gt;\nlogin_page = &amp;lt;pages.login_page.LoginPage object at 0x000002793EE4A4E0&amp;gt;\nuser = RegisterLoginUser(register=RegisterUser(first_name=&amp;#x27;Firstname&amp;#x27;, last_name=&amp;#x27;Lastname&amp;#x27;, email=&amp;#x27;team_3_RLIU1@gmailcom&amp;#x27;, password=&amp;#x27;StrongPass123&amp;#x27;), login=LoginUser(email=&amp;#x27;team_3_RLVU1@gmailcom&amp;#x27;, password=&amp;#x27;StrongPass123&amp;#x27;))\nauto_delete_user = None\n\n    @pytest.mark.asyncio\n    @pytest.mark.parametrize(\n        &amp;quot;user, auto_delete_user&amp;quot;,\n        [(user, user.login) for user in register_login_invalid_new_users],\n        indirect=[&amp;quot;auto_delete_user&amp;quot;]\n    )\n    async def test_successful_registration_login_invalid(register_page: Page, login_page: Page, user: RegisterLoginUser, auto_delete_user):\n        &amp;quot;&amp;quot;&amp;quot;\n        Verifica que el registro falle si hay campos vac\u00edos o inv\u00e1lidos.\n        &amp;quot;&amp;quot;&amp;quot;\n        await register_page.register(user.register)\n        await login_page.login(user.login)\n&amp;gt;       assert &amp;quot;/my-account&amp;quot; in login_page.page.url, f&amp;quot;Se inici\u00f3 sesi\u00f3n con credenciales inv\u00e1lidas: {user.register}&amp;quot;\nE       AssertionError: Se inici\u00f3 sesi\u00f3n con credenciales inv\u00e1lidas: RegisterUser(first_name=&amp;#x27;Firstname&amp;#x27;, last_name=&amp;#x27;Lastname&amp;#x27;, email=&amp;#x27;team_3_RLIU1@gmailcom&amp;#x27;, password=&amp;#x27;StrongPass123&amp;#x27;)\nE       assert &amp;#x27;/my-account&amp;#x27; in &amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;\nE        +  where &amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27; = &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;&amp;gt;.url\nE        +    where &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;&amp;gt; = &amp;lt;pages.login_page.LoginPage object at 0x000002793EE4A4E0&amp;gt;.page\n\necomus\\test\\test_register_login.py:33: AssertionError\n&#34;}], &#34;ecomus/test/test_register_login.py::test_successful_registration_login_invalid[user1-auto_delete_user1]&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;ecomus/test/test_register_login.py::test_successful_registration_login_invalid[user1-auto_delete_user1]&#34;, &#34;duration&#34;: &#34;00:00:10&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;ecomus/test/test_register_login.py::test_successful_registration_login_invalid[user1-auto_delete_user1]&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:10&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;register_page = &amp;lt;pages.register_page.RegisterPage object at 0x000002793F1E02D0&amp;gt;\nlogin_page = &amp;lt;pages.login_page.LoginPage object at 0x000002793F13AC10&amp;gt;\nuser = RegisterLoginUser(register=RegisterUser(first_name=&amp;#x27;Firstname&amp;#x27;, last_name=&amp;#x27;Lastname&amp;#x27;, email=&amp;#x27;team_3_RLIU2@gmail.com&amp;#x27;, password=&amp;#x27;1&amp;#x27;), login=LoginUser(email=&amp;#x27;team_3_RLVU2@gmail.com&amp;#x27;, password=&amp;#x27;1&amp;#x27;))\nauto_delete_user = None\n\n    @pytest.mark.asyncio\n    @pytest.mark.parametrize(\n        &amp;quot;user, auto_delete_user&amp;quot;,\n        [(user, user.login) for user in register_login_invalid_new_users],\n        indirect=[&amp;quot;auto_delete_user&amp;quot;]\n    )\n    async def test_successful_registration_login_invalid(register_page: Page, login_page: Page, user: RegisterLoginUser, auto_delete_user):\n        &amp;quot;&amp;quot;&amp;quot;\n        Verifica que el registro falle si hay campos vac\u00edos o inv\u00e1lidos.\n        &amp;quot;&amp;quot;&amp;quot;\n        await register_page.register(user.register)\n        await login_page.login(user.login)\n&amp;gt;       assert &amp;quot;/my-account&amp;quot; in login_page.page.url, f&amp;quot;Se inici\u00f3 sesi\u00f3n con credenciales inv\u00e1lidas: {user.register}&amp;quot;\nE       AssertionError: Se inici\u00f3 sesi\u00f3n con credenciales inv\u00e1lidas: RegisterUser(first_name=&amp;#x27;Firstname&amp;#x27;, last_name=&amp;#x27;Lastname&amp;#x27;, email=&amp;#x27;team_3_RLIU2@gmail.com&amp;#x27;, password=&amp;#x27;1&amp;#x27;)\nE       assert &amp;#x27;/my-account&amp;#x27; in &amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;\nE        +  where &amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27; = &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;&amp;gt;.url\nE        +    where &amp;lt;Page url=&amp;#x27;https://automation-portal-bootcamp.vercel.app/login&amp;#x27;&amp;gt; = &amp;lt;pages.login_page.LoginPage object at 0x000002793F13AC10&amp;gt;.page\n\necomus\\test\\test_register_login.py:33: AssertionError\n&#34;}]}, &#34;renderCollapsed&#34;: [&#34;passed&#34;], &#34;initialSort&#34;: &#34;result&#34;, &#34;title&#34;: &#34;report.html&#34;}"></div>
+    <script>
+      (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+const { getCollapsedCategory, setCollapsedIds } = require('./storage.js')
+
+class DataManager {
+    setManager(data) {
+        const collapsedCategories = [...getCollapsedCategory(data.renderCollapsed)]
+        const collapsedIds = []
+        const tests = Object.values(data.tests).flat().map((test, index) => {
+            const collapsed = collapsedCategories.includes(test.result.toLowerCase())
+            const id = `test_${index}`
+            if (collapsed) {
+                collapsedIds.push(id)
+            }
+            return {
+                ...test,
+                id,
+                collapsed,
+            }
+        })
+        const dataBlob = { ...data, tests }
+        this.data = { ...dataBlob }
+        this.renderData = { ...dataBlob }
+        setCollapsedIds(collapsedIds)
+    }
+
+    get allData() {
+        return { ...this.data }
+    }
+
+    resetRender() {
+        this.renderData = { ...this.data }
+    }
+
+    setRender(data) {
+        this.renderData.tests = [...data]
+    }
+
+    toggleCollapsedItem(id) {
+        this.renderData.tests = this.renderData.tests.map((test) =>
+            test.id === id ? { ...test, collapsed: !test.collapsed } : test,
+        )
+    }
+
+    set allCollapsed(collapsed) {
+        this.renderData = { ...this.renderData, tests: [...this.renderData.tests.map((test) => (
+            { ...test, collapsed }
+        ))] }
+    }
+
+    get testSubset() {
+        return [...this.renderData.tests]
+    }
+
+    get environment() {
+        return this.renderData.environment
+    }
+
+    get initialSort() {
+        return this.data.initialSort
+    }
+}
+
+module.exports = {
+    manager: new DataManager(),
+}
+
+},{"./storage.js":8}],2:[function(require,module,exports){
+const mediaViewer = require('./mediaviewer.js')
+const templateEnvRow = document.getElementById('template_environment_row')
+const templateResult = document.getElementById('template_results-table__tbody')
+
+function htmlToElements(html) {
+    const temp = document.createElement('template')
+    temp.innerHTML = html
+    return temp.content.childNodes
+}
+
+const find = (selector, elem) => {
+    if (!elem) {
+        elem = document
+    }
+    return elem.querySelector(selector)
+}
+
+const findAll = (selector, elem) => {
+    if (!elem) {
+        elem = document
+    }
+    return [...elem.querySelectorAll(selector)]
+}
+
+const dom = {
+    getStaticRow: (key, value) => {
+        const envRow = templateEnvRow.content.cloneNode(true)
+        const isObj = typeof value === 'object' && value !== null
+        const values = isObj ? Object.keys(value).map((k) => `${k}: ${value[k]}`) : null
+
+        const valuesElement = htmlToElements(
+            values ? `<ul>${values.map((val) => `<li>${val}</li>`).join('')}<ul>` : `<div>${value}</div>`)[0]
+        const td = findAll('td', envRow)
+        td[0].textContent = key
+        td[1].appendChild(valuesElement)
+
+        return envRow
+    },
+    getResultTBody: ({ testId, id, log, extras, resultsTableRow, tableHtml, result, collapsed }) => {
+        const resultBody = templateResult.content.cloneNode(true)
+        resultBody.querySelector('tbody').classList.add(result.toLowerCase())
+        resultBody.querySelector('tbody').id = testId
+        resultBody.querySelector('.collapsible').dataset.id = id
+
+        resultsTableRow.forEach((html) => {
+            const t = document.createElement('template')
+            t.innerHTML = html
+            resultBody.querySelector('.collapsible').appendChild(t.content)
+        })
+
+        if (log) {
+            // Wrap lines starting with "E" with span.error to color those lines red
+            const wrappedLog = log.replace(/^E.*$/gm, (match) => `<span class="error">${match}</span>`)
+            resultBody.querySelector('.log').innerHTML = wrappedLog
+        } else {
+            resultBody.querySelector('.log').remove()
+        }
+
+        if (collapsed) {
+            resultBody.querySelector('.collapsible > td')?.classList.add('collapsed')
+            resultBody.querySelector('.extras-row').classList.add('hidden')
+        } else {
+            resultBody.querySelector('.collapsible > td')?.classList.remove('collapsed')
+        }
+
+        const media = []
+        extras?.forEach(({ name, format_type, content }) => {
+            if (['image', 'video'].includes(format_type)) {
+                media.push({ path: content, name, format_type })
+            }
+
+            if (format_type === 'html') {
+                resultBody.querySelector('.extraHTML').insertAdjacentHTML('beforeend', `<div>${content}</div>`)
+            }
+        })
+        mediaViewer.setup(resultBody, media)
+
+        // Add custom html from the pytest_html_results_table_html hook
+        tableHtml?.forEach((item) => {
+            resultBody.querySelector('td[class="extra"]').insertAdjacentHTML('beforeend', item)
+        })
+
+        return resultBody
+    },
+}
+
+module.exports = {
+    dom,
+    htmlToElements,
+    find,
+    findAll,
+}
+
+},{"./mediaviewer.js":6}],3:[function(require,module,exports){
+const { manager } = require('./datamanager.js')
+const { doSort } = require('./sort.js')
+const storageModule = require('./storage.js')
+
+const getFilteredSubSet = (filter) =>
+    manager.allData.tests.filter(({ result }) => filter.includes(result.toLowerCase()))
+
+const doInitFilter = () => {
+    const currentFilter = storageModule.getVisible()
+    const filteredSubset = getFilteredSubSet(currentFilter)
+    manager.setRender(filteredSubset)
+}
+
+const doFilter = (type, show) => {
+    if (show) {
+        storageModule.showCategory(type)
+    } else {
+        storageModule.hideCategory(type)
+    }
+
+    const currentFilter = storageModule.getVisible()
+    const filteredSubset = getFilteredSubSet(currentFilter)
+    manager.setRender(filteredSubset)
+
+    const sortColumn = storageModule.getSort()
+    doSort(sortColumn, true)
+}
+
+module.exports = {
+    doFilter,
+    doInitFilter,
+}
+
+},{"./datamanager.js":1,"./sort.js":7,"./storage.js":8}],4:[function(require,module,exports){
+const { redraw, bindEvents, renderStatic } = require('./main.js')
+const { doInitFilter } = require('./filter.js')
+const { doInitSort } = require('./sort.js')
+const { manager } = require('./datamanager.js')
+const data = JSON.parse(document.getElementById('data-container').dataset.jsonblob)
+
+function init() {
+    manager.setManager(data)
+    doInitFilter()
+    doInitSort()
+    renderStatic()
+    redraw()
+    bindEvents()
+}
+
+init()
+
+},{"./datamanager.js":1,"./filter.js":3,"./main.js":5,"./sort.js":7}],5:[function(require,module,exports){
+const { dom, find, findAll } = require('./dom.js')
+const { manager } = require('./datamanager.js')
+const { doSort } = require('./sort.js')
+const { doFilter } = require('./filter.js')
+const {
+    getVisible,
+    getCollapsedIds,
+    setCollapsedIds,
+    getSort,
+    getSortDirection,
+    possibleFilters,
+} = require('./storage.js')
+
+const removeChildren = (node) => {
+    while (node.firstChild) {
+        node.removeChild(node.firstChild)
+    }
+}
+
+const renderStatic = () => {
+    const renderEnvironmentTable = () => {
+        const environment = manager.environment
+        const rows = Object.keys(environment).map((key) => dom.getStaticRow(key, environment[key]))
+        const table = document.getElementById('environment')
+        removeChildren(table)
+        rows.forEach((row) => table.appendChild(row))
+    }
+    renderEnvironmentTable()
+}
+
+const addItemToggleListener = (elem) => {
+    elem.addEventListener('click', ({ target }) => {
+        const id = target.parentElement.dataset.id
+        manager.toggleCollapsedItem(id)
+
+        const collapsedIds = getCollapsedIds()
+        if (collapsedIds.includes(id)) {
+            const updated = collapsedIds.filter((item) => item !== id)
+            setCollapsedIds(updated)
+        } else {
+            collapsedIds.push(id)
+            setCollapsedIds(collapsedIds)
+        }
+        redraw()
+    })
+}
+
+const renderContent = (tests) => {
+    const sortAttr = getSort(manager.initialSort)
+    const sortAsc = JSON.parse(getSortDirection())
+    const rows = tests.map(dom.getResultTBody)
+    const table = document.getElementById('results-table')
+    const tableHeader = document.getElementById('results-table-head')
+
+    const newTable = document.createElement('table')
+    newTable.id = 'results-table'
+
+    // remove all sorting classes and set the relevant
+    findAll('.sortable', tableHeader).forEach((elem) => elem.classList.remove('asc', 'desc'))
+    tableHeader.querySelector(`.sortable[data-column-type="${sortAttr}"]`)?.classList.add(sortAsc ? 'desc' : 'asc')
+    newTable.appendChild(tableHeader)
+
+    if (!rows.length) {
+        const emptyTable = document.getElementById('template_results-table__body--empty').content.cloneNode(true)
+        newTable.appendChild(emptyTable)
+    } else {
+        rows.forEach((row) => {
+            if (!!row) {
+                findAll('.collapsible td:not(.col-links', row).forEach(addItemToggleListener)
+                find('.logexpander', row).addEventListener('click',
+                    (evt) => evt.target.parentNode.classList.toggle('expanded'),
+                )
+                newTable.appendChild(row)
+            }
+        })
+    }
+
+    table.replaceWith(newTable)
+}
+
+const renderDerived = () => {
+    const currentFilter = getVisible()
+    possibleFilters.forEach((result) => {
+        const input = document.querySelector(`input[data-test-result="${result}"]`)
+        input.checked = currentFilter.includes(result)
+    })
+}
+
+const bindEvents = () => {
+    const filterColumn = (evt) => {
+        const { target: element } = evt
+        const { testResult } = element.dataset
+
+        doFilter(testResult, element.checked)
+        const collapsedIds = getCollapsedIds()
+        const updated = manager.renderData.tests.map((test) => {
+            return {
+                ...test,
+                collapsed: collapsedIds.includes(test.id),
+            }
+        })
+        manager.setRender(updated)
+        redraw()
+    }
+
+    const header = document.getElementById('environment-header')
+    header.addEventListener('click', () => {
+        const table = document.getElementById('environment')
+        table.classList.toggle('hidden')
+        header.classList.toggle('collapsed')
+    })
+
+    findAll('input[name="filter_checkbox"]').forEach((elem) => {
+        elem.addEventListener('click', filterColumn)
+    })
+
+    findAll('.sortable').forEach((elem) => {
+        elem.addEventListener('click', (evt) => {
+            const { target: element } = evt
+            const { columnType } = element.dataset
+            doSort(columnType)
+            redraw()
+        })
+    })
+
+    document.getElementById('show_all_details').addEventListener('click', () => {
+        manager.allCollapsed = false
+        setCollapsedIds([])
+        redraw()
+    })
+    document.getElementById('hide_all_details').addEventListener('click', () => {
+        manager.allCollapsed = true
+        const allIds = manager.renderData.tests.map((test) => test.id)
+        setCollapsedIds(allIds)
+        redraw()
+    })
+}
+
+const redraw = () => {
+    const { testSubset } = manager
+
+    renderContent(testSubset)
+    renderDerived()
+}
+
+module.exports = {
+    redraw,
+    bindEvents,
+    renderStatic,
+}
+
+},{"./datamanager.js":1,"./dom.js":2,"./filter.js":3,"./sort.js":7,"./storage.js":8}],6:[function(require,module,exports){
+class MediaViewer {
+    constructor(assets) {
+        this.assets = assets
+        this.index = 0
+    }
+
+    nextActive() {
+        this.index = this.index === this.assets.length - 1 ? 0 : this.index + 1
+        return [this.activeFile, this.index]
+    }
+
+    prevActive() {
+        this.index = this.index === 0 ? this.assets.length - 1 : this.index -1
+        return [this.activeFile, this.index]
+    }
+
+    get currentIndex() {
+        return this.index
+    }
+
+    get activeFile() {
+        return this.assets[this.index]
+    }
+}
+
+
+const setup = (resultBody, assets) => {
+    if (!assets.length) {
+        resultBody.querySelector('.media').classList.add('hidden')
+        return
+    }
+
+    const mediaViewer = new MediaViewer(assets)
+    const container = resultBody.querySelector('.media-container')
+    const leftArrow = resultBody.querySelector('.media-container__nav--left')
+    const rightArrow = resultBody.querySelector('.media-container__nav--right')
+    const mediaName = resultBody.querySelector('.media__name')
+    const counter = resultBody.querySelector('.media__counter')
+    const imageEl = resultBody.querySelector('img')
+    const sourceEl = resultBody.querySelector('source')
+    const videoEl = resultBody.querySelector('video')
+
+    const setImg = (media, index) => {
+        if (media?.format_type === 'image') {
+            imageEl.src = media.path
+
+            imageEl.classList.remove('hidden')
+            videoEl.classList.add('hidden')
+        } else if (media?.format_type === 'video') {
+            sourceEl.src = media.path
+
+            videoEl.classList.remove('hidden')
+            imageEl.classList.add('hidden')
+        }
+
+        mediaName.innerText = media?.name
+        counter.innerText = `${index + 1} / ${assets.length}`
+    }
+    setImg(mediaViewer.activeFile, mediaViewer.currentIndex)
+
+    const moveLeft = () => {
+        const [media, index] = mediaViewer.prevActive()
+        setImg(media, index)
+    }
+    const doRight = () => {
+        const [media, index] = mediaViewer.nextActive()
+        setImg(media, index)
+    }
+    const openImg = () => {
+        window.open(mediaViewer.activeFile.path, '_blank')
+    }
+    if (assets.length === 1) {
+        container.classList.add('media-container--fullscreen')
+    } else {
+        leftArrow.addEventListener('click', moveLeft)
+        rightArrow.addEventListener('click', doRight)
+    }
+    imageEl.addEventListener('click', openImg)
+}
+
+module.exports = {
+    setup,
+}
+
+},{}],7:[function(require,module,exports){
+const { manager } = require('./datamanager.js')
+const storageModule = require('./storage.js')
+
+const genericSort = (list, key, ascending, customOrder) => {
+    let sorted
+    if (customOrder) {
+        sorted = list.sort((a, b) => {
+            const aValue = a.result.toLowerCase()
+            const bValue = b.result.toLowerCase()
+
+            const aIndex = customOrder.findIndex((item) => item.toLowerCase() === aValue)
+            const bIndex = customOrder.findIndex((item) => item.toLowerCase() === bValue)
+
+            // Compare the indices to determine the sort order
+            return aIndex - bIndex
+        })
+    } else {
+        sorted = list.sort((a, b) => a[key] === b[key] ? 0 : a[key] > b[key] ? 1 : -1)
+    }
+
+    if (ascending) {
+        sorted.reverse()
+    }
+    return sorted
+}
+
+const durationSort = (list, ascending) => {
+    const parseDuration = (duration) => {
+        if (duration.includes(':')) {
+            // If it's in the format "HH:mm:ss"
+            const [hours, minutes, seconds] = duration.split(':').map(Number)
+            return (hours * 3600 + minutes * 60 + seconds) * 1000
+        } else {
+            // If it's in the format "nnn ms"
+            return parseInt(duration)
+        }
+    }
+    const sorted = list.sort((a, b) => parseDuration(a['duration']) - parseDuration(b['duration']))
+    if (ascending) {
+        sorted.reverse()
+    }
+    return sorted
+}
+
+const doInitSort = () => {
+    const type = storageModule.getSort(manager.initialSort)
+    const ascending = storageModule.getSortDirection()
+    const list = manager.testSubset
+    const initialOrder = ['Error', 'Failed', 'Rerun', 'XFailed', 'XPassed', 'Skipped', 'Passed']
+
+    storageModule.setSort(type)
+    storageModule.setSortDirection(ascending)
+
+    if (type?.toLowerCase() === 'original') {
+        manager.setRender(list)
+    } else {
+        let sortedList
+        switch (type) {
+        case 'duration':
+            sortedList = durationSort(list, ascending)
+            break
+        case 'result':
+            sortedList = genericSort(list, type, ascending, initialOrder)
+            break
+        default:
+            sortedList = genericSort(list, type, ascending)
+            break
+        }
+        manager.setRender(sortedList)
+    }
+}
+
+const doSort = (type, skipDirection) => {
+    const newSortType = storageModule.getSort(manager.initialSort) !== type
+    const currentAsc = storageModule.getSortDirection()
+    let ascending
+    if (skipDirection) {
+        ascending = currentAsc
+    } else {
+        ascending = newSortType ? false : !currentAsc
+    }
+    storageModule.setSort(type)
+    storageModule.setSortDirection(ascending)
+
+    const list = manager.testSubset
+    const sortedList = type === 'duration' ? durationSort(list, ascending) : genericSort(list, type, ascending)
+    manager.setRender(sortedList)
+}
+
+module.exports = {
+    doInitSort,
+    doSort,
+}
+
+},{"./datamanager.js":1,"./storage.js":8}],8:[function(require,module,exports){
+const possibleFilters = [
+    'passed',
+    'skipped',
+    'failed',
+    'error',
+    'xfailed',
+    'xpassed',
+    'rerun',
+]
+
+const getVisible = () => {
+    const url = new URL(window.location.href)
+    const settings = new URLSearchParams(url.search).get('visible')
+    const lower = (item) => {
+        const lowerItem = item.toLowerCase()
+        if (possibleFilters.includes(lowerItem)) {
+            return lowerItem
+        }
+        return null
+    }
+    return settings === null ?
+        possibleFilters :
+        [...new Set(settings?.split(',').map(lower).filter((item) => item))]
+}
+
+const hideCategory = (categoryToHide) => {
+    const url = new URL(window.location.href)
+    const visibleParams = new URLSearchParams(url.search).get('visible')
+    const currentVisible = visibleParams ? visibleParams.split(',') : [...possibleFilters]
+    const settings = [...new Set(currentVisible)].filter((f) => f !== categoryToHide).join(',')
+
+    url.searchParams.set('visible', settings)
+    window.history.pushState({}, null, unescape(url.href))
+}
+
+const showCategory = (categoryToShow) => {
+    if (typeof window === 'undefined') {
+        return
+    }
+    const url = new URL(window.location.href)
+    const currentVisible = new URLSearchParams(url.search).get('visible')?.split(',').filter(Boolean) ||
+        [...possibleFilters]
+    const settings = [...new Set([categoryToShow, ...currentVisible])]
+    const noFilter = possibleFilters.length === settings.length || !settings.length
+
+    noFilter ? url.searchParams.delete('visible') : url.searchParams.set('visible', settings.join(','))
+    window.history.pushState({}, null, unescape(url.href))
+}
+
+const getSort = (initialSort) => {
+    const url = new URL(window.location.href)
+    let sort = new URLSearchParams(url.search).get('sort')
+    if (!sort) {
+        sort = initialSort || 'result'
+    }
+    return sort
+}
+
+const setSort = (type) => {
+    const url = new URL(window.location.href)
+    url.searchParams.set('sort', type)
+    window.history.pushState({}, null, unescape(url.href))
+}
+
+const getCollapsedCategory = (renderCollapsed) => {
+    let categories
+    if (typeof window !== 'undefined') {
+        const url = new URL(window.location.href)
+        const collapsedItems = new URLSearchParams(url.search).get('collapsed')
+        switch (true) {
+        case !renderCollapsed && collapsedItems === null:
+            categories = ['passed']
+            break
+        case collapsedItems?.length === 0 || /^["']{2}$/.test(collapsedItems):
+            categories = []
+            break
+        case /^all$/.test(collapsedItems) || collapsedItems === null && /^all$/.test(renderCollapsed):
+            categories = [...possibleFilters]
+            break
+        default:
+            categories = collapsedItems?.split(',').map((item) => item.toLowerCase()) || renderCollapsed
+            break
+        }
+    } else {
+        categories = []
+    }
+    return categories
+}
+
+const getSortDirection = () => JSON.parse(sessionStorage.getItem('sortAsc')) || false
+const setSortDirection = (ascending) => sessionStorage.setItem('sortAsc', ascending)
+
+const getCollapsedIds = () => JSON.parse(sessionStorage.getItem('collapsedIds')) || []
+const setCollapsedIds = (list) => sessionStorage.setItem('collapsedIds', JSON.stringify(list))
+
+module.exports = {
+    getVisible,
+    hideCategory,
+    showCategory,
+    getCollapsedIds,
+    setCollapsedIds,
+    getSort,
+    setSort,
+    getSortDirection,
+    setSortDirection,
+    getCollapsedCategory,
+    possibleFilters,
+}
+
+},{}]},{},[4]);
+    </script>
+  </footer>
+</html>

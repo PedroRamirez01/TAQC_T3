@@ -2,4 +2,5 @@
 *.png
 /.pytest_cache/
 */*/__pycache__/
-*.html
+*/__pycache__/
+# *.html
