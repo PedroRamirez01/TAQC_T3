@@ -20,13 +20,13 @@ pipeline {
 
     stage('Build Docker') {
       steps {
-        sh 'docker build --build-arg TOKEN=$TOKEN -t ecomus_image .'
+        sh 'docker build -t ecomus_image .'
       }
     }
 
     stage('Run Docker') {
       steps {
-        sh 'docker run -it ecomus_image -p 8081:80'
+        sh 'docker run -it ecomus_image -e TOKEN=$TOKEN -p 8081:80'
       }
     }
   }
