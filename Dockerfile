@@ -8,4 +8,4 @@ RUN pip install --no-cache-dir -r requirements.txt && python -m playwright insta
 
 VOLUME ["/app/login/report"]
 
-CMD ["pytest", "--html=login/report/report.html", "--self-contained-html"]
+CMD ["pytest", "--html=ecomus/report/report.html", "--self-contained-html"]
