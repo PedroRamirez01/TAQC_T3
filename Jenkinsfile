@@ -6,16 +6,18 @@ pipeline {
   }
 
   stages {
-    stage('Configurar Git safe.directory') {
+    stage('Clean Workspace') {
       steps {
-        sh 'git config --global --add safe.directory /var/jenkins_home/workspace/ecomus'
+        deleteDir()
       }
     }
-    stage('Verificar Docker') {
+
+    stage('Checkout') {
       steps {
-        sh 'docker --version'
+        checkout scm
       }
     }
+
     stage('Build Docker') {
       steps {
         sh 'docker build --build-arg TOKEN=$TOKEN -t ecomus_image .'
