@@ -23,5 +23,11 @@ pipeline {
         sh 'docker build --build-arg TOKEN=$TOKEN -t ecomus_image .'
       }
     }
+
+    stage('Run Docker') {
+      steps {
+        sh 'docker run -it -p 8081:80 ecomus_image'
+      }
+    }
   }
 }
