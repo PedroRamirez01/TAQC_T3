@@ -1,8 +1,8 @@
 import httpx
 import os
 
+BASE_URL = "https://automation-portal-bootcamp.vercel.app/"
 TOKEN = os.getenv("TOKEN")
-BASE_URL = os.getenv("BASE_URL")
 
 HEADERS = {
     "Authorization": f"Bearer {TOKEN}",
