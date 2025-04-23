@@ -26,7 +26,7 @@ pipeline {
 
     stage('Run Docker') {
       steps {
-        sh 'docker run -it -p 8081:80 ecomus_image'
+        sh 'docker run -it ecomus_image -p 8081:80'
       }
     }
   }
