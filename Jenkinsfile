@@ -6,6 +6,11 @@ pipeline {
   }
 
   stages {
+    stage('Configurar Git safe.directory') {
+      steps {
+        sh 'git config --global --add safe.directory /var/jenkins_home/workspace/ecomus'
+      }
+    }
     stage('Verificar Docker') {
       steps {
         sh 'docker --version'
