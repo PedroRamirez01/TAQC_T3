@@ -1,14 +1,17 @@
-FROM python:3.11-slim
+# Usa la imagen base oficial de Jenkins
+FROM jenkins/jenkins:lts
 
-WORKDIR /app
+# Cambia al usuario root para poder instalar cosas
+USER root
 
-ARG TOKEN
-ENV TOKEN=$TOKEN
+# Actualiza los repositorios y luego instala Docker CLI y Python 3
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    docker.io
 
-COPY . .
+# Da permisos al usuario de Jenkins para usar Docker
+RUN usermod -aG docker jenkins
 
-RUN pip install --no-cache-dir -r requirements.txt && python -m playwright install --with-deps
-
-VOLUME ["/app/ecomus/report"]
-
-CMD ["sleep", "infinity"]
+# Cambia al usuario de Jenkins
+USER jenkins
