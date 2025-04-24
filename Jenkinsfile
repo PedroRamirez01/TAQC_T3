@@ -31,5 +31,12 @@ pipeline {
         sh 'docker run -d --name container_ecomus_image -e TOKEN=$TOKEN -p 8082:8082 ecomus_image'
       }
     }
+
+    stage('Test') {
+      steps {
+        sh 'docker exec container_ecomus_image pytest --html=ecomus/report/report.html --self-contained-html || true'
+        sh 'docker exec -d container_ecomus_image python3 -m http.server 8082 --directory ecomus/report/'
+      }
+    }
   }
 }
