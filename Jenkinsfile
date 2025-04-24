@@ -9,8 +9,8 @@ pipeline {
     stage('Clean Workspace') {
       steps {
         deleteDir()
-        sh 'docker stop container_ecomus_image || true'
-        sh 'docker rm container_ecomus_image || true'
+        sh 'docker stop jenkins-docker || true'
+        sh 'docker rm jenkins-docker || true'
       }
     }
 
@@ -28,9 +28,9 @@ pipeline {
 
     stage('Run Docker') {
       steps {
-        sh 'docker run -d --name container_ecomus_image -e TOKEN=$TOKEN -p 8082:8082 ecomus_image'
-        sh 'docker exec container_ecomus_image pytest --html=ecomus/report/report.html --self-contained-html || true'
-        sh 'docker exec -d container_ecomus_image python3 -m http.server 8082 --directory ecomus/report/'
+        sh 'docker run -d --name jenkins-docker -e TOKEN=$TOKEN -p 8082:8082 ecomus_image'
+        sh 'docker exec jenkins-docker pytest --html=ecomus/report/report.html --self-contained-html || true'
+        sh 'docker exec -d jenkins-docker python3 -m http.server 8082 --directory ecomus/report/'
       }
     }
   }
