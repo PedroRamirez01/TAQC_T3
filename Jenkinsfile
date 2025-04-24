@@ -6,13 +6,13 @@ pipeline {
   }
 
   stages {
-    stage('Clean Workspace') {
-      steps {
-        deleteDir()
-        sh 'docker stop jenkins-docker || true'
-        sh 'docker rm jenkins-docker || true'
-      }
-    }
+    // stage('Clean Workspace') {
+    //   steps {
+    //     deleteDir()
+    //     sh 'docker stop jenkins-docker || true'
+    //     sh 'docker rm jenkins-docker || true'
+    //   }
+    // }
 
     stage('Checkout') {
       steps {
