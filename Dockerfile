@@ -9,6 +9,6 @@ COPY . .
 
 RUN pip install --no-cache-dir -r requirements.txt && python -m playwright install --with-deps
 
-VOLUME ["/app/login/report"]
+VOLUME ["/app/ecomus/report"]
 
-CMD ["pytest", "--html=ecomus/report/report.html", "--self-contained-html"]
+CMD ["sleep", "infinity"]
