@@ -6,14 +6,6 @@ pipeline {
   }
 
   stages {
-    stage('Clean Workspace') {
-      steps {
-        deleteDir()
-        sh 'docker stop jenkins-docker || true'
-        sh 'docker rm jenkins-docker || true'
-      }
-    }
-
     stage('Checkout') {
       steps {
         checkout scm
@@ -28,9 +20,9 @@ pipeline {
 
     stage('Run Docker') {
       steps {
-        sh 'docker run -d --name jenkins-docker -e TOKEN=$TOKEN -p 8082:8082 ecomus_image'
-        sh 'docker exec jenkins-docker pytest --html=ecomus/report/report.html --self-contained-html || true'
-        sh 'docker exec -d jenkins-docker python3 -m http.server 8082 --directory ecomus/report/'
+        sh 'docker run -d --name ecomus_image_container -e TOKEN=$TOKEN -p 8082:8082 ecomus_image'
+        sh 'docker exec ecomus_image_container pytest --html=ecomus/report/report.html --self-contained-html || true'
+        sh 'docker exec -d ecomus_image_container python3 -m http.server 8082 --directory ecomus/report/'
       }
     }
   }

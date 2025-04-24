@@ -1,7 +1,8 @@
 import httpx
 import os
+from config.config import Config
 
-BASE_URL = "https://automation-portal-bootcamp.vercel.app/"
+URL_BASE = Config().URL_BASE
 TOKEN = os.getenv("TOKEN")
 
 HEADERS = {
@@ -14,7 +15,7 @@ async def get_user_by_email(email):
         return None
     async with httpx.AsyncClient() as client:
         try:
-            response = await client.get(f"{BASE_URL}api/user?email={email}", headers=HEADERS)
+            response = await client.get(f"{URL_BASE}api/user?email={email}", headers=HEADERS)
             response.raise_for_status()
             return response.json()
         except httpx.HTTPStatusError as e:
@@ -28,7 +29,7 @@ async def delete_user_by_id(email):
         return None
     async with httpx.AsyncClient() as client:
         try:
-            response = await client.delete(f"{BASE_URL}api/user/{user['id']}", headers=HEADERS)
+            response = await client.delete(f"{URL_BASE}api/user/{user['id']}", headers=HEADERS)
             return response.status_code
         except httpx.RequestError:
             return None
