@@ -1,9 +1,14 @@
-FROM jenkins/jenkins:lts
+FROM python:3.11-slim
 
-USER root
+WORKDIR /app
 
-RUN apt-get update && apt-get install -y \
-    python3 \
-    python3-pip
+ARG TOKEN
+ENV TOKEN=$TOKEN
 
-USER jenkins
+COPY . .
+
+RUN pip install --no-cache-dir -r requirements.txt && python -m playwright install --with-deps
+
+VOLUME ["/app/ecomus/report"]
+
+CMD ["sleep", "infinity"]

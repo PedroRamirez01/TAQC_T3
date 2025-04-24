@@ -6,14 +6,6 @@ pipeline {
   }
 
   stages {
-    stage('Python Test') {
-            steps {
-                script {
-                    sh 'python3 --version'  // Verificar que Python 3 está instalado
-                }
-            }
-        }
-
     stage('Clean Workspace') {
       steps {
         deleteDir()
