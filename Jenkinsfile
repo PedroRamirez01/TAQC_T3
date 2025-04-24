@@ -9,8 +9,8 @@ pipeline {
     stage('Clean Workspace') {
       steps {
         deleteDir()
-        sh 'docker stop container_ecomus_image || true'
-        sh 'docker rm container_ecomus_image || true'
+        // sh 'docker stop container_ecomus_image || true'
+        // sh 'docker rm container_ecomus_image || true'
       }
     }
 
