@@ -7,7 +7,7 @@ ENV TOKEN=$TOKEN
 
 COPY . .
 
-RUN pytest --html=ecomus/report/report.html --self-contained-html || true
+RUN pip install --no-cache-dir -r requirements.txt && python -m playwright install --with-deps && pytest --html=ecomus/report/report.html --self-contained-html || true
 
 EXPOSE 8082
 
