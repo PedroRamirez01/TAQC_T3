@@ -13,25 +13,25 @@ pipeline {
                 }
             }
         }
-    // stage('Clean Workspace') {
-    //   steps {
-    //     deleteDir()
-    //     sh 'docker stop container_ecomus_image || true'
-    //     sh 'docker rm container_ecomus_image || true'
-    //   }
-    // }
+    stage('Clean Workspace') {
+      steps {
+        deleteDir()
+        sh 'docker stop container_ecomus_image || true'
+        sh 'docker rm container_ecomus_image || true'
+      }
+    }
 
-    // stage('Checkout') {
-    //   steps {
-    //     checkout scm
-    //   }
-    // }
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
+    }
 
-    // stage('Build Docker') {
-    //   steps {
-    //     sh 'docker build -t ecomus_image .'
-    //   }
-    // }
+    stage('Build Docker') {
+      steps {
+        sh 'docker build -t ecomus_image .'
+      }
+    }
 
     // stage('Run Docker') {
     //   steps {
