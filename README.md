@@ -62,4 +62,8 @@ El objetivo de este proyecto es automatizar el proceso de compra de un producto 
   ./docker-install.sh
 ```
 
-5. Ingresar a Jenkins
+5. Ingresar a Jenkins, añade TOKEN como credencial
+
+6. Crea Job, pipeline ingresando url del proyecto
+
+7. Ejecuta pipeline
