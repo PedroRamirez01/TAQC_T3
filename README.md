@@ -36,3 +36,30 @@ El objetivo de este proyecto es automatizar el proceso de compra de un producto 
 ```
   pytest --html=login/report/report.html --self-contained-html
 ```
+
+##  Jenkins
+1. Traer imagen desde Docker:
+
+```bash
+  sudo docker pull jenkins/jenkins:lts-jdk17
+```
+
+2. Levantar contenedor:
+```bash
+  sudo docker run --name jenkins-docker -u root -d -p 8080:8080 -p 50000:50000 -v jenkins_home:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock jenkins/jenkins:lts 
+```
+
+3. Ingresar a la terminal de jenkins para instalar Docker dentro del contenedor:
+```bash
+  apt-get update
+  apt-get upgrade
+  apt-get install nano
+```
+
+4. Copiar script docker-install.sh dentro de archivo docker-install.sh:
+```bash
+  nano docker-install.sh
+  ./docker-install.sh
+```
+
+5. Ingresar a Jenkins
