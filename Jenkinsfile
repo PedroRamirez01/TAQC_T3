@@ -6,17 +6,9 @@ pipeline {
   }
 
   stages {
-    // stage('Clean Workspace') {
-    //   steps {
-    //     deleteDir()
-    //     sh 'docker stop jenkins-docker || true'
-    //     sh 'docker rm jenkins-docker || true'
-    //   }
-    // }
-
     stage('Checkout') {
       steps {
-        sh 'git clone https://github.com/PedroRamirez01/TAQC_T3.git .'
+        checkout scm
       }
     }
 
