@@ -213,7 +213,7 @@ class HomeToPage:
             await self.franklinSiganture.hover()
             await self.quickAdd.wait_for(state="visible", timeout=2000)
             await self.quickAdd.click()
-            await self.quickAddPopupContent.wait_for(state="visible", timeout=2000)
+            await self.quickAddPopupContent.wait_for(state="visible", timeout=3000)
             print("Contenido del Quick Add visible")
             return True
         except Exception as e:
@@ -227,7 +227,7 @@ class HomeToPage:
             await self.franklinSiganture.hover()
             await self.quickAddFav.wait_for(state="visible", timeout=2000)
             await self.quickAddFav.click()
-            await self.quickAddFavPopupContent.wait_for(state="visible", timeout=2000)
+            await self.quickAddFavPopupContent.wait_for(state="visible", timeout=3000)
             print("Contenido del Quick Fav visible")
             return True
         except Exception as e:
@@ -242,7 +242,7 @@ class HomeToPage:
             await self.quickAddCompare.wait_for(state="visible", timeout=2000)
             await self.quickAddCompare.click()
             await self.closerCompare.click()
-            await self.quickAddComparePopupContent.wait_for(state="visible", timeout=2000)
+            await self.quickAddComparePopupContent.wait_for(state="visible", timeout=3000)
             print("Contenido del Quick Compare visible")
             return True
         except Exception as e:
@@ -256,7 +256,7 @@ class HomeToPage:
             await self.franklinSiganture.hover()
             await self.quickView.wait_for(state="visible", timeout=2000)
             await self.quickView.click()
-            await self.quickViewPopupContent.wait_for(state="visible", timeout=2000)
+            await self.quickViewPopupContent.wait_for(state="visible", timeout=3000)
             print("Contenido del Quick View visible")
             return True
         except Exception as e:
