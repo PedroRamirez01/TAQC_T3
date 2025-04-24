@@ -26,7 +26,7 @@ pipeline {
 
     stage('Run Docker') {
       steps {
-        sh 'docker run ecomus_image -e TOKEN=$TOKEN -p 8081:80'
+        sh 'docker run -d -e TOKEN=$TOKEN -p 8081:80 ecomus_image'
       }
     }
   }
