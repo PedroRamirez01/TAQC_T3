@@ -7,8 +7,10 @@ ENV TOKEN=$TOKEN
 
 COPY . .
 
-RUN pip install --no-cache-dir -r requirements.txt && python -m playwright install --with-deps
+RUN pytest --html=ecomus/report/report.html --self-contained-html || true
 
-VOLUME ["/app/login/report"]
+EXPOSE 8082
 
-CMD ["pytest", "--html=ecomus/report/report.html", "--self-contained-html"]
+VOLUME ["/app/ecomus/report"]
+
+CMD ["python3", "-m", "http.server", "8082", "--directory", "ecomus/report"]
