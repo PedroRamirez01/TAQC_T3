@@ -16,7 +16,7 @@ pipeline {
 
     stage('Checkout') {
       steps {
-        checkout scm
+        sh 'git clone https://github.com/PedroRamirez01/TAQC_T3.git .'
       }
     }
 
