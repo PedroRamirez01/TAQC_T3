@@ -74,10 +74,6 @@ class FilterProductPage:
         await self.addToCart.click()
         return await self.page.locator(".tf-totals-total-value").inner_text()
 
-    async def outOfStock(self):
-        await self.filterBttn.click()
-        await self.outOfStockFilter.click()
-
     async def doFilterMenDiv(self):
         await self.filterBttn.click()
         await self.filterMen.click()
@@ -136,6 +132,17 @@ class FilterProductPage:
             except Exception:
                 if attempy < Config.MAX_ATTEMPTS - 1:
                     await self.page.wait_for_timeout(Config.DELAY)
+
+    async def outOfStock(self):
+        await self.filterBttn.click()
+        await self.outOfStockFilter.click()
+
+    async def addCart(self):
+        await self.producto.hover()
+        await self.producto.wait_for(state="visible")
+        await self.quickAdd.click()
+        await self.addToCart.click()
+        return await self.page.locator(".tf-totals-total-value").inner_text()
 
     async def PopUp(self):
         if await self.closePopUp.count() > 0 and await self.closePopUp.is_visible():
@@ -248,4 +255,3 @@ class FilterProductPage:
             return urls
         except Exception as e :
             print(f"Error : {e}")
-
