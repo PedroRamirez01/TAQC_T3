@@ -4,20 +4,20 @@ Automatización de pruebas utilizando Playwright para realizar un flujo completo
 
 ---
 
-## 🎯 Objetivo
+## Objetivo
 
 El objetivo de este proyecto es automatizar el proceso de compra de un producto en una tienda en línea, desde el registro de un nuevo usuario hasta la finalización de la compra, asegurando que cada paso funcione correctamente.
 
 ---
 
-## 🧰 Tecnologías utilizadas
+## Tecnologías utilizadas
 
 - **Playwright** – Framework de automatización de pruebas.
 - **Python** – Lenguaje de programación.
 
 ---
 
-## 🔁 Flujo de automatización
+## Flujo de automatización
 
 1. **Registro de usuario:** Creación de una nueva cuenta en la tienda en línea.
 2. **Inicio de sesión:** Autenticación con las credenciales del usuario registrado.
@@ -27,7 +27,7 @@ El objetivo de este proyecto es automatizar el proceso de compra de un producto 
 
 ---
 
-## 💻 Instalación y Ejecución
+## Instalación y Ejecución
 
 1. Clonar el repositorio:
 
@@ -50,26 +50,24 @@ pytest --html=login/report/report.html --self-contained-html
 
 ---
 
-## ⚙️ Jenkins + Docker Setup
+## Jenkins + Docker Setup
 
 Este proyecto utiliza Jenkins dentro de un contenedor Docker para automatizar integraciones y despliegues.
 
-### 🔧 Paso 1: Levantar Jenkins con Docker
+### Paso 1: Levantar Jenkins con Docker
 
 ```bash
 sudo docker-compose build
 sudo docker-compose up -d
 ```
 
-### 🖥️ Paso 2: Acceder a la terminal de Jenkins
+### Paso 2: Acceder a la terminal de Jenkins
 
 ```bash
 sudo docker exec -it jenkins bash
 ```
 
-> Asegúrate de que el nombre del contenedor coincida con el definido en tu `docker-compose.yml`.
-
-### 🔐 Paso 3: Crear credencial 'TOKEN'
+### Paso 3: Crear credencial 'TOKEN'
 
 En la interfaz web de Jenkins (`http://localhost:8080`):
 
@@ -78,9 +76,9 @@ En la interfaz web de Jenkins (`http://localhost:8080`):
 3. Crea una nueva credencial:
    - Tipo: **Secret text**
    - ID: `TOKEN`
-   - Secret: tu token personal de GitHub.
+   - Secret: ****************
 
-### 🛠️ Paso 4: Configurar un Job (Pipeline)
+### Paso 4: Configurar un Job (Pipeline)
 
 1. Crea un nuevo ítem en Jenkins y selecciona **"Pipeline"**.
 2. Marca la opción **GitHub project** y coloca:
@@ -99,6 +97,6 @@ En la interfaz web de Jenkins (`http://localhost:8080`):
      */main
      ```
 
-### ▶️ Paso 5: Ejecutar el Job
+### ▶Paso 5: Ejecutar el Job
 
 Haz clic en **"Build Now"** para correr el pipeline.
