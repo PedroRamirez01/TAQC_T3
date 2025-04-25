@@ -1,10 +1,5 @@
 pipeline {
-  agent {
-    docker {
-      image 'docker:20.10.24-dind'
-      args '-v /var/run/docker.sock:/var/run/docker.sock'
-    }
-  }
+  agent any
 
   environment {
     TOKEN = credentials('TOKEN')
@@ -25,6 +20,7 @@ pipeline {
 
     stage('Run Docker') {
       steps {
+        sh 'docker rm -f ecomus_image_container || true'
         sh 'docker run -d --name ecomus_image_container -e TOKEN=$TOKEN -p 8082:8082 ecomus_image'
         sh 'docker exec ecomus_image_container pytest --html=ecomus/report/report.html --self-contained-html || true'
         sh 'docker exec -d ecomus_image_container python3 -m http.server 8082 --directory ecomus/report/'
