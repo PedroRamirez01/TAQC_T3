@@ -5,7 +5,10 @@ from models.register_login_users import RegisterLoginUser
 # Data for test_register.py
 register_valid_users = [
     RegisterUser(first_name="Firstname", last_name="Lastname", email="team_3_RVU1@gmail.com", password="StrongPass123"),
-    RegisterUser(first_name="Firstname", last_name="Lastname", email="team_3_RVU2@hotmail.com", password="AnotherStrong123"),
+    RegisterUser(first_name="Firstname", last_name="Lastname", email="team_3_RVU2@hotmail.com", password="StrongPass123"),
+    RegisterUser(first_name="Firstname", last_name="Lastname", email="team_3_RVU3@outlook.com", password="StrongPass123"),
+    RegisterUser(first_name="Firstname", last_name="Lastname", email="team_3_RVU4@live.es", password="StrongPass123"),
+    RegisterUser(first_name="Firstname", last_name="Lastname", email="team_3_RVU4@yahoo.com", password="StrongPass123"),
 ]
 
 register_empty_fields_users = [
