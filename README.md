@@ -97,6 +97,6 @@ En la interfaz web de Jenkins (`http://localhost:8080`):
      */main
      ```
 
-### ▶Paso 5: Ejecutar el Job
+### Paso 5: Ejecutar el Job
 
 Haz clic en **"Build Now"** para correr el pipeline.
