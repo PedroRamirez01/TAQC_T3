@@ -61,13 +61,7 @@ sudo docker-compose build
 sudo docker-compose up -d
 ```
 
-### Paso 2: Acceder a la terminal de Jenkins
-
-```bash
-sudo docker exec -it jenkins bash
-```
-
-### Paso 3: Crear credencial 'TOKEN'
+### Paso 2: Crear credencial 'TOKEN'
 
 En la interfaz web de Jenkins (`http://localhost:8080`):
 
@@ -78,7 +72,7 @@ En la interfaz web de Jenkins (`http://localhost:8080`):
    - ID: `TOKEN`
    - Secret: ****************
 
-### Paso 4: Configurar un Job (Pipeline)
+### Paso 3: Configurar un Job (Pipeline)
 
 1. Crea un nuevo ítem en Jenkins y selecciona **"Pipeline"**.
 2. Marca la opción **GitHub project** y coloca:
@@ -97,6 +91,6 @@ En la interfaz web de Jenkins (`http://localhost:8080`):
      */main
      ```
 
-### Paso 5: Ejecutar el Job
+### Paso 4: Ejecutar el Job
 
 Haz clic en **"Build Now"** para correr el pipeline.
