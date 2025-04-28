@@ -1,4 +1,4 @@
-from playwright.async_api import Page
+from playwright.async_api import Page, expect
 
 class CheckoutPage:
 
@@ -113,8 +113,8 @@ class CheckoutPage:
         :param label: Describes if it is a 'valid' or 'invalid' checkout.
         """
         if label.startswith("valid"):
-            assert await self.success_message.is_visible(), f"[{label}] Expected success message not found."
+            await expect(self.success_message).to_be_visible()
         else:
-            assert not await self.success_message.is_visible(), f"[{label}] Unexpected success message for invalid input."
+            await expect(self.success_message).not_to_be_visible()
 
     
