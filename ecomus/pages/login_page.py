@@ -4,20 +4,20 @@ from config.config import Config
 
 class LoginPage:
     """_summary_
-    Clase que representa la página de inicio de sesión.
-    Contiene métodos para navegar a la página, completar los campos de inicio de sesión y enviar el formulario.
-    Atributos:
-        url (str): URL de la página de inicio de sesión.
-        page (Page): Instancia de la página de Playwright.
-        field_email (Locator): Campo de entrada para el correo electrónico.
-        field_password (Locator): Campo de entrada para la contraseña.
-        btn_login (Locator): Botón para enviar el formulario de inicio de sesión.
-    Métodos:
-        navigate(): Navega a la página de inicio de sesión.
-        fill_email(email: str): Completa el campo de correo electrónico.
-        fill_password(password: str): Completa el campo de contraseña.
-        submit(): Envía el formulario de inicio de sesión.
-        login(user: LoginUser): Realiza el inicio de sesión con un usuario dado.
+    Class representing the login page.
+    Contains methods for navigating to the page, filling in the login fields, and submitting the form.
+    Attributes:
+        url (str): URL of the login page.
+        page (Page): Instance of the Playwright page.
+        field_email (Locator): Email input field.
+        field_password (Locator): Password input field.
+        btn_login (Locator): Button to submit the login form.
+    Methods:
+        navigate(): Navigates to the login page.
+        fill_email(email: str): Fills in the email field.
+        fill_password(password: str): Fills in the password field.
+        submit(): Submits the login form.
+        login(user: LoginUser): Logs in with the given user.
     """
 
     def __init__(self, page: Page):

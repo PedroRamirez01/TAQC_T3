@@ -3,6 +3,16 @@ from playwright.async_api import Page
 from models.register_user import RegisterUser
 from utils.users_data import register_valid_users, register_empty_fields_users, register_invalid_email_users, register_invalid_password_users, register_invalid_firstname_users, register_invalid_lastname_users
 
+"""_summary_
+The following tests were performed:
+    1. Verify that registration is successful and redirects to the login page.
+    2. Registration with empty fields: Verify that registration fails if there are empty fields.
+    3. Registration with invalid first name: Verify that registration fails if the first name is invalid.
+    4. Registration with invalid last name: Verify that registration fails if the last name is invalid.
+    5. Registration with invalid email: Verify that registration fails if the email is invalid.
+    6. Registration with invalid password: Verify that registration fails if the password does not meet the security requirements.
+"""
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     "user, auto_delete_user",
@@ -10,10 +20,8 @@ from utils.users_data import register_valid_users, register_empty_fields_users, 
     indirect=["auto_delete_user"]
 )
 async def test_successful_registration(register_page: Page, user: RegisterUser, auto_delete_user):
-    """
-    Verifica que el registro sea exitoso y redirija a la página de inicio de sesión."""
     await register_page.register(user)
-    assert "/login" in register_page.page.url, f"Usuario valido no creado: {user}"
+    assert "/login" in register_page.page.url, f"Valid user not created: {user}."
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
@@ -22,11 +30,8 @@ async def test_successful_registration(register_page: Page, user: RegisterUser, 
     indirect=["auto_delete_user"]
 )
 async def test_registration_with_empty_fields(register_page: Page, user: RegisterUser, auto_delete_user):
-    """
-    Verifica que el registro falle si hay campos vacíos.
-    """
     await register_page.register(user)
-    assert "/register" in register_page.page.url, f"Se creó un usuario con 1 o más campos vacíos: {user}"
+    assert "/register" in register_page.page.url, f"A user was created with 1 or more empty fields: {user}."
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
@@ -35,11 +40,8 @@ async def test_registration_with_empty_fields(register_page: Page, user: Registe
     indirect=["auto_delete_user"]
 )
 async def test_registration_with_invalid_firstname(register_page: Page, user: RegisterUser, auto_delete_user):
-    """
-    Verifica que el registro falle si el firstname es inválido.
-    """
     await register_page.register(user)
-    assert "/register" in register_page.page.url, f"Se creó un usuario con un firstname inválido: {user}"
+    assert "/register" in register_page.page.url, f"A user was created with an invalid firstname: {user}."
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
@@ -48,11 +50,8 @@ async def test_registration_with_invalid_firstname(register_page: Page, user: Re
     indirect=["auto_delete_user"]
 )
 async def test_registration_with_invalid_lastname(register_page: Page, user: RegisterUser, auto_delete_user):
-    """
-    Verifica que el registro falle si el lastname es inválido.
-    """
     await register_page.register(user)
-    assert "/register" in register_page.page.url, f"Se creó un usuario con un lastname inválido: {user}"
+    assert "/register" in register_page.page.url, f"A user was created with an invalid lastname: {user}."
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
@@ -61,11 +60,8 @@ async def test_registration_with_invalid_lastname(register_page: Page, user: Reg
     indirect=["auto_delete_user"]
 )
 async def test_registration_with_invalid_email(register_page: Page, user: RegisterUser, auto_delete_user):
-    """
-    Verifica que el registro falle si el email es inválido.
-    """
     await register_page.register(user)
-    assert "/register" in register_page.page.url, f"Se creó un usuario con un email inválido: {user}"
+    assert "/register" in register_page.page.url, f"A user was created with an invalid email address: {user}."
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
@@ -74,8 +70,5 @@ async def test_registration_with_invalid_email(register_page: Page, user: Regist
     indirect=["auto_delete_user"]
 )
 async def test_registration_with_invalid_password_security(register_page: Page, user: RegisterUser, auto_delete_user):
-    """
-    Verifica que el registro falle si la contraseña no cumple con los requisitos de seguridad.
-    """
     await register_page.register(user)
-    assert "/register" in register_page.page.url, f"Se creó un usuario con una contraseña inválida: {user}"
+    assert "/register" in register_page.page.url, f"A user was created with an invalid password: {user}."
