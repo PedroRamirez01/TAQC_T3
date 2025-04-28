@@ -1,48 +1,51 @@
 # TAQC_T3
 
-Automatización de pruebas utilizando Playwright para realizar un flujo completo de compra en una tienda en línea.
+Test automation using Playwright to perform a complete checkout flow in an online store.
 
 ---
 
-## Objetivo
+## Goals
 
-El objetivo de este proyecto es automatizar el proceso de compra de un producto en una tienda en línea, desde el registro de un nuevo usuario hasta la finalización de la compra, asegurando que cada paso funcione correctamente.
-
----
-
-## Tecnologías utilizadas
-
-- **Playwright** – Framework de automatización de pruebas.
-- **Python** – Lenguaje de programación.
+The goal of this project is to automate the online store purchasing process, from new user registration to checkout, ensuring that each step runs smoothly.
 
 ---
 
-## Flujo de automatización
+## Technologies used
 
-1. **Registro de usuario:** Creación de una nueva cuenta en la tienda en línea.
-2. **Inicio de sesión:** Autenticación con las credenciales del usuario registrado.
-3. **Búsqueda de producto:** Localización de un producto específico en la tienda.
-4. **Añadir al carrito:** Agregar una cantidad específica del producto al carrito de compras.
-5. **Finalizar compra:** Completar el proceso de compra del producto.
+- **Playwright** – Test automation framework.
+- **Python** – Programming language.
+- **Git** – Version control.
+- **Docker** – Containerization.
+- **Jenkins** – CI/CD
 
 ---
 
-## Instalación y Ejecución
+## Individual Automation Flow
 
-1. Clonar el repositorio:
+1. **User Registration:** Create a new account in the online store.
+2. **Login:** Authenticate with the registered user's credentials.
+3. **Product Search:** Locate a specific product in the store.
+4. **Add to Cart:** Add a specific quantity of the product to the shopping cart.
+5. **Checkout:** Complete the product checkout process.
+
+---
+
+## Installation and Launch
+
+1. Clone the repository:
 
 ```bash
-git clone https://github.com/tu-usuario/TAQC_T3.git
+git clone https://github.com/PedroRamirez01/TAQC_T3.git
 cd TAQC_T3
 ```
 
-2. Instalar dependencias:
+2. Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Ejecutar las pruebas:
+3. Run the tests:
 
 ```bash
 pytest --html=login/report/report.html --self-contained-html
@@ -52,24 +55,24 @@ pytest --html=login/report/report.html --self-contained-html
 
 ## Jenkins + Docker Setup
 
-Este proyecto utiliza Jenkins dentro de un contenedor Docker para automatizar integraciones y despliegues.
+This project uses Jenkins inside a Docker container to automate integrations and deployments.
 
-### Paso 1: Levantar Jenkins con Docker
+### Step 1: Launch Jenkins
 
 ```bash
 sudo docker-compose build
 sudo docker-compose up -d
 ```
 
-### Paso 2: Crear credencial 'TOKEN'
+### Step 2: Create a 'TOKEN' Credential
 
-En la interfaz web de Jenkins (`http://localhost:8080`):
+In the Jenkins web interface (http://localhost:8080):
 
-1. Ve a **"Manage Jenkins" > "Credentials"**.
-2. Selecciona el almacén de credenciales (por ejemplo, "(global)").
-3. Crea una nueva credencial:
-   - Tipo: **Secret text**
-   - ID: `TOKEN`
+1. Go to Manage Jenkins > Credentials.
+2. Select the credential store.
+3. Create a new credential:
+   - Type: Secret text
+   - ID: TOKEN
    - Secret: ****************
 
 ### Paso 3: Configurar un Job (Pipeline)
@@ -77,7 +80,7 @@ En la interfaz web de Jenkins (`http://localhost:8080`):
 1. Crea un nuevo ítem en Jenkins y selecciona **"Pipeline"**.
 2. Marca la opción **GitHub project** y coloca:
    ```
-   https://github.com/tu-usuario/TAQC_T3.git
+   https://github.com/PedroRamirez01/TAQC_T3.git
    ```
 3. En la sección **Pipeline**:
    - **Definition**: `Pipeline script from SCM`
@@ -91,6 +94,25 @@ En la interfaz web de Jenkins (`http://localhost:8080`):
      */main
      ```
 
-### Paso 4: Ejecutar el Job
+### Step 3: Configure a Job (Pipeline)
 
-Haz clic en **"Build Now"** para correr el pipeline.
+1. Create a new item in Jenkins and select **Pipeline**.
+2. Check the **GitHub project** option and enter:
+   ```
+   https://github.com/PedroRamirez01/TAQC_T3.git
+   ```
+3. In the **Pipeline** section:
+   - **Definition**: `Pipeline script from SCM`
+   - **SCM**: `Git`
+   - **Repository URL**:
+      ```
+      https://github.com/PedroRamirez01/TAQC_T3.git
+      ```
+   - **Branches to build**:
+      ```
+      */main
+      ```
+
+### Step 4: Run the Job
+
+Click **"Build Now"** to run the pipeline.

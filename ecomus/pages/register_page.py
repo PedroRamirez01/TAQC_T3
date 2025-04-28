@@ -4,24 +4,24 @@ from config.config import Config
 
 class RegisterPage:
     """_summary_
-    Clase que representa la página de registro en el sitio web de prueba.
-    Proporciona métodos para interactuar con los elementos de la página y realizar el registro de un nuevo usuario.
-    Atributos:
-        url (str): URL de la página de registro.
-        page (Page): Instancia de la página de Playwright.
-        fieldFirstName (Locator): Localizador para el campo de nombre.
-        fieldLastName (Locator): Localizador para el campo de apellido.
-        fieldEmail (Locator): Localizador para el campo de correo electrónico.
-        fieldPassword (Locator): Localizador para el campo de contraseña.
-        btnRegister (Locator): Localizador para el botón de registro.
-    Métodos:
-        navigate(): Navega a la página de registro.
-        fill_first_name(firstName: str): Rellena el campo de nombre.
-        fill_last_name(lastName: str): Rellena el campo de apellido.
-        fill_email(email: str): Rellena el campo de correo electrónico.
-        fill_password(password: str): Rellena el campo de contraseña.
-        submit(): Hace clic en el botón de registro.
-        register(user: RegisterUser): Realiza el registro del usuario utilizando los datos proporcionados.
+    Class that represents the registration page on the test website.
+    Provides methods for interacting with page elements and registering a new user.
+    Attributes:
+        url (str): URL of the registration page.
+        page (Page): Instance of the Playwright page.
+        fieldFirstName (Locator): Locator for the first name field.
+        fieldLastName (Locator): Locator for the last name field.
+        fieldEmail (Locator): Locator for the email field.
+        fieldPassword (Locator): Locator for the password field.
+        btnRegister (Locator): Locator for the registration button.
+    Methods:
+        navigate(): Navigates to the registration page.
+        fill_first_name(firstName: str): Fills the first name field.
+        fill_last_name(lastName: str): Fills the last name field.
+        fill_email(email: str): Fills in the email field.
+        fill_password(password: str): Fills in the password field.
+        submit(): Clicks the registration button.
+        register(user: RegisterUser): Registers the user using the provided data.
     """
 
     def __init__(self, page: Page) -> None:
