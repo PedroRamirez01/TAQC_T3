@@ -13,7 +13,7 @@ async def test_successful_registration(register_page: Page, user: RegisterUser, 
     """
     Verifica que el registro sea exitoso y redirija a la página de inicio de sesión."""
     await register_page.register(user)
-    assert "/login" in register_page.page.url, f"Usuario valido no creado: {user}"
+    assert "/login" in register_page.page.url, f"Usuario valido no creado: {user}" #expect
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(

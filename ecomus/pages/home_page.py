@@ -3,19 +3,41 @@ from config.config import Config
 
 class HomeToPage:
     """
-    Page Object Model para la página principal.
-    Permite interactuar con elementos destacados, categorías, productos y realizar acciones rápidas.
+        Modelo de Objeto de Página (POM) para la página principal de Ecomus e-commerce.
+
+        Esta clase implementa el patrón Page Object Model para la página principal del sitio web Ecomus.
+        Proporciona métodos para interactuar con elementos clave como:
+
+        - Botones de navegación y categorías
+        - Funcionalidad de búsqueda
+        - Acciones rápidas (Agregar al carrito, favoritos, comparar)
+        - Características de descubrimiento de productos
+        - Gestión de ventanas emergentes
+
+        Características principales:
+
+        - Navegación por categorías (Ropa, Paddles, Accesorios, Hombres)
+        - Búsqueda y filtrado de productos
+        - Funcionalidad de vista rápida y agregar al carrito
+        - Funciones de lista de deseos y comparación de productos
+        - Secciones de descubrimiento (Nuevos Artículos, Super Store, Serie SLK, Motion Pro)
+
+        Flujos principales:
+
+        - search_for_item: Realiza búsqueda de productos usando el icono y campo de búsqueda
+        - navigate_and_collect_discovery_urls: Navega por las secciones destacadas y recolecta URLs
+        - navigate_and_collect_category_urls: Navega por las categorías principales y recolecta URLs
+        - hover_product_and_quick_add: Agrega producto al carrito mediante acción rápida
+        - hover_product_and_add_fav: Agrega producto a favoritos mediante acción rápida
+        - hover_product_and_add_compare: Agrega producto a comparación mediante acción rápida
+        - hover_product_and_view: Muestra vista rápida del producto
     """
 
     def __init__(self, page: Page):
-        """
-        Inicializa los localizadores de la página principal.
-        :param page: Instancia de Playwright Page.
-        """
         self.page = page
-        self.popUpHome = self.page.locator("span.icon.icon-close.btn-hide-popup")
-        self.searchIcon = self.page.locator(".nav-search > a:nth-child(1) > i:nth-child(1)")
-        self.searchInput = self.page.locator("fieldset.text > input:nth-child(1)")
+        self.popUpHome = self.page.locator("#newsletterPopup span.icon.icon-close.btn-hide-popup") 
+        self.searchIcon = self.page.locator("#header .nav-search")
+        self.searchInput = self.page.locator('#canvasSearch input[placeholder="Search"]')
         self.newItems = self.page.locator(".discovery-new-item > a:nth-child(2)")
         self.superStore = self.page.locator(".btn-outline-dark")
         self.slkSeries = self.page.locator(".tf-sw-lookbook > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(3)")
@@ -39,123 +61,69 @@ class HomeToPage:
         self.menButton = page.locator(".tf-sw-collection > div:nth-child(1) > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)")
 
     async def navigate(self, url: str) -> None:
-        """
-        Navega a la URL especificada y espera a que el DOM esté cargado.
-        :param url: URL de destino.
-        """
         assert await self.page.goto(url, wait_until="domcontentloaded")
     
     async def closePopUpHome(self):
-        """
-        Cierra el pop-up de la página principal si está presente.
-        """
         await self.page.wait_for_timeout(2000)
         await self.popUpHome.click()
 
     async def closerQuickView(self):
-        """
-        Cierra el pop-up de Quick View.
-        """
         await self.page.wait_for_timeout(2000)
         await self.closerQuick.click()
     
     async def click_clothingButton(self):
-        """
-        Hace clic en el botón de la categoría 'Clothing' y retorna la URL resultante.
-        :return: URL después del clic.
-        """
         await self.clothingButton.click()
         await self.page.wait_for_timeout(1000)
         return self.page.url
     
     async def click_paddlesButton(self):
-        """
-        Hace clic en el botón de la categoría 'Paddles' y retorna la URL resultante.
-        :return: URL después del clic.
-        """
         await self.paddlesButton.click()
         await self.page.wait_for_timeout(1000)
         return self.page.url
     
     async def click_accesoriesButton(self):
-        """
-        Hace clic en el botón de la categoría 'Accesories' y retorna la URL resultante.
-        :return: URL después del clic.
-        """
         await self.accesoriesButton.click()
         await self.page.wait_for_timeout(1000)
         return self.page.url
     
     async def click_menButton(self):
-        """
-        Hace clic en el botón de la categoría 'Men' y retorna la URL resultante.
-        :return: URL después del clic.
-        """
         await self.menButton.click()
         await self.page.wait_for_timeout(1000)
         return self.page.url
 
     async def click_newItems(self):
-        """
-        Hace clic en el enlace de nuevos productos y retorna la URL resultante.
-        :return: URL después del clic.
-        """
         await self.newItems.click()
         await self.page.wait_for_timeout(1000)
         return self.page.url
 
     async def click_superStore(self):
-        """
-        Hace scroll y clic en el botón 'Super Store', luego retorna la URL resultante.
-        :return: URL después del clic.
-        """
         await self.superStore.scroll_into_view_if_needed()
         await self.superStore.click()
         await self.page.wait_for_timeout(1000)
         return self.page.url
 
     async def click_slkSeries(self):
-        """
-        Hace scroll y clic en el botón 'SLK Series', luego retorna la URL resultante.
-        :return: URL después del clic.
-        """
         await self.slkSeries.scroll_into_view_if_needed()
         await self.slkSeries.click()
         await self.page.wait_for_timeout(1000)
         return self.page.url
 
     async def click_motionPro(self):
-        """
-        Hace scroll y clic en el botón 'Motion Pro', luego retorna la URL resultante.
-        :return: URL después del clic.
-        """
         await self.motionPro.scroll_into_view_if_needed()
         await self.motionPro.click()
         await self.page.wait_for_timeout(1000)
         return self.page.url
 
     async def click_ecomus(self):
-        """
-        Hace clic en el logo para volver al home.
-        """
         await self.ecomus.click()
         await self.page.wait_for_timeout(1000)
 
     async def searchIconClick(self):
-        """
-        Hace clic en el icono de búsqueda y retorna la URL resultante.
-        :return: URL después del clic.
-        """
         await self.searchIcon.click()
         await self.page.wait_for_timeout(1000)
         return self.page.url
 
     async def searchInputFill(self, item: str = "Paddle"):
-        """
-        Escribe un texto en el campo de búsqueda y retorna la URL resultante.
-        :param item: Texto a buscar.
-        :return: URL después de escribir en el campo.
-        """
         await self.searchInput.fill(item)
         await self.page.wait_for_timeout(1000)
         return self.page.url
@@ -169,6 +137,7 @@ class HomeToPage:
         """
         urls = []
         for attempt in range(Config.MAX_ATTEMPTS):
+            await self.closePopUpHome()
             try:
                 url1 = await self.searchIconClick()
                 if url1: urls.append(url1)
