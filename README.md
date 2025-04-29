@@ -48,7 +48,7 @@ pip install -r requirements.txt
 3. Run the tests:
 
 ```bash
-pytest --html=login/report/report.html --self-contained-html
+pytest --html=ecomus/report/report.html --self-contained-html
 ```
 
 ---
