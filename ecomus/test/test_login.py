@@ -38,6 +38,6 @@ async def test_login_empty_email(login_page: Page, user: LoginUser):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("user", login_user_empty_password)
-async def test_login_empty_email(login_page: Page, user: LoginUser):
+async def test_login_empty_password(login_page: Page, user: LoginUser):
     await login_page.login(user)
     assert "/login" in login_page.page.url, f"Login with empty password: {user}."
