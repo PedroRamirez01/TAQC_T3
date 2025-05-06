@@ -34,26 +34,65 @@ class RegisterPage:
         self.btnRegister = self.page.locator("#register-form > div.mb_20 > button")
 
     async def navigate(self) -> None:
+        """
+        Navigates to the registration page.
+        This method is called before filling in the registration form.
+        It ensures that the page is loaded and ready for interaction.
+        """
         await self.page.goto(self.url, wait_until="domcontentloaded")
 
     async def fill_first_name(self, firstName: str) -> None:
+        """
+        Fills the first name field.
+        Args:
+            firstName (str): The first name to fill in.
+        """
         await self.fieldFirstName.wait_for(state="visible")
-        await self.page.screenshot(path="error_msg_register.png", full_page=True)
         await self.fieldFirstName.fill(firstName)
 
     async def fill_last_name(self, lastName: str) -> None:
+        """
+        Fills the last name field.
+        Args:
+            lastName (str): The last name to fill in.
+        """
+        await self.fieldLastName.wait_for(state="visible")
         await self.fieldLastName.fill(lastName)
 
     async def fill_email(self, email: str) -> None:
+        """
+        Fills in the email field.
+        Args:
+            email (str): The email to fill in.
+        """
+        await self.fieldEmail.wait_for(state="visible")
         await self.fieldEmail.fill(email)
     
     async def fill_password(self, password: str) -> None:
+        """
+        Fills in the password field.
+        Args:
+            password (str): The password to fill in.
+        """
+        await self.fieldPassword.wait_for(state="visible")
         await self.fieldPassword.fill(password)
 
     async def submit(self) -> None:
+        """
+        Clicks the registration button.
+        This method is called after filling in the registration form.
+        It submits the form and initiates the registration process.
+        """
+        await self.btnRegister.wait_for(state="visible")
         await self.btnRegister.click()
 
     async def register(self, user: RegisterUser) -> None:
+        """
+        Registers the user using the provided data.
+        This method combines all the steps of navigating to the page, filling in the form, and submitting it.
+        Args:
+            user (RegisterUser): The user data to register.
+        """
         await self.navigate()
         await self.fill_first_name(user.first_name)
         await self.fill_last_name(user.last_name)
