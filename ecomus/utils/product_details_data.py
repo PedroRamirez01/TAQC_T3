@@ -1,7 +1,3 @@
-from models.register_user import RegisterUser
-from models.login_user import LoginUser
-from models.register_login_users import RegisterLoginUser
-
 # Data for test_product_detail.py
 product_detail_quantity_input = [
     1, 3, 1000000000000000000000
