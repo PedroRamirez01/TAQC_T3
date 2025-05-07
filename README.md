@@ -71,8 +71,9 @@ In the Jenkins web interface (http://localhost:8080):
 1. Go to Manage Jenkins > Credentials.
 2. Select the credential store.
 3. Create a new credential:
-   - Type: Secret text
-   - ID: TOKEN
+   - Type:Secret text
+   - Scope:Global
+   - ID:TOKEN
    - Secret: ****************
 
 ### Paso 3: Configurar un Job (Pipeline)
