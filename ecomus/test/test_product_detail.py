@@ -1,6 +1,6 @@
 import pytest
 from playwright.async_api import Page
-from ecomus.utils.product_details_data import product_detail_quantity_input, product_detail_negative_quantity_input, product_detail_free_shipping, product_detail_cart_close_cart
+from utils.product_details_data import product_detail_quantity_input, product_detail_negative_quantity_input, product_detail_free_shipping, product_detail_cart_close_cart
 
 @pytest.mark.asyncio
 async def test_verify_discount(product_detail_page: Page):
@@ -18,16 +18,16 @@ async def test_product_detail_quantity_with_input_normal_quantity(product_detail
     """Verifies that a regular amount can be added to the cart from the product details page."""
     assert await product_detail_page.add_to_cart_with_input(quantity), f"The quantity could not be added correctly: {quantity}."
     cantidad = int(float(await product_detail_page.quantity_cart.input_value()))
-    assert 0 < cantidad < 10000, f"Quantity in cart out of range."
+    assert 0 < cantidad < 10000, "Quantity in cart out of range."
     assert cantidad == quantity, f"Quantity in cart does not match the quantity added: {cantidad} != {quantity}."
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("quantity", product_detail_negative_quantity_input)
 async def test_product_detail_negative_quantity_with_input_normal_quantity(product_detail_page: Page, quantity: int):
     """Verifies that a negative or zero amount cannot be added to the cart from the product details page."""
-    assert not await product_detail_page.add_to_cart_with_input(quantity), f"A negative amount or 0 was accepted."
+    assert not await product_detail_page.add_to_cart_with_input(quantity), "A negative amount or 0 was accepted."
     cantidad = int(float(await product_detail_page.quantity_cart.input_value()))
-    assert cantidad == 1, f"Negative values ​​can be entered in quantity input."
+    assert cantidad == 1, "Negative values ​​can be entered in quantity input."
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("quantity", product_detail_free_shipping)
