@@ -13,15 +13,7 @@ test_data = valid_checkout_data + invalid_checkout_data
 async def test_checkout_flow(label,data,page):
         await page.goto(URL, wait_until="domcontentloaded")
         addToCart = AddToCart(page)
-        await addToCart.changeColor()
-        await addToCart.changeSize()
-        await addToCart.incrementQuantity()
-        await addToCart.incrementQuantity()
-        await addToCart.incrementQuantity()
-        await addToCart.incrementQuantity()
-        await addToCart.incrementQuantity()
-        await addToCart.decrementQuantity()
-        await addToCart.addToCart()
+        await addToCart.perform_add_to_cart_actions()
 
         checkoutpage = CheckoutPage(page)
         await checkoutpage.clickTermsAndConditionsCheckbox()

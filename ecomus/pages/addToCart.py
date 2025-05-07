@@ -53,4 +53,18 @@ class AddToCart:
         """
         assert self.addToCartButton, "No add to cart button found"
         await self.addToCartButton.click()
+
+    async def perform_add_to_cart_actions(self):
+        """
+        Performs a series of actions to add a product to the cart.
+        """
+        await self.changeColor()
+        await self.changeSize()
+        await self.incrementQuantity()
+        await self.incrementQuantity()
+        await self.incrementQuantity()
+        await self.incrementQuantity()
+        await self.incrementQuantity()
+        await self.decrementQuantity()
+        await self.addToCart()
         
