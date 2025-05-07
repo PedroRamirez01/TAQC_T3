@@ -1,4 +1,6 @@
+import re
 from playwright.async_api import Page, expect
+from utils.api_requests import verify_order_exists
 
 class CheckoutPage:
 
@@ -29,7 +31,7 @@ class CheckoutPage:
         self.fieldCardCVV = self.page.locator("#wrapper > section > div > div > div.tf-page-cart-footer > div > form > div.box.grid-2 > div:nth-child(2) > input[type=text]")
         self.agreeCheckbox = self.page.locator("#check-agree")
         self.placeOrderButton = self.page.locator("#wrapper > section > div > div > div.tf-page-cart-footer > div > form > button")
-        self.success_message = self.page.locator('p[style*="color: green"]:has-text("Order saved successfully!")')
+        self.successMessage = self.page.locator('p[style*="color: green"]:has-text("Order saved successfully!")')
 
     async def clickTermsAndConditionsCheckbox(self):
         assert self.termsAndConditionsCheckbox, "No terms and conditions checkbox found"
@@ -94,7 +96,7 @@ class CheckoutPage:
         assert self.placeOrderButton, "No place order button found"
         await self.placeOrderButton.click()
 
-    async def fill_checkout_form(self, data):
+    async def fillCheckoutForm(self, data):
         await self.fillFirstName(data["FIRST_NAME"])
         await self.fillLastName(data["LAST_NAME"])
         await self.fillCountry(data["COUNTRY"])
@@ -107,14 +109,44 @@ class CheckoutPage:
         await self.fillCardExpiration(data["CARD_EXPIRATION"])
         await self.fillCardCVV(data["CARD_CVV"])
 
-    async def assert_success_message(self, label):
+    async def getOrderId(self):
+        try:
+            """
+            Extracts the order ID (UUID) from the success message after placing the order.
+            :return: The extracted order ID string.
+            """
+            order_text = await self.successMessage.text_content()
+            match = re.search(r"[a-f0-9\-]{36}", order_text)
+            if match:
+                return match.group(0)
+            else:
+                raise ValueError("Order ID not found in the success message.")
+        except Exception as e:
+            print(f"[ERROR] No se pudo extraer el ID de orden: {e}")
+            return None
+        
+    async def assertOrderInApi(self, order_id):
+        """
+        Asserts whether the order ID exists in the API.
+        :param order_id: The order ID to check.
+    
+        """
+        if order_id:
+            exists = await verify_order_exists(order_id)    
+            assert exists, f"Order with ID {order_id} does not exist in the API"
+        else:
+            raise ValueError("Order ID is None or empty.")
+
+
+
+    async def assertSuccessMessage(self, label):
         """
         Asserts whether the success message appears based on the label.
         :param label: Describes if it is a 'valid' or 'invalid' checkout.
         """
         if label.startswith("valid"):
-            await expect(self.success_message).to_be_visible()
+            await expect(self.successMessage).to_be_visible()
         else:
-            await expect(self.success_message).not_to_be_visible()
+            await expect(self.successMessage).not_to_be_visible()
 
     

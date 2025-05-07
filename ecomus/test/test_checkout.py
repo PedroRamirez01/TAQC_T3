@@ -3,6 +3,7 @@ from pages.addToCart import AddToCart
 from pages.checkoutPage import CheckoutPage
 from utils.test_data import valid_checkout_data, invalid_checkout_data
 
+
 product_id = 1
 URL = f"https://automation-portal-bootcamp.vercel.app/product-detail/{product_id}"
 
@@ -19,13 +20,16 @@ async def test_checkout_flow(label,data,page):
         await checkoutpage.clickTermsAndConditionsCheckbox()
         await checkoutpage.clickProceedToCheckoutButton()
 
-        await checkoutpage.fill_checkout_form(data)
+        await checkoutpage.fillCheckoutForm(data)
         await checkoutpage.clickAgreeCheckbox()
         await checkoutpage.clickPlaceOrderButton()
 
         await page.wait_for_timeout(5000) 
 
-        await checkoutpage.assert_success_message(label)
+        await checkoutpage.assertSuccessMessage(label)
+
+        order_id = await checkoutpage.getOrderId()
+        await checkoutpage.assertOrderInApi(order_id)
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("label,data", valid_checkout_data)
@@ -39,10 +43,18 @@ async def test_checkout_with_empty_cart(label,data,page):
         checkoutpage = CheckoutPage(page)
         await checkoutpage.clickTermsAndConditionsCheckbox()
         await checkoutpage.clickProceedToCheckoutButton()
-        await checkoutpage.fill_checkout_form(data)
+        await checkoutpage.fillCheckoutForm(data)
         await checkoutpage.clickAgreeCheckbox()
         await checkoutpage.clickPlaceOrderButton()
 
         await page.wait_for_timeout(5000) 
 
-        await checkoutpage.assert_success_message(label)
+        await checkoutpage.assertSuccessMessage(label)
+            # 👉 Extraer el ID y verificar la API
+        # order_id = await checkoutpage.getOrderId()
+        # assert order_id, "No se encontró el ID de la orden en el mensaje de éxito"
+        # exists = await verify_order_exists(order_id)    
+        # assert exists, f"La orden con ID {order_id} no existe en la API"
+        order_id = await checkoutpage.getOrderId()
+        await checkoutpage.assertOrderInApi(order_id)
+
