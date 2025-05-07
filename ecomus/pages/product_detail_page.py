@@ -56,18 +56,22 @@ class ProductDetailPage:
         self.quantity_cart = self.page.locator("#shoppingCart > div > div > div.wrap > div.tf-mini-cart-wrap > div.tf-mini-cart-main > div > div.tf-mini-cart-items > div > div.tf-mini-cart-info > div.tf-mini-cart-btns > div.wg-quantity.small > input[type=text]")
 
     async def navigate(self) -> None:
+        """Navigate to the product detail page."""
         await self.page.goto(self.url, wait_until="domcontentloaded")
 
     async def press_cart(self) -> None:
+        """Press the 'Add to Cart' button."""
         await self.add_to_cart.click()
         await self.page.wait_for_timeout(2000)
 
     async def cart_add_product(self, quantity: int) -> None:
+        """Add a product to the cart with the specified quantity."""
         await self.press_cart()
         for _ in range(quantity):
             await self.cart_add_btn.click()
 
     async def verify_free_shipping(self, quantity: int) -> bool:
+        """Check if free shipping is applied after adding products to the cart."""
         await self.navigate()
         shipping_text_t1 = await self.shipping_text.inner_text()
         await self.cart_add_product(quantity)
@@ -75,6 +79,7 @@ class ProductDetailPage:
         return shipping_text_t1 != shipping_text_t2
 
     async def cart_add_cart(self, quantity: int) -> bool:
+        """Check if the cart quantity is updated correctly after adding products."""
         await self.navigate()
         await self.add_to_cart_with_input(quantity)
         input_t1 = await self.cart_input.input_value()
@@ -84,6 +89,7 @@ class ProductDetailPage:
         return int(input_t1)*2 == int(input_t2)
 
     async def verify_discount(self) -> bool:
+        """Check if the discount is applied correctly."""
         await self.navigate()
         price = await self.price.inner_text()
         discount = await self.discount.inner_text()
@@ -95,6 +101,7 @@ class ProductDetailPage:
         return price_on_sale == expected_price_on_sale
 
     async def add_to_cart_with_input(self, quantity: int) -> bool:
+        """Add a product to the cart using a quantity input field."""
         try:
             await self.navigate()
             if quantity == 0:
