@@ -17,12 +17,12 @@ services:
     environment:
       - DOCKER_HOST=unix:///var/run/docker.sock
     restart: unless-stopped
-    networks:
-      - jenkins_network
+    # networks:
+    #   - jenkins_network
 
 volumes:
   jenkins_home:
 
-networks:
-  jenkins_network:
-    driver: bridge
+# networks:
+#   jenkins_network:
+#     driver: bridge
