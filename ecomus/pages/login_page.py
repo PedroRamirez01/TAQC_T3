@@ -28,18 +28,23 @@ class LoginPage:
         self.btn_login = page.locator("#login > div > form > div:nth-child(4) > button")
 
     async def navigate(self) -> None:
+        """Navigates to the login page."""
         await self.page.goto(self.url, wait_until="domcontentloaded")
 
     async def fill_email(self, email: str) -> None:
+        """Fills in the email field."""
         await self.field_email.fill(email)
 
     async def fill_password(self, password: str) -> None:
+        """Fills in the password field."""
         await self.field_password.fill(password)
 
     async def submit(self) -> None:
+        """Submits the login form."""
         await self.btn_login.click()
 
     async def login(self, user: LoginUser) -> None:
+        """Logs in with the given user."""
         await self.navigate()
         await self.fill_email(user.email)
         await self.fill_password(user.password)
