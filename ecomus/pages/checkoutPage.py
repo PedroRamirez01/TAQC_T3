@@ -135,18 +135,19 @@ class CheckoutPage:
             exists = await verify_order_exists(order_id)    
             assert exists, f"Order with ID {order_id} does not exist in the API"
         else:
-            raise ValueError("Order ID is None or empty.")
+            pass
 
 
-
-    async def assertSuccessMessage(self, label):
+    async def assertSuccessMessage(self, label, order_id):
         """
         Asserts whether the success message appears based on the label.
         :param label: Describes if it is a 'valid' or 'invalid' checkout.
         """
         if label.startswith("valid"):
             await expect(self.successMessage).to_be_visible()
+            assert order_id, "Expected an order ID for a valid checkout"
         else:
             await expect(self.successMessage).not_to_be_visible()
+            assert not order_id, "Expected no order ID for an invalid checkout"
 
     
