@@ -34,66 +34,66 @@ class CheckoutPage:
         self.successMessage = self.page.locator('p[style*="color: green"]:has-text("Order saved successfully!")')
 
     async def clickTermsAndConditionsCheckbox(self):
-        assert self.termsAndConditionsCheckbox, "No terms and conditions checkbox found"
+        await expect(self.termsAndConditionsCheckbox).to_be_visible()
         await self.termsAndConditionsCheckbox.click()
     
     async def clickProceedToCheckoutButton(self):
-        assert self.proceedToCheckoutButton, "No proceed to checkout button found"
+        await expect(self.proceedToCheckoutButton).to_be_visible()
         await self.proceedToCheckoutButton.click()
 
     async def fillFirstName(self, first_name):
-        assert self.fieldFirstName, "No first name field found"
+        await expect(self.fieldFirstName).to_be_visible()
         await self.fieldFirstName.fill(first_name)
 
     async def fillLastName(self, last_name):
-        assert self.fieldLastName, "No last name field found"
+        await expect(self.fieldLastName).to_be_visible()
         await self.fieldLastName.fill(last_name)
     
     async def fillCountry(self, country_value=None):
-        assert self.fieldCountry, "No country field found"
+        await expect(self.fieldCountry).to_be_visible()
         if country_value:
             await self.page.select_option("#country", value=country_value)
         else:
             await self.page.select_option("#country", index=0)
 
     async def fillCity(self, city): 
-        assert self.fieldCity, "No city field found"
+        await expect(self.fieldCity).to_be_visible()
         await self.fieldCity.fill(city)
 
     async def fillAdress(self, adress):
-        assert self.fieldAdress, "No adress field found"
+        await expect(self.fieldAdress).to_be_visible()
         await self.fieldAdress.fill(adress) 
 
     async def fillPhoneNumber(self, phone_number):  
-        assert self.fieldPhoneNumber, "No phone number field found"
+        await expect(self.fieldPhoneNumber).to_be_visible()
         await self.fieldPhoneNumber.fill(phone_number)  
 
     async def fillEmail(self, email):
-        assert self.fieldEmail, "No email field found"
+        await expect(self.fieldEmail).to_be_visible()
         await self.fieldEmail.fill(email)   
 
     async def fillDiscountCode(self, discount_code):    
-        assert self.fieldDiscountCode, "No discount code field found"
+        await expect(self.fieldDiscountCode).to_be_visible()
         await self.fieldDiscountCode.fill(discount_code)
     
     async def fillCardNumber(self, card_number):
-        assert self.fieldCardNumber, "No card number field found"
+        await expect(self.fieldCardNumber).to_be_visible()
         await self.fieldCardNumber.fill(card_number)
 
     async def fillCardExpiration(self, card_expiration):
-        assert self.fieldCardExpiration, "No card expiration field found"
+        await expect(self.fieldCardExpiration).to_be_visible()
         await self.fieldCardExpiration.fill(card_expiration)    
 
     async def fillCardCVV(self, card_cvv):  
-        assert self.fieldCardCVV, "No card CVV field found"
+        await expect(self.fieldCardCVV).to_be_visible()
         await self.fieldCardCVV.fill(card_cvv)
 
     async def clickAgreeCheckbox(self):
-        assert self.agreeCheckbox, "No agree checkbox found"
+        await expect(self.agreeCheckbox).to_be_visible()
         await self.agreeCheckbox.click()
     
     async def clickPlaceOrderButton(self):
-        assert self.placeOrderButton, "No place order button found"
+        await expect(self.placeOrderButton).to_be_visible()
         await self.placeOrderButton.click()
 
     async def fillCheckoutForm(self, data):
@@ -133,7 +133,7 @@ class CheckoutPage:
         """
         if order_id:
             exists = await verify_order_exists(order_id)    
-            assert exists, f"Order with ID {order_id} does not exist in the API"
+            await expect(exists).to_equal(True)  # Order with ID {order_id} does not exist in the API
         else:
             pass
 
@@ -145,9 +145,9 @@ class CheckoutPage:
         """
         if label.startswith("valid"):
             await expect(self.successMessage).to_be_visible()
-            assert order_id, "Expected an order ID for a valid checkout"
+            await expect(order_id).not_to_be_none()  # Expected an order ID for a valid checkout
         else:
             await expect(self.successMessage).not_to_be_visible()
-            assert not order_id, "Expected no order ID for an invalid checkout"
+            await expect(order_id).to_be_none()  # Expected no order ID for an invalid checkout
 
-    
+
