@@ -9,7 +9,7 @@ URL = f"https://automation-portal-bootcamp.vercel.app/product-detail/{product_id
 
 test_data = valid_checkout_data + invalid_checkout_data
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio 
 @pytest.mark.parametrize("label,data", test_data)
 async def test_checkout_flow(label,data,page):
         await page.goto(URL, wait_until="domcontentloaded")
