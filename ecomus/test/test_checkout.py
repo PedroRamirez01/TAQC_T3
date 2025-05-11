@@ -31,6 +31,10 @@ async def test_checkout_flow(label, data,checkout_page):
         order = await checkout_page.getOrderbyId(order_id)
         print(f"Order: {order}")
 
+        assert order["items"][0]["title"] == 'Franklin Signature Pickleball Paddle'
+        assert order["items"][0]["quantity"] == 5
+        assert order["items"][0]["price"] == 100
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize("label,data", valid_checkout_data)
 async def test_checkout_with_empty_cart(label, data,checkout_page):
@@ -54,4 +58,5 @@ async def test_checkout_with_empty_cart(label, data,checkout_page):
 
         order = await checkout_page.getOrderbyId(order_id)
         print(f"Order: {order}")
+
 
