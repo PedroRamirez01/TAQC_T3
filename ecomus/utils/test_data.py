@@ -248,5 +248,5 @@ invalid_checkout_data = [
         "CARD_NUMBER": "",
         "CARD_EXPIRATION": "",
         "CARD_CVV": ""
-    }),
+    })
 ]
