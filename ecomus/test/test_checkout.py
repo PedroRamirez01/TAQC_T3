@@ -1,61 +1,57 @@
 import pytest
-from pages.addToCart import AddToCart
-from pages.checkoutPage import CheckoutPage
-from utils.test_data import valid_checkout_data
+from pages.addToCart_page import AddToCart
+from utils.test_data import valid_checkout_data, invalid_checkout_data
 from playwright.async_api import expect
 
 
-product_id = 1
-URL = f"https://automation-portal-bootcamp.vercel.app/product-detail/{product_id}"
-
-test_data = valid_checkout_data 
+test_data = valid_checkout_data + invalid_checkout_data
 
 @pytest.mark.asyncio 
 @pytest.mark.parametrize("label,data", test_data)
-async def test_checkout_flow(label,data,page):
-        await page.goto(URL, wait_until="domcontentloaded")
-        addToCart = AddToCart(page)
-        await addToCart.perform_add_to_cart_actions()
+async def test_checkout_flow(label, data,checkout_page):
+        addToCart = AddToCart(checkout_page.page)
+        await addToCart.closeModal()
+        await addToCart.clickFirstPaddle()
+        await addToCart.performAddToCartActions()
 
-        checkoutpage = CheckoutPage(page)
-        await checkoutpage.clickTermsAndConditionsCheckbox()
-        await checkoutpage.clickProceedToCheckoutButton()
+        await checkout_page.clickTermsAndConditionsCheckbox()
+        await checkout_page.clickProceedToCheckoutButton()
 
-        await checkoutpage.fillCheckoutForm(data)
-        await checkoutpage.clickAgreeCheckbox()
-        await checkoutpage.clickPlaceOrderButton()
+        await checkout_page.fillCheckoutForm(data)
+        await checkout_page.clickAgreeCheckbox()
+        await checkout_page.clickPlaceOrderButton()
 
-        await page.wait_for_timeout(5000) 
+        await checkout_page.page.wait_for_timeout(5000) 
 
+        await expect(checkout_page.successMessage).to_contain_text("Order saved successfully! Your order ID is:")
 
-        # success_message = await checkoutpage.getSuccessMessage(label)
-        await expect(checkoutpage.successMessage).to_contain_text("Order saved successfully! Your order ID is:")
-        order_id = await checkoutpage.getOrderId()
+        order_id = await checkout_page.getOrderId()
         print(f"Order ID: {order_id}")
-        order = await checkoutpage.getOrderbyId(order_id)
+
+        order = await checkout_page.getOrderbyId(order_id)
         print(f"Order: {order}")
 
-        # await checkoutpage.assertSuccessMessage(label, order_id)
+@pytest.mark.asyncio
+@pytest.mark.parametrize("label,data", valid_checkout_data)
+async def test_checkout_with_empty_cart(label, data,checkout_page):
+        addToCart = AddToCart(checkout_page.page)
+        await addToCart.closeModal()
+        await addToCart.clickCartButton()
 
-# @pytest.mark.asyncio
-# @pytest.mark.parametrize("label,data", valid_checkout_data)
-# async def test_checkout_with_empty_cart(label,data,page):
-#         await page.goto(URL, wait_until="domcontentloaded")
+        await checkout_page.page.wait_for_timeout(2000)
+        await checkout_page.clickTermsAndConditionsCheckbox()
+        await checkout_page.clickProceedToCheckoutButton()
+        await checkout_page.fillCheckoutForm(data)
+        await checkout_page.clickAgreeCheckbox()
+        await checkout_page.clickPlaceOrderButton()
 
-#         cart_button = page.locator("#header > div > div > div.col-xl-3.col-md-4.col-3 > ul > li.nav-cart > a")
-#         await cart_button.click()
-#         await page.wait_for_timeout(2000)
+        await checkout_page.page.wait_for_timeout(5000)
 
-#         checkoutpage = CheckoutPage(page)
-#         await checkoutpage.clickTermsAndConditionsCheckbox()
-#         await checkoutpage.clickProceedToCheckoutButton()
-#         await checkoutpage.fillCheckoutForm(data)
-#         await checkoutpage.clickAgreeCheckbox()
-#         await checkoutpage.clickPlaceOrderButton()
+        await expect(checkout_page.successMessage).to_contain_text("Order saved successfully! Your order ID is:")
 
-#         await page.wait_for_timeout(5000) 
+        order_id = await checkout_page.getOrderId()
+        print(f"Order ID: {order_id}")
 
-#         order_id = await checkoutpage.getOrderId()
-#         await checkoutpage.assertOrderInApi(order_id)
-#         await checkoutpage.assertSuccessMessage(label, order_id)
+        order = await checkout_page.getOrderbyId(order_id)
+        print(f"Order: {order}")
 

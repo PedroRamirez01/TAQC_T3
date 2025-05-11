@@ -1,6 +1,7 @@
 import pytest_asyncio
 from playwright.async_api import Page
 from playwright.async_api import async_playwright
+from pages.checkout_page import CheckoutPage
 from pages.home_page import HomeToPage
 from pages.filterProduct_page import FilterProductPage
 from pages.login_page import LoginPage
@@ -56,3 +57,8 @@ async def auto_delete_user(request):
     email = user.email
     yield
     await delete_user_by_id(email)
+
+@pytest_asyncio.fixture
+async def checkout_page(page: Page):
+    await page.goto(Config.URL_BASE)
+    return CheckoutPage(page)

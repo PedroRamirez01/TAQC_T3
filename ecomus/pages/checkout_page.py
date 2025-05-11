@@ -1,6 +1,7 @@
 import re
 from playwright.async_api import Page, expect
 # from utils.api_requests import verify_order_exists
+from config.config import Config
 
 class CheckoutPage:
 
@@ -33,6 +34,12 @@ class CheckoutPage:
         self.placeOrderButton = self.page.locator("#wrapper > section > div > div > div.tf-page-cart-footer > div > form > button")
         self.successMessage = self.page.locator('p[style*="color: green"]:has-text("Order saved successfully!")')
 
+    async def navigate(self, url: str) -> None:
+        """
+        Navega a la URL especificada y espera a que el DOM esté cargado.
+        :param url: URL de destino.
+        """
+        await self.page.goto(url, wait_until="domcontentloaded")
 
     async def clickTermsAndConditionsCheckbox(self):
         await expect(self.termsAndConditionsCheckbox).to_be_visible()
@@ -110,22 +117,6 @@ class CheckoutPage:
         await self.fillCardExpiration(data["CARD_EXPIRATION"])
         await self.fillCardCVV(data["CARD_CVV"])
 
-    # async def getOrderId(self):
-    #     try:
-    #         """
-    #         Extracts the order ID (UUID) from the success message after placing the order.
-    #         :return: The extracted order ID string.
-    #         """
-    #         order_text = await self.successMessage.text_content()
-    #         match = re.search(r"[a-f0-9\-]{36}", order_text)
-    #         if match:
-    #             return match.group(0)
-    #         else:
-    #             raise ValueError("Order ID not found in the success message.")
-    #     except Exception as e:
-    #         print(f"[ERROR] No se pudo extraer el ID de orden: {e}")
-    #         return None
-
     async def getOrderId(self):
         try:
             """
@@ -138,31 +129,6 @@ class CheckoutPage:
             print(f"[ERROR] No se pudo extraer el ID de orden: {e}")
             return None
         
-    # async def assertOrderInApi(self, order_id):
-    #     """
-    #     Asserts whether the order ID exists in the API.
-    #     :param order_id: The order ID to check.
-    #     """
-    #     if order_id:
-    #         exists = await verify_order_exists(order_id)
-    #         assert exists, f"Order with ID {order_id} does not exist in the API"
-    #     else:
-    #         pass  # No se espera una orden en este caso
-
-
-    # async def assertSuccessMessage(self, label, order_id):
-    #     """
-    #     Asserts whether the success message appears based on the label.
-    #     :param label: Describes if it is a 'valid' or 'invalid' checkout.
-    #     """
-    #     if label.startswith("valid"):
-    #         await expect(self.successMessage).to_be_visible()
-    #         assert order_id, "Expected an order ID for a valid checkout"
-
-    #     else:
-    #         await expect(self.successMessage).not_to_be_visible()
-    #         assert not order_id, "Expected no order ID for an invalid checkout"
-
     async def getSuccessMessage(self, label):
         """
         Asserts whether the success message appears based on the label.
@@ -176,22 +142,6 @@ class CheckoutPage:
             await expect(self.successMessage).not_to_be_visible()
             return None
 
-    # async def getOrderbyId(self, order_id):
-    #     """
-    #     Accede a la URL de la orden por ID y retorna el contenido como dict (desde JSON).
-    #     """
-    #     try:
-    #         response = await self.page.request.get(f"/api/orders/{order_id}")
-    #         if response.ok:
-    #             json_data = await response.json()
-    #             return json_data
-    #         else:
-    #             print(f"[ERROR] Respuesta no OK al acceder a la orden: {response.status}")
-    #             return None
-    #     except Exception as e:
-    #         print(f"[ERROR] No se pudo obtener la orden por ID: {e}")
-    #         return None
-
     async def getOrderbyId(self, order_id):
         """
         Consulta la orden por ID desde la API y retorna el contenido si existe.
@@ -201,7 +151,7 @@ class CheckoutPage:
             return None
 
         try:
-            response = await self.page.request.get(f"/api/orders/{order_id}")
+            response = await self.page.request.get(f"{Config.URL_BASE}api/orders/{order_id}")
             if response.ok:
                 return await response.json()
             else:

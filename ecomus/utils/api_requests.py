@@ -33,16 +33,3 @@ async def delete_user_by_id(email):
             return response.status_code
         except httpx.RequestError:
             return None
-        
-# async def verify_order_exists(order_id: str):
-#     if not order_id:
-#         return False
-#     async with httpx.AsyncClient() as client:
-#         try:
-#             response = await client.get(f"{URL_BASE}api/orders/{order_id}", headers=HEADERS)
-#             response.raise_for_status()
-#             data = response.json()
-#             return data.get("id") == order_id
-#         except httpx.HTTPStatusError as e:
-#             print(f"Order check failed: {e}")
-#             return False

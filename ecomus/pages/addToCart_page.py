@@ -18,6 +18,16 @@ class AddToCart:
         self.IncrementButton = self.page.locator('#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-quantity > div.wg-quantity > span.btn-quantity.plus-btn')
         self.DecrementButton = self.page.locator('#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-quantity > div.wg-quantity > span.btn-quantity.minus-btn')
         self.addToCartButton = self.page.locator('#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-buy-button > form > a.tf-btn.btn-fill.justify-content-center.fw-6.fs-16.flex-grow-1.animate-hover-btn')
+        self.clickFirstPaddleButton = self.page.locator('#wrapper > div > section:nth-child(6) > div.tf-grid-layout.tf-col-2.md-col-3.gap-0.home-pckaleball-page > div:nth-child(1) > div.card-product-wrapper > a > img.lazyload.img-hover')
+        self.closeModalButton = self.page.locator('#newsletterPopup > div > div > div.modal-top > span')
+        self.cartButton = self.page.locator('#header > div > div > div.col-xxl-5.col-md-4.col-3 > ul > li.nav-cart > a')
+
+    async def navigate(self, url: str) -> None:
+        """
+        Navega a la URL especificada y espera a que el DOM esté cargado.
+        :param url: URL de destino.
+        """
+        await self.page.goto(url, wait_until="domcontentloaded")
 
     async def changeColor(self):
         """
@@ -54,7 +64,7 @@ class AddToCart:
         assert self.addToCartButton, "No add to cart button found"
         await self.addToCartButton.click()
 
-    async def perform_add_to_cart_actions(self):
+    async def performAddToCartActions(self):
         """
         Performs a series of actions to add a product to the cart.
         """
@@ -67,4 +77,25 @@ class AddToCart:
         await self.incrementQuantity()
         await self.decrementQuantity()
         await self.addToCart()
+
+    async def clickFirstPaddle(self):
+        """
+        Clicks on the first paddle in the product list.
+        """
+        assert self.clickFirstPaddleButton, "No first paddle button found"
+        await self.clickFirstPaddleButton.click()
+
+    async def closeModal(self):
+        """
+        Closes the modal if it is open.
+        """
+        assert self.closeModalButton, "No close modal button found"
+        await self.closeModalButton.click()
+
+    async def clickCartButton(self):
+        """
+        Clicks on the cart button.
+        """
+        assert self.cartButton, "No cart button found"
+        await self.cartButton.click()
         
