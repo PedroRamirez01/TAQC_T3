@@ -1,6 +1,5 @@
 import re
 from playwright.async_api import Page, expect
-# from utils.api_requests import verify_order_exists
 from config.config import Config
 
 class CheckoutPage:
@@ -36,8 +35,8 @@ class CheckoutPage:
 
     async def navigate(self, url: str) -> None:
         """
-        Navega a la URL especificada y espera a que el DOM esté cargado.
-        :param url: URL de destino.
+        Navigates to the specified URL and waits for the DOM to be loaded.
+        :param url: Target URL.
         """
         await self.page.goto(url, wait_until="domcontentloaded")
 
@@ -120,8 +119,8 @@ class CheckoutPage:
     async def getOrderId(self):
         try:
             """
-            Extrae el order ID (UUID) desde el mensaje de éxito usando split.
-            :return: El ID de la orden como string.
+            Extract the order ID from the success message.
+            :return: The order ID as a string.
             """
             order_text = await self.successMessage.text_content()
             return order_text.split("Your order ID is: ")[1].strip()
@@ -144,7 +143,7 @@ class CheckoutPage:
 
     async def getOrderbyId(self, order_id):
         """
-        Consulta la orden por ID desde la API y retorna el contenido si existe.
+        Consults the order by ID from the API and returns the content if it exists.
         """
         if not order_id:
             print("[ERROR] El ID de orden está vacío.")
@@ -155,9 +154,9 @@ class CheckoutPage:
             if response.ok:
                 return await response.json()
             else:
-                print(f"[ERROR] Orden no encontrada (status {response.status})")
+                print(f"[ERROR] Order not found (status {response.status})")
                 return None
         except Exception as e:
-            print(f"[ERROR] Fallo al obtener la orden: {e}")
+            print(f"[ERROR] Fail to obtain the order: {e}")
             return None
 

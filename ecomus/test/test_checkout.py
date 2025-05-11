@@ -3,7 +3,6 @@ from pages.addToCart_page import AddToCart
 from utils.test_data import valid_checkout_data, invalid_checkout_data
 from playwright.async_api import expect
 
-
 test_data = valid_checkout_data + invalid_checkout_data
 
 @pytest.mark.asyncio 
