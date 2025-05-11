@@ -1,4 +1,4 @@
-from playwright.async_api import Page
+from playwright.async_api import Page , expect
 from config.config import Config
 
 class FilterProductPage:
@@ -63,14 +63,14 @@ class FilterProductPage:
         await self.filterBttn.click()
         await self.clearFilter.click()
         await self.closePopUpFilter.click()
-        return await self.page.locator(".wrapper-control-shop > div:nth-child(2)").inner_text()
+        return await self.page.locator(".wrapper-control-shop > div:nth-child(2)")
 
     async def add_cart(self):
         await self.producto.hover()
         await self.producto.wait_for(state="visible")
         await self.quickAdd.click()
         await self.addToCart.click()
-        return await self.page.locator(".tf-totals-total-value").inner_text()
+        return self.page.locator(".tf-totals-total-value")
 
     async def do_filter_men_div(self): #Refectorizar Return
         await self.filterBttn.click()
@@ -106,7 +106,7 @@ class FilterProductPage:
         await self.color.click()
         await self.size.click()
         await self.closePopUpFilter.click()
-        return await self.page.locator(".wrapper-control-shop > div:nth-child(2)").inner_text()
+        #return await self.page.locator(".wrapper-control-shop > div:nth-child(2)").inner_text()
 
     async def do_filter_denim_url(self):
         await self.filterBttn.click()
@@ -135,13 +135,6 @@ class FilterProductPage:
         await self.filterBttn.click()
         await self.outOfStockFilter.click()
 
-    async def add_cart(self):
-        await self.producto.hover()
-        await self.producto.wait_for(state="visible")
-        await self.quickAdd.click()
-        await self.addToCart.click()
-        return await self.page.locator(".tf-totals-total-value").inner_text()
-
     async def pop_up(self):
         if await self.closePopUpFilter.count() > 0 and await self.closePopUpFilter.is_visible():
             await self.closePopUpFilter.click()
@@ -154,24 +147,16 @@ class FilterProductPage:
         try:
             await self.out_of_stock()
             await self.pop_up()
-            total_value = await self.add_cart()
-            print(f"Total cart value: {total_value}")
-            return total_value
+            return await self.add_cart()
         except Exception as e:
             print(f"Error: {e}")
 
     async def do_clear_filter(self):
-        divs = []
         try:
-            div1 = await self.do_multiplies_filter()
-            if div1:
-                divs.append(div1)
-                print(div1)
-            div2 = await self.clear_Filter()
-            if div2:
-                divs.append(div2)
-                print(div2)
-            return divs
+            await self.do_multiplies_filter()
+            await self.filterBttn.click()
+            filter_button = self.page.locator("a.tf-btn:nth-child(4)")
+            return filter_button
         except Exception as e:
             print(f"Error: {e}")
 
