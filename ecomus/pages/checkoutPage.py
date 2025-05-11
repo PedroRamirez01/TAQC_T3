@@ -1,6 +1,6 @@
 import re
 from playwright.async_api import Page, expect
-from utils.api_requests import verify_order_exists
+# from utils.api_requests import verify_order_exists
 
 class CheckoutPage:
 
@@ -32,6 +32,7 @@ class CheckoutPage:
         self.agreeCheckbox = self.page.locator("#check-agree")
         self.placeOrderButton = self.page.locator("#wrapper > section > div > div > div.tf-page-cart-footer > div > form > button")
         self.successMessage = self.page.locator('p[style*="color: green"]:has-text("Order saved successfully!")')
+
 
     async def clickTermsAndConditionsCheckbox(self):
         await expect(self.termsAndConditionsCheckbox).to_be_visible()
@@ -109,46 +110,104 @@ class CheckoutPage:
         await self.fillCardExpiration(data["CARD_EXPIRATION"])
         await self.fillCardCVV(data["CARD_CVV"])
 
+    # async def getOrderId(self):
+    #     try:
+    #         """
+    #         Extracts the order ID (UUID) from the success message after placing the order.
+    #         :return: The extracted order ID string.
+    #         """
+    #         order_text = await self.successMessage.text_content()
+    #         match = re.search(r"[a-f0-9\-]{36}", order_text)
+    #         if match:
+    #             return match.group(0)
+    #         else:
+    #             raise ValueError("Order ID not found in the success message.")
+    #     except Exception as e:
+    #         print(f"[ERROR] No se pudo extraer el ID de orden: {e}")
+    #         return None
+
     async def getOrderId(self):
         try:
             """
-            Extracts the order ID (UUID) from the success message after placing the order.
-            :return: The extracted order ID string.
+            Extrae el order ID (UUID) desde el mensaje de éxito usando split.
+            :return: El ID de la orden como string.
             """
             order_text = await self.successMessage.text_content()
-            match = re.search(r"[a-f0-9\-]{36}", order_text)
-            if match:
-                return match.group(0)
-            else:
-                raise ValueError("Order ID not found in the success message.")
+            return order_text.split("Your order ID is: ")[1].strip()
         except Exception as e:
             print(f"[ERROR] No se pudo extraer el ID de orden: {e}")
             return None
         
-    async def assertOrderInApi(self, order_id):
-        """
-        Asserts whether the order ID exists in the API.
-        :param order_id: The order ID to check.
-        """
-        if order_id:
-            exists = await verify_order_exists(order_id)
-            assert exists, f"Order with ID {order_id} does not exist in the API"
-        else:
-            pass  # No se espera una orden en este caso
+    # async def assertOrderInApi(self, order_id):
+    #     """
+    #     Asserts whether the order ID exists in the API.
+    #     :param order_id: The order ID to check.
+    #     """
+    #     if order_id:
+    #         exists = await verify_order_exists(order_id)
+    #         assert exists, f"Order with ID {order_id} does not exist in the API"
+    #     else:
+    #         pass  # No se espera una orden en este caso
 
 
-    async def assertSuccessMessage(self, label, order_id):
+    # async def assertSuccessMessage(self, label, order_id):
+    #     """
+    #     Asserts whether the success message appears based on the label.
+    #     :param label: Describes if it is a 'valid' or 'invalid' checkout.
+    #     """
+    #     if label.startswith("valid"):
+    #         await expect(self.successMessage).to_be_visible()
+    #         assert order_id, "Expected an order ID for a valid checkout"
+
+    #     else:
+    #         await expect(self.successMessage).not_to_be_visible()
+    #         assert not order_id, "Expected no order ID for an invalid checkout"
+
+    async def getSuccessMessage(self, label):
         """
         Asserts whether the success message appears based on the label.
         :param label: Describes if it is a 'valid' or 'invalid' checkout.
         """
         if label.startswith("valid"):
             await expect(self.successMessage).to_be_visible()
-            assert order_id, "Expected an order ID for a valid checkout"
+            return await self.successMessage.text_content()
 
         else:
             await expect(self.successMessage).not_to_be_visible()
-            assert not order_id, "Expected no order ID for an invalid checkout"
+            return None
 
+    # async def getOrderbyId(self, order_id):
+    #     """
+    #     Accede a la URL de la orden por ID y retorna el contenido como dict (desde JSON).
+    #     """
+    #     try:
+    #         response = await self.page.request.get(f"/api/orders/{order_id}")
+    #         if response.ok:
+    #             json_data = await response.json()
+    #             return json_data
+    #         else:
+    #             print(f"[ERROR] Respuesta no OK al acceder a la orden: {response.status}")
+    #             return None
+    #     except Exception as e:
+    #         print(f"[ERROR] No se pudo obtener la orden por ID: {e}")
+    #         return None
 
+    async def getOrderbyId(self, order_id):
+        """
+        Consulta la orden por ID desde la API y retorna el contenido si existe.
+        """
+        if not order_id:
+            print("[ERROR] El ID de orden está vacío.")
+            return None
+
+        try:
+            response = await self.page.request.get(f"/api/orders/{order_id}")
+            if response.ok:
+                return await response.json()
+            else:
+                print(f"[ERROR] Orden no encontrada (status {response.status})")
+                return None
+        except Exception as e:
+            print(f"[ERROR] Fallo al obtener la orden: {e}")
+            return None
 
