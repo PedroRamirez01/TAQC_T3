@@ -50,3 +50,13 @@ class LoginPage:
         await self.fill_password(user.password)
         await self.submit()
         await self.page.wait_for_timeout(2000)
+
+    async def fill_login_form(self, user: dict) -> None:
+        """
+        Fills in the login form with the provided user data.
+        Args:
+            user (dict): A dictionary containing user data with keys 'email' and 'password'.
+        """
+        await self.fill_email(user["email"])
+        await self.fill_password(user["password"])
+        await self.submit()

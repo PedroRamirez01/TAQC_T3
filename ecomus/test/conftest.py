@@ -13,7 +13,7 @@ from config.config import Config
 @pytest_asyncio.fixture(scope="function")
 async def page():
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
+        browser = await p.chromium.launch(headless=False, slow_mo=100)
         page = await browser.new_page()
         yield page
         await browser.close()
@@ -55,6 +55,13 @@ async def product_detail_page(page: Page):
 async def auto_delete_user(request):
     user = request.param
     email = user.email
+    yield
+    await delete_user_by_id(email)
+
+@pytest_asyncio.fixture
+async def auto_delete_user_e2e(request):
+    user = request.param
+    email = user["email"]
     yield
     await delete_user_by_id(email)
 

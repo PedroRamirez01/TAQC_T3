@@ -100,3 +100,14 @@ class RegisterPage:
         await self.fill_password(user.password)
         await self.submit()
         await self.page.wait_for_timeout(3000)
+
+    async def fill_register_form(self, user: dict) -> None:
+        """
+        Fills the registration form with the provided user data.
+        Args:
+            user (dict): A dictionary containing user data.
+        """
+        await self.fill_first_name(user["first_name"])
+        await self.fill_last_name(user["last_name"])
+        await self.fill_email(user["email"])
+        await self.fill_password(user["password"])
