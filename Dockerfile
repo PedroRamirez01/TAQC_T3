@@ -17,5 +17,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN python3 -m venv venv \
-    && pip install --upgrade pip
+RUN python3 -m venv venv
+
+RUN venv/bin/pip install --upgrade pip
