@@ -5,6 +5,8 @@ LABEL description="Jenkins with Python3, pip and Playwright"
 
 USER root
 
+WORKDIR /var/jenkins_home/workspace
+
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
