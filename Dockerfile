@@ -7,11 +7,13 @@ USER root
 
 WORKDIR /var/jenkins_home/workspace
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    wget \
+    && dpkg --configure -a \
+    && apt-get install -y --no-install-recommends \
     python3 \
     python3-pip \
     python3-venv \
-    wget \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
