@@ -14,7 +14,6 @@ class AddToCart:
         """
         self.page = page
         self.changeColorButton = self.page.locator('#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-variant-picker > div:nth-child(1) > form > label:nth-child(4)')
-        self.selectColorButton = self.page.locator('div.variant-picker-item form.variant-picker-values label[data-value="{color}"]')
         self.changeSizeButton = self.page.locator('#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-variant-picker > div:nth-child(2) > form > label:nth-child(6)')
         self.IncrementButton = self.page.locator('#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-quantity > div.wg-quantity > span.btn-quantity.plus-btn')
         self.DecrementButton = self.page.locator('#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-quantity > div.wg-quantity > span.btn-quantity.minus-btn')
@@ -36,14 +35,6 @@ class AddToCart:
         """
         await expect(self.changeColorButton).to_be_visible()
         await self.changeColorButton.click()
-
-    async def selectColor(self, color: str):
-        """
-        Selects a specific color for the product.
-        :param color: The color to select.
-        """
-        await expect(self.selectColorButton.format(color=color)).to_be_visible()
-        await self.selectColorButton.format(color=color).click()
 
     async def changeSize(self):
         """
