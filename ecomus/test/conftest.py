@@ -13,7 +13,7 @@ from config.config import Config
 @pytest_asyncio.fixture(scope="function")
 async def page():
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=False, slow_mo=100)
+        browser = await p.chromium.launch(headless=False, slow_mo=500)
         page = await browser.new_page()
         yield page
         await browser.close()
