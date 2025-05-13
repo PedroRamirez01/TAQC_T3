@@ -2,7 +2,7 @@ FROM jenkins/jenkins:lts
 
 LABEL maintainer="TAQC - Team 3"
 LABEL description="Jenkins with Python3, pip and Playwright"
-# test
+
 USER root
 
 WORKDIR /var/jenkins_home/workspace
