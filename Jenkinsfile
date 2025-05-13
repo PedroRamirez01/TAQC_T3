@@ -1,8 +1,10 @@
 pipeline {
   agent any
-  // environment {
-  //   TOKEN = credentials('TOKEN')
-  // }
+
+  environment {
+    TOKEN = credentials('TOKEN')
+  }
+
   stages {
     stage('Checkout') {
       steps {
@@ -21,13 +23,13 @@ pipeline {
     stage('Install Dependencies') {
       steps {
         sh 'pip install --break-system-packages -r requirements.txt'
-        sh 'python -m playwright install --with-deps'
+        sh 'python3 -m playwright install --with-deps'
       }
     }
 
     stage('Run tests') {
       steps {
-        sh 'pytest --html=ecomus/report/report.html --self-contained-html || true'
+        sh 'pytest ecomus/test/test_login.py --html=ecomus/report/report.html --self-contained-html || true'
         sh 'python3 -m http.server 8082 --directory ecomus/report/'
       }
     }
