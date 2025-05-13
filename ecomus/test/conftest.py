@@ -21,7 +21,7 @@ async def page():
 @pytest_asyncio.fixture
 async def homeTo_page(page):
     home_page = HomeToPage(page)
-    await home_page.navigate(Config.URL_BASE)
+    await home_page.navigate()
     return home_page
 
 @pytest_asyncio.fixture
