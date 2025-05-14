@@ -36,6 +36,7 @@ class HomeToPage:
         self.popUpHome = self.page.locator("#newsletterPopup span.btn-hide-popup")
         self.searchIcon = self.page.locator(".nav-search > a:nth-child(1) > i:nth-child(1)")
         self.searchInput = self.page.locator("fieldset.text > input:nth-child(1)")
+        self.fashionSearch = page.locator("li.tf-quicklink-item:nth-child(1) > a:nth-child(1)")
         self.ecomus = self.page.locator(".logo")
         self.franklinSiganture = self.page.locator("div.card-product:nth-child(1) > div:nth-child(1) > a:nth-child(1) > img:nth-child(2)")
         self.quickAdd = self.page.locator("div.card-product:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)")
@@ -48,10 +49,14 @@ class HomeToPage:
         self.quickAddFavPopupContent = page.locator("div.card-product:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2) > span:nth-child(2)")
         self.quickAddComparePopupContent = page.locator("#compare > div:nth-child(1) > div:nth-child(2)")
         self.quickViewPopupContent = page.locator("div.tf-product-info-list:nth-child(1)")
-        
+
     async def navigate(self, url: str) -> None:
         await self.page.goto(url, wait_until="domcontentloaded")
         await expect(self.page).to_have_url(url)
+    
+    async def fashion_search(self):
+        await self.page.wait_for_timeout(2000)
+        await self.fashionSearch.click()
     
     async def close_pop_up_home(self):
         await expect(self.popUpHome).to_be_visible()

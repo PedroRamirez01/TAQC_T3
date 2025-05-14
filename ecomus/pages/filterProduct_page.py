@@ -47,17 +47,37 @@ class FilterProductPage:
         self.shopCategories = self.page.locator(".tf-sw-collection > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)")
         self.outOfStockFilter = self.page.locator("#availability > ul:nth-child(1) > li:nth-child(2) > input:nth-child(1)")
         self.producto = self.page.locator("div.card-product:nth-child(1) > div:nth-child(1) > a:nth-child(1) > img:nth-child(2)")
+        self.slicer = self.page.locator("div.rc-slider-handle:nth-child(4)")
         self.avaliable = self.page.locator("#availability > ul:nth-child(1) > li:nth-child(1) > input:nth-child(1)")
         self.brand = self.page.locator("#brand > ul:nth-child(1) > li:nth-child(1) > input:nth-child(1)")
         self.color = self.page.locator("input.bg_brown")
         self.size = self.page.locator("#size > ul:nth-child(1) > li:nth-child(2) > input:nth-child(1)")
         self.clearFilter = self.page.locator("a.tf-btn:nth-child(4)")
+        self.productThree = self.page.locator("div.card-product:nth-child(3) > div:nth-child(1) > a:nth-child(1) > img:nth-child(2)")
 
     async def navigate(self, url: str) -> None:
         await self.page.goto(url, wait_until="domcontentloaded")
 
     async def initial_url(self):
         return self.page.url
+
+    async def move_price_slider(self, pixels: int) -> None:
+        # Get the bounding box of the slider handle
+        handle_box = await self.slicer.bounding_box()
+    
+        # Get the center X and Y coordinates of the handle
+        x = handle_box['x'] + handle_box['width'] / 2
+        y = handle_box['y'] + handle_box['height'] / 2
+        
+        # Simple drag operation on X-axis only
+        await self.page.mouse.move(x, y)
+        await self.page.mouse.down()
+        await self.page.mouse.move(x + pixels, y)
+        await self.page.mouse.up()
+        
+        # Wait for any animations to complete
+        await self.page.wait_for_timeout(500)
+
 
     async def clear_Filter(self):
         await self.filterBttn.click()
@@ -72,17 +92,17 @@ class FilterProductPage:
         await self.addToCart.click()
         return self.page.locator(".tf-totals-total-value")
 
-    async def do_filter_men_div(self): #Refectorizar Return
+    async def do_filter_men(self): #Refectorizar Return
         await self.filterBttn.click()
         await self.filterMen.click()
         await self.closePopUpFilter.click()
-        return await self.page.locator("div.card-product:nth-child(1) > div:nth-child(2) > a:nth-child(1)").inner_text()
+        #return await self.page.locator("div.card-product:nth-child(1) > div:nth-child(2) > a:nth-child(1)").inner_text()
 
-    async def do_filter_women_div(self): #Refectorizar Return
+    async def do_filter_women(self): #Refectorizar Return
         await self.filterBttn.click()
         await self.filterWomen.click()
         await self.closePopUpFilter.click()
-        return await self.page.locator("div.card-product:nth-child(1) > div:nth-child(2) > a:nth-child(1)").inner_text()
+        #eturn await self.page.locator("div.card-product:nth-child(1) > div:nth-child(2) > a:nth-child(1)").inner_text()
 
     async def do_filter_men_url(self):
         await self.filterBttn.click()
@@ -134,6 +154,7 @@ class FilterProductPage:
     async def out_of_stock(self):
         await self.filterBttn.click()
         await self.outOfStockFilter.click()
+        await self.pop_up()
 
     async def pop_up(self):
         if await self.closePopUpFilter.count() > 0 and await self.closePopUpFilter.is_visible():
