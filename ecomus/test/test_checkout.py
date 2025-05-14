@@ -22,7 +22,10 @@ async def test_checkout_flow(label, data,checkout_page, add_to_cart):
 
         await checkout_page.page.wait_for_timeout(5000) 
 
-        await expect(checkout_page.successMessage).to_contain_text("Order saved successfully! Your order ID is:")
+        if label.startswith("valid"):
+            await expect(checkout_page.successMessage).to_contain_text("Order saved successfully! Your order ID is:")
+        else:
+            await expect(checkout_page.successMessage).not_to_be_visible()
 
         order_id = await checkout_page.getOrderId()
         print(f"Order ID: {order_id}")
@@ -50,7 +53,7 @@ async def test_checkout_with_empty_cart(label, data,checkout_page, add_to_cart):
 
         await checkout_page.page.wait_for_timeout(5000)
 
-        await expect(checkout_page.successMessage).to_contain_text("Order saved successfully! Your order ID is:")
+        await expect(checkout_page.successMessage).not_to_be_visible()
 
         order_id = await checkout_page.getOrderId()
         print(f"Order ID: {order_id}")

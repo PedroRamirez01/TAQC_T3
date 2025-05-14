@@ -126,19 +126,6 @@ class CheckoutPage:
         except Exception as e:
             print(f"[ERROR] No se pudo extraer el ID de orden: {e}")
             return None
-        
-    async def getSuccessMessage(self, label):
-        """
-        Asserts whether the success message appears based on the label.
-        :param label: Describes if it is a 'valid' or 'invalid' checkout.
-        """
-        if label.startswith("valid"):
-            await expect(self.successMessage).to_be_visible()
-            return await self.successMessage.text_content()
-
-        else:
-            await expect(self.successMessage).not_to_be_visible()
-            return None
 
     async def getOrderbyId(self, order_id):
         """
