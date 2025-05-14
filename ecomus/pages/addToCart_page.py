@@ -13,7 +13,7 @@ class AddToCart:
         :param page: Instance of Playwright Page.
         """
         self.page = page
-        self.changeColorButton = self.page.locator('#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-variant-picker > div:nth-child(1) > form > label:nth-child(4)')
+        self.changeColorButton = '.tf-product-info-list.other-image-zoom .tf-product-info-variant-picker form.variant-picker-values label:has(span.tooltip:has-text("{color}"))'
         self.changeSizeButton = self.page.locator('#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-variant-picker > div:nth-child(2) > form > label:nth-child(6)')
         self.IncrementButton = self.page.locator('#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-quantity > div.wg-quantity > span.btn-quantity.plus-btn')
         self.DecrementButton = self.page.locator('#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-quantity > div.wg-quantity > span.btn-quantity.minus-btn')
@@ -29,12 +29,15 @@ class AddToCart:
         """
         await self.page.goto(url, wait_until="domcontentloaded")
 
-    async def changeColor(self):
+    async def changeColor(self, color: str):
         """
-        Changes the product color.
+        Selecciona el color especificado utilizando el nuevo locator.
+        :param color: Nombre del color a seleccionar.
         """
-        await expect(self.changeColorButton).to_be_visible()
-        await self.changeColorButton.click()
+        color_locator = self.page.locator(self.changeColorButton.format(color=color))
+        await self.page.mouse.move(0, 0)
+        await expect(color_locator).to_be_visible()
+        await color_locator.first.click()
 
     async def changeSize(self):
         """
