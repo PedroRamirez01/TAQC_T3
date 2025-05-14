@@ -37,12 +37,12 @@ async def test_checkoutbug(register_page: Page, login_page: Page, homeTo_page: P
 
     await checkout_page.fillCheckoutForm({
         "FIRST_NAME": "",
-        "LAST_NAME": "González",
+        "LAST_NAME": "Rodriguez",
         "COUNTRY": "United States",
         "CITY": "Springfield",
         "ADDRESS": "Calle siempre viva 123",
         "PHONE_NUMBER": "123456789",
-        "EMAIL": "pedritogonzalez123@gmail.com",
+        "EMAIL": "luis.rodriguez@gmail.com",
         "DISCOUNT_CODE": "123",
         "CARD_NUMBER": "4242424242424242",
         "CARD_EXPIRATION": "12/25",
