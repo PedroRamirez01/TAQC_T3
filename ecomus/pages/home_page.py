@@ -38,6 +38,7 @@ class HomeToPage:
         self.searchInput = self.page.locator("fieldset.text > input:nth-child(1)")
         self.fashionSearch = page.locator("li.tf-quicklink-item:nth-child(1) > a:nth-child(1)")
         self.ecomus = self.page.locator(".logo")
+        self.products = self.page.locator("div.card-product:nth-child(1) > div:nth-child(1) > a:nth-child(1) > img:nth-child(2)")
         self.franklinSiganture = self.page.locator("div.card-product:nth-child(1) > div:nth-child(1) > a:nth-child(1) > img:nth-child(2)")
         self.quickAdd = self.page.locator("div.card-product:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)")
         self.quickAddFav = self.page.locator("div.card-product:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)")
@@ -57,6 +58,14 @@ class HomeToPage:
     async def fashion_search(self):
         await self.page.wait_for_timeout(2000)
         await self.fashionSearch.click()
+    
+    async def hover_product_and_quick_add(self):
+        await self.products.scroll_into_view_if_needed()
+        await self.products.wait_for(state="visible")
+        await self.products.hover()
+        await expect(self.quickAddPopupContent).to_be_visible()
+        await self.quickAdd.click()
+
     
     async def close_pop_up_home(self):
         await expect(self.popUpHome).to_be_visible()
