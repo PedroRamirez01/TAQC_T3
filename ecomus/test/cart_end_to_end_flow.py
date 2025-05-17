@@ -70,9 +70,9 @@ async def test_successful(register_page: Page, login_page: Page, homeTo_page: Pa
     order = await checkout_page.getOrderbyId(order_id)
 
     assert order["items"][0]["title"] == 'Franklin Signature Pickleball Paddle', f"Expected title 'Franklin Signature Pickleball Paddle', got {order['items'][0]['title']}"
-    assert order["items"][0]["quantity"] == 2, f'Expected quantity 2, got {order["items"][0]["quantity"]}'
-    assert order["items"][0]["price"] == 100, f'Expected price 100, got {order["items"][0]["price"]}'
+    assert order["items"][0]["quantity"] == 2, f'Expected quantity 2, got {order["items"][0]["quantity"]}. Product: {order["items"][0]["title"]}'
+    assert order["items"][0]["price"] == 100, f'Expected price 100, got {order["items"][0]["price"]}. Product: {order["items"][0]["title"]}'
 
     assert order["items"][1]["title"] == 'JOOLA Scorpeus Pickleball Paddle', f"Expected title 'JOOLA Scorpeus Pickleball Paddle', got {order['items'][1]['title']}"
-    assert order["items"][1]["quantity"] == 3, f'Expected quantity 3, got {order["items"][1]["quantity"]}'
-    assert order["items"][1]["price"] == 199, f'Expected price 100, got {order["items"][1]["price"]}'
+    assert order["items"][1]["quantity"] == 3, f'Expected quantity 3, got {order["items"][1]["quantity"]}. Product: {order["items"][1]["title"]}'
+    assert order["items"][1]["price"] == 199, f'Expected price 100, got {order["items"][1]["price"]}. Product: {order["items"][1]["title"]}'
