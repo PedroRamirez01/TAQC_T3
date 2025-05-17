@@ -1,5 +1,6 @@
 import pytest_asyncio
 from playwright.async_api import Page
+from config.config import Config
 from playwright.async_api import async_playwright
 from pages.checkout_page import CheckoutPage
 from pages.home_page import HomeToPage
@@ -7,8 +8,8 @@ from pages.filterProduct_page import FilterProductPage
 from pages.login_page import LoginPage
 from pages.register_page import RegisterPage
 from pages.product_detail_page import ProductDetailPage
+from pages.addToCart_page import AddToCart
 from utils.api_requests import delete_user_by_id
-from config.config import Config
 
 @pytest_asyncio.fixture(scope="function")
 async def page():
@@ -69,3 +70,8 @@ async def auto_delete_user_e2e(request):
 async def checkout_page(page: Page):
     await page.goto(Config.URL_BASE)
     return CheckoutPage(page)
+
+@pytest_asyncio.fixture
+async def add_to_cart(page: Page):
+    add_to_cart = AddToCart(page)
+    return add_to_cart
