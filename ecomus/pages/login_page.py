@@ -1,4 +1,4 @@
-from playwright.async_api import Page
+from playwright.async_api import Page, expect
 from models.login_user import LoginUser
 from config.config import Config
 
@@ -30,6 +30,7 @@ class LoginPage:
     async def navigate(self) -> None:
         """Navigates to the login page."""
         await self.page.goto(self.url, wait_until="domcontentloaded")
+        await expect(self.page).to_have_url(self.url)
 
     async def fill_email(self, email: str) -> None:
         """Fills in the email field."""
