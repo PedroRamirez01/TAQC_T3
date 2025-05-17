@@ -38,6 +38,10 @@ async def test_successful(register_page: Page, login_page: Page, homeTo_page: Pa
     await add_to_cart.changeColor("Black")
     await add_to_cart.changeSize()
     await add_to_cart.incrementQuantity()
+    await add_to_cart.addToCart()
+
+    await add_to_cart.closeCart()
+    
     await add_to_cart.incrementQuantity()
     await add_to_cart.addToCart()
 
@@ -62,15 +66,13 @@ async def test_successful(register_page: Page, login_page: Page, homeTo_page: Pa
     await expect(checkout_page.successMessage).to_contain_text("Order saved successfully! Your order ID is:")
 
     order_id = await checkout_page.getOrderId()
-    print(f"Order ID: {order_id}")
 
     order = await checkout_page.getOrderbyId(order_id)
-    print(f"Order: {order}")
 
     assert order["items"][0]["title"] == 'Franklin Signature Pickleball Paddle', f"Expected title 'Franklin Signature Pickleball Paddle', got {order['items'][0]['title']}"
     assert order["items"][0]["quantity"] == 2, f'Expected quantity 2, got {order["items"][0]["quantity"]}'
     assert order["items"][0]["price"] == 100, f'Expected price 100, got {order["items"][0]["price"]}'
 
     assert order["items"][1]["title"] == 'JOOLA Scorpeus Pickleball Paddle', f"Expected title 'JOOLA Scorpeus Pickleball Paddle', got {order['items'][1]['title']}"
-    assert order["items"][1]["quantity"] == 3, f'Expected quantity 2, got {order["items"][1]["quantity"]}'
-    assert order["items"][1]["price"] == 100, f'Expected price 100, got {order["items"][1]["price"]}'
+    assert order["items"][1]["quantity"] == 3, f'Expected quantity 3, got {order["items"][1]["quantity"]}'
+    assert order["items"][1]["price"] == 199, f'Expected price 100, got {order["items"][1]["price"]}'

@@ -61,8 +61,7 @@ async def auto_delete_user(request):
 
 @pytest_asyncio.fixture
 async def auto_delete_user_e2e(request):
-    user = request.param
-    email = user["email"]
+    email = request.param["email"]
     yield
     await delete_user_by_id(email)
 
