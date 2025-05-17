@@ -26,22 +26,22 @@ class AddToCart:
 
     async def navigate(self, url: str) -> None:
         """
-        Navega a la URL especificada y espera a que el DOM esté cargado.
-        :param url: URL de destino.
+        Navigates to the specified URL and waits for the DOM to be loaded.
+        :param url: Target URL.
         """
         await self.page.goto(url, wait_until="domcontentloaded")
 
     async def changeColor(self, color: str):
         """
-        Selecciona el color especificado utilizando el nuevo locator.
-        :param color: Nombre del color a seleccionar.
+        Select a color for the product.
+        :param color: Color to be selected.
         """
         color_locator = self.page.locator(self.changeColorButton.format(color=color))
         await self.page.mouse.move(0, 0)
         await expect(color_locator).to_be_visible()
         await color_locator.first.click()
 
-    async def changeSize(self):
+    async def changeSize(self, size: str):
         """
         Changes the product size.
         """
@@ -52,15 +52,15 @@ class AddToCart:
         """
         Increases the product quantity.
         """
-        await expect(self.IncrementButton).to_be_visible()
-        await self.IncrementButton.click()
+        await expect(self.incrementButton).to_be_visible()
+        await self.incrementButton.click()
 
     async def decrementQuantity(self):
         """
         Decreases the product quantity.
         """
-        await expect(self.DecrementButton).to_be_visible()
-        await self.DecrementButton.click()
+        await expect(self.decrementButton).to_be_visible()
+        await self.decrementButton.click()
 
     async def addToCart(self):
         """

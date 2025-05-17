@@ -3,6 +3,7 @@ from playwright.async_api import Page
 from config.config import Config
 from playwright.async_api import async_playwright
 from pages.checkout_page import CheckoutPage
+from pages.addToCart_page import AddToCart
 from pages.home_page import HomeToPage
 from pages.filterProduct_page import FilterProductPage
 from pages.login_page import LoginPage
