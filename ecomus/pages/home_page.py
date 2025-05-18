@@ -1,4 +1,4 @@
-from playwright.async_api import Page ,expect
+from playwright.async_api import Page, expect
 from config.config import Config
 
 class HomeToPage:
@@ -33,6 +33,7 @@ class HomeToPage:
 
     def __init__(self, page: Page):
         self.page = page
+        self.url = Config.URL_BASE
         self.popUpHome = self.page.locator("#newsletterPopup span.btn-hide-popup")
         self.searchIcon = self.page.locator(".nav-search > a:nth-child(1) > i:nth-child(1)")
         self.searchInput = self.page.locator("fieldset.text > input:nth-child(1)")
@@ -51,9 +52,9 @@ class HomeToPage:
         self.quickAddComparePopupContent = page.locator("#compare > div:nth-child(1) > div:nth-child(2)")
         self.quickViewPopupContent = page.locator("div.tf-product-info-list:nth-child(1)")
 
-    async def navigate(self, url: str) -> None:
-        await self.page.goto(url, wait_until="domcontentloaded")
-        await expect(self.page).to_have_url(url)
+    async def navigate(self) -> None:
+        await self.page.goto(self.url, wait_until="domcontentloaded")
+        await expect(self.page).to_have_url(self.url)
     
     async def fashion_search(self):
         await self.page.wait_for_timeout(2000)
@@ -65,45 +66,46 @@ class HomeToPage:
         await self.products.hover()
         await expect(self.quickAddPopupContent).to_be_visible()
         await self.quickAdd.click()
-
-    
-    async def close_pop_up_home(self):
+        
+    async def close_pop_up_home(self) -> None:
         await expect(self.popUpHome).to_be_visible()
         await self.page.wait_for_load_state("networkidle")
         await self.popUpHome.click()
         await expect(self.popUpHome).to_be_hidden()
 
-    async def closer_quick_view(self):
+    async def closer_quick_view(self) -> None:
         await self.page.wait_for_timeout(2000)
         await self.closerQuick.click()
     
-    async def click_ecomus(self):
+    async def click_ecomus(self) -> None:
         await self.ecomus.click()
         await self.page.wait_for_timeout(1000)
 
-    async def search_icon_click(self):
+    async def search_icon_click(self) -> str:
         await self.searchIcon.click()
         await self.page.wait_for_timeout(1000)
         return self.page.url
 
-    async def search_input_fill(self, item: str = "Paddle"):
+    async def search_input_fill(self, item: str = "Paddle") -> str:
         await self.searchInput.fill(item)
         await self.page.wait_for_timeout(1000)
         return self.page.url
 
     # Main Flows
     
-    async def search_for_item(self):
+    async def search_for_item(self) -> str:
         urls = []
         for attempt in range(Config.MAX_ATTEMPTS):
             try:
                 await self.close_pop_up_home()
                 url1 = await self.search_icon_click()
-                if url1: urls.append(url1)
+                if url1:
+                    urls.append(url1)
                 await self.page.wait_for_timeout(1000)
 
                 url2 = await self.search_input_fill()
-                if url2: urls.append(url2)
+                if url2:
+                    urls.append(url2)
 
                 return urls
             except Exception as e:
