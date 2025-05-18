@@ -1,4 +1,4 @@
-from playwright.async_api import Page
+from playwright.async_api import Page, expect
 
 class AddToCart:
 
@@ -13,55 +13,60 @@ class AddToCart:
         :param page: Instance of Playwright Page.
         """
         self.page = page
-        self.changeColorButton = self.page.locator('#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-variant-picker > div:nth-child(1) > form > label:nth-child(4)')
+        self.changeColorButton = '.tf-product-info-list.other-image-zoom .tf-product-info-variant-picker form.variant-picker-values label:has(span.tooltip:has-text("{color}"))'
         self.changeSizeButton = self.page.locator('#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-variant-picker > div:nth-child(2) > form > label:nth-child(6)')
-        self.IncrementButton = self.page.locator('#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-quantity > div.wg-quantity > span.btn-quantity.plus-btn')
-        self.DecrementButton = self.page.locator('#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-quantity > div.wg-quantity > span.btn-quantity.minus-btn')
+        self.incrementButton = self.page.locator('#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-quantity > div.wg-quantity > span.btn-quantity.plus-btn')
+        self.decrementButton = self.page.locator('#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-quantity > div.wg-quantity > span.btn-quantity.minus-btn')
         self.addToCartButton = self.page.locator('#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-buy-button > form > a.tf-btn.btn-fill.justify-content-center.fw-6.fs-16.flex-grow-1.animate-hover-btn')
         self.clickFirstPaddleButton = self.page.locator('#wrapper > div > section:nth-child(6) > div.tf-grid-layout.tf-col-2.md-col-3.gap-0.home-pckaleball-page > div:nth-child(1) > div.card-product-wrapper > a > img.lazyload.img-hover')
+        self.clickThirdPaddleButton = self.page.locator('#wrapper > div > section:nth-child(6) > div.tf-grid-layout.tf-col-2.md-col-3.gap-0.home-pckaleball-page > div:nth-child(3) > div.card-product-wrapper > a > img.lazyload.img-hover')
         self.closeModalButton = self.page.locator('#newsletterPopup > div > div > div.modal-top > span')
         self.cartButton = self.page.locator('#header > div > div > div.col-xxl-5.col-md-4.col-3 > ul > li.nav-cart > a')
+        self.closeCartButton = self.page.locator('#shoppingCart > div > div > div.header > span')
 
     async def navigate(self, url: str) -> None:
         """
-        Navega a la URL especificada y espera a que el DOM esté cargado.
-        :param url: URL de destino.
+        Navigates to the specified URL and waits for the DOM to be loaded.
+        :param url: Target URL.
         """
         await self.page.goto(url, wait_until="domcontentloaded")
 
-    async def changeColor(self):
+    async def changeColor(self, color: str):
         """
-        Changes the product color.
+        Select a color for the product.
+        :param color: Color to be selected.
         """
-        assert self.changeColorButton, "No color button found"
-        await self.changeColorButton.click()
+        color_locator = self.page.locator(self.changeColorButton.format(color=color))
+        await self.page.mouse.move(0, 0)
+        await expect(color_locator).to_be_visible()
+        await color_locator.first.click()
 
     async def changeSize(self):
         """
         Changes the product size.
         """
-        assert self.changeSizeButton, "No size button found"
+        await expect(self.changeSizeButton).to_be_visible()
         await self.changeSizeButton.click()
 
     async def incrementQuantity(self):
         """
         Increases the product quantity.
         """
-        assert self.IncrementButton, "No increment button found"
-        await self.IncrementButton.click()
+        await expect(self.incrementButton).to_be_visible()
+        await self.incrementButton.click()
 
     async def decrementQuantity(self):
         """
         Decreases the product quantity.
         """
-        assert self.DecrementButton, "No decrement button found"
-        await self.DecrementButton.click()
+        await expect(self.decrementButton).to_be_visible()
+        await self.decrementButton.click()
 
     async def addToCart(self):
         """
         Adds the product to the shopping cart.
         """
-        assert self.addToCartButton, "No add to cart button found"
+        await expect(self.addToCartButton).to_be_visible()
         await self.addToCartButton.click()
 
     async def performAddToCartActions(self):
@@ -74,7 +79,7 @@ class AddToCart:
         await self.incrementQuantity()
         await self.incrementQuantity()
         await self.incrementQuantity()
-        await self.incrementQuantity()
+        await self.incrementQuantity() 
         await self.decrementQuantity()
         await self.addToCart()
 
@@ -82,20 +87,33 @@ class AddToCart:
         """
         Clicks on the first paddle in the product list.
         """
-        assert self.clickFirstPaddleButton, "No first paddle button found"
+        await expect(self.clickFirstPaddleButton).to_be_visible()
         await self.clickFirstPaddleButton.click()
+
+    async def clickThirdPaddle(self):
+        """
+        Clicks on the third paddle in the product list.
+        """
+        await expect(self.clickThirdPaddleButton).to_be_visible()
+        await self.clickThirdPaddleButton.click()
 
     async def closeModal(self):
         """
         Closes the modal if it is open.
         """
-        assert self.closeModalButton, "No close modal button found"
+        await expect(self.closeModalButton).to_be_visible()
         await self.closeModalButton.click()
 
     async def clickCartButton(self):
         """
         Clicks on the cart button.
         """
-        assert self.cartButton, "No cart button found"
+        await expect(self.cartButton).to_be_visible()
         await self.cartButton.click()
-        
+
+    async def closeCart(self):
+        """
+        Closes the cart.
+        """
+        await expect(self.closeCartButton).to_be_visible()
+        await self.closeCartButton.click()
