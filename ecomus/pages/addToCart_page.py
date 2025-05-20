@@ -14,10 +14,11 @@ class AddToCart:
         """
         self.page = page
         self.changeColorButton = '.tf-product-info-list.other-image-zoom .tf-product-info-variant-picker form.variant-picker-values label:has(span.tooltip:has-text("{color}"))'
-        self.changeSizeButton = self.page.locator('#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-variant-picker > div:nth-child(2) > form > label:nth-child(6)')
+        self.changeSizeButton = '#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-variant-picker form > label:has-text("{size}")'
         self.incrementButton = self.page.locator('#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-quantity > div.wg-quantity > span.btn-quantity.plus-btn')
         self.decrementButton = self.page.locator('#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-quantity > div.wg-quantity > span.btn-quantity.minus-btn')
         self.addToCartButton = self.page.locator('#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-buy-button > form > a.tf-btn.btn-fill.justify-content-center.fw-6.fs-16.flex-grow-1.animate-hover-btn')
+        self.quantityInput = self.page.locator('#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-quantity > div.wg-quantity > input[type=text]')
         self.clickFirstPaddleButton = self.page.locator('#wrapper > div > section:nth-child(6) > div.tf-grid-layout.tf-col-2.md-col-3.gap-0.home-pckaleball-page > div:nth-child(1) > div.card-product-wrapper > a > img.lazyload.img-hover')
         self.clickThirdPaddleButton = self.page.locator('#wrapper > div > section:nth-child(6) > div.tf-grid-layout.tf-col-2.md-col-3.gap-0.home-pckaleball-page > div:nth-child(3) > div.card-product-wrapper > a > img.lazyload.img-hover')
         self.closeModalButton = self.page.locator('#newsletterPopup > div > div > div.modal-top > span')
@@ -41,12 +42,14 @@ class AddToCart:
         await expect(color_locator).to_be_visible()
         await color_locator.first.click()
 
-    async def changeSize(self):
+    async def changeSize(self, size: str):
         """
-        Changes the product size.
+        Change the size of the product.
+        :param size: Size to be selected.
         """
-        await expect(self.changeSizeButton).to_be_visible()
-        await self.changeSizeButton.click()
+        size_locator = self.page.locator(self.changeSizeButton.format(size=size))
+        await expect(size_locator).to_be_visible()
+        await size_locator.click()
 
     async def incrementQuantity(self):
         """
@@ -61,6 +64,10 @@ class AddToCart:
         """
         await expect(self.decrementButton).to_be_visible()
         await self.decrementButton.click()
+
+    async def setItemQuantity(self, amount: int):
+        await expect(self.quantityInput).to_be_visible()
+        await self.quantityInput.fill(str(amount))
 
     async def addToCart(self):
         """

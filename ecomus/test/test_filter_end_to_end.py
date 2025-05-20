@@ -1,5 +1,4 @@
 import pytest
-import time
 from playwright.async_api import Page , expect
 
 @pytest.mark.asyncio

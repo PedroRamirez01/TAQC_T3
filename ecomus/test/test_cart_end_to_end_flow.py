@@ -26,7 +26,7 @@ async def test_successful(register_page: Page, login_page: Page, homeTo_page: Pa
     await homeTo_page.close_pop_up_home()
     await add_to_cart.clickFirstPaddle()
     await add_to_cart.changeColor("Blue")
-    await add_to_cart.changeSize()
+    await add_to_cart.changeSize("M")
     await add_to_cart.incrementQuantity()
     await add_to_cart.addToCart()
 
@@ -36,7 +36,7 @@ async def test_successful(register_page: Page, login_page: Page, homeTo_page: Pa
     await homeTo_page.close_pop_up_home()
     await add_to_cart.clickThirdPaddle()
     await add_to_cart.changeColor("Black")
-    await add_to_cart.changeSize()
+    await add_to_cart.changeSize("L")
     await add_to_cart.incrementQuantity()
     await add_to_cart.addToCart()
 
