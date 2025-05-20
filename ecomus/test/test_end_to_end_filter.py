@@ -25,6 +25,7 @@ async def test_successful_filter(register_page: Page, login_page: Page, homeTo_p
 
     await homeTo_page.click_ecomus()
     await homeTo_page.close_pop_up_home()
+    time.sleep(2)
     await homeTo_page.search_icon_click()
     await homeTo_page.fashion_search()
     await expect(homeTo_page.page).to_have_url("https://automation-portal-bootcamp.vercel.app/shop-default")
@@ -37,8 +38,8 @@ async def test_successful_filter(register_page: Page, login_page: Page, homeTo_p
 
     await filter_page.filterBttn.click()
     await filter_page.move_price_slider(1)
-    await filter_page.move_price_slider(7) #Valor 16-20 Slicer
-    #await filter_page.pop_up()
+    await filter_page.move_price_slider(7)
+    await filter_page.pop_up()
     await filter_page.order_by()
     await expect(filter_page.page.locator("div.card-product:nth-child(1) > div:nth-child(2) > span:nth-child(2)")).to_have_text("$14.95")
     
