@@ -36,7 +36,7 @@ async def test_successful(register_page: Page, login_page: Page, homeTo_page: Pa
     await homeTo_page.close_pop_up_home()
     await add_to_cart.clickThirdPaddle()
     await add_to_cart.changeColor("Black")
-    await add_to_cart.changeSize("L")
+    await add_to_cart.changeSize("S")
     await add_to_cart.incrementQuantity()
     await add_to_cart.addToCart()
 
@@ -74,5 +74,5 @@ async def test_successful(register_page: Page, login_page: Page, homeTo_page: Pa
     assert order["items"][0]["price"] == 100, f'Expected price 100, got {order["items"][0]["price"]}. Product: {order["items"][0]["title"]}'
 
     assert order["items"][1]["title"] == 'JOOLA Scorpeus Pickleball Paddle', f"Expected title 'JOOLA Scorpeus Pickleball Paddle', got {order['items'][1]['title']}"
-    assert order["items"][1]["quantity"] == 3, f'Expected quantity 3, got {order["items"][1]["quantity"]}. Product: {order["items"][1]["title"]}'
+    assert order["items"][1]["quantity"] == 5, f'Expected quantity 5, got {order["items"][1]["quantity"]}. Product: {order["items"][1]["title"]}'
     assert order["items"][1]["price"] == 199, f'Expected price 100, got {order["items"][1]["price"]}. Product: {order["items"][1]["title"]}'
