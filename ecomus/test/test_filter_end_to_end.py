@@ -24,7 +24,6 @@ async def test_successful_filter(register_page: Page, login_page: Page, homeTo_p
 
     await homeTo_page.click_ecomus()
     await homeTo_page.close_pop_up_home()
-    time.sleep(2)
     await homeTo_page.search_icon_click()
     await homeTo_page.fashion_search()
     await expect(homeTo_page.page).to_have_url("https://automation-portal-bootcamp.vercel.app/shop-default")
