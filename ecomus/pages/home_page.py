@@ -20,7 +20,7 @@ class HomeToPage:
         self.searchIcon = self.page.locator(".nav-search > a:nth-child(1) > i:nth-child(1)")
         self.searchInput = self.page.locator("fieldset.text > input:nth-child(1)")
         self.fashionSearch = page.locator("li.tf-quicklink-item:nth-child(1) > a:nth-child(1)")
-        self.ecomus = self.page.locator(".logo")
+        self.ecomus = self.page.locator("#header > div > div > div.col-xl-3.col-md-4.col-6 > a")
         self.products = self.page.locator("div.card-product:nth-child(1) > div:nth-child(1) > a:nth-child(1) > img:nth-child(2)")
         self.franklinSiganture = self.page.locator("div.card-product:nth-child(1) > div:nth-child(1) > a:nth-child(1) > img:nth-child(2)")
         self.quickAdd = self.page.locator("div.card-product:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)")
