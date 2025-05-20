@@ -15,7 +15,7 @@ from utils.api_requests import delete_user_by_id
 @pytest_asyncio.fixture(scope="function")
 async def page():
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=False, slow_mo=500)
+        browser = await p.chromium.launch(headless=True)
         page = await browser.new_page()
         yield page
         await browser.close()
