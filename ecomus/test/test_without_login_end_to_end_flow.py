@@ -15,7 +15,7 @@ async def test_successful(homeTo_page: Page, add_to_cart: Page, checkout_page: P
     await homeTo_page.close_pop_up_home()
     await add_to_cart.clickThirdPaddle()
     await add_to_cart.changeColor("Black")
-    await add_to_cart.changeSize()
+    await add_to_cart.changeSize("M")
     await add_to_cart.incrementQuantity()
     await add_to_cart.addToCart()
 
