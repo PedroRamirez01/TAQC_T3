@@ -34,7 +34,7 @@ pipeline {
 
     stage('Run tests') {
       steps {
-        sh 'TOKEN=$TOKEN pytest ecomus/test/test_login.py --html=ecomus/report/report.html --self-contained-html || true'
+        sh 'TOKEN=$TOKEN pytest ecomus/test -k "end_to_end" --html=ecomus/report/report.html --self-contained-html || true'
         // sh 'python3 -m http.server 8082 --directory ecomus/report/'
       }
     }
