@@ -6,7 +6,7 @@ from playwright.async_api import expect
 @pytest.mark.parametrize("auto_delete_user_e2e", [{
     "email": "luis.rodriguez@gmail.com"
 }], indirect=True)
-async def test_checkoutbug(register_page: Page, login_page: Page, homeTo_page: Page, add_to_cart: Page, checkout_page:Page, auto_delete_user_e2e): #, home_page: Page, add_to_cart: Page, checkout_page: Page
+async def test_checkout(register_page: Page, login_page: Page, homeTo_page: Page, add_to_cart: Page, checkout_page:Page, auto_delete_user_e2e): #, home_page: Page, add_to_cart: Page, checkout_page: Page
     await register_page.navigate()
     await register_page.fill_register_form({
         "first_name": "Luis",
@@ -36,21 +36,21 @@ async def test_checkoutbug(register_page: Page, login_page: Page, homeTo_page: P
     await checkout_page.clickProceedToCheckoutButton()
 
     await checkout_page.fillCheckoutForm({
-        "FIRST_NAME": "",
+        "FIRST_NAME": "Luis",
         "LAST_NAME": "Rodriguez",
         "COUNTRY": "United States",
         "CITY": "Springfield",
         "ADDRESS": "Calle siempre viva 123",
         "PHONE_NUMBER": "123456789",
-        "EMAIL": "luis.rodriguez@gmail.com",
-        "DISCOUNT_CODE": "123",
+        "EMAIL": "pedritogonzalez123@gmail.com",
+        "DISCOUNT_CODE": "",
         "CARD_NUMBER": "4242424242424242",
         "CARD_EXPIRATION": "12/25",
         "CARD_CVV": "123"
     })
     await checkout_page.clickAgreeCheckbox()
     await checkout_page.clickPlaceOrderButton()
-    await expect(checkout_page.successMessage).not_to_be_visible()
+    await expect(checkout_page.successMessage).to_contain_text("Order saved successfully! Your order ID is:")
 
     order_id = await checkout_page.getOrderId()
     print(f"Order ID: {order_id}")
