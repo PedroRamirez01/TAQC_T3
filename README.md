@@ -84,7 +84,7 @@ To get the initial admin password:
 docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 ```
 
-### Step 3: Create a 'TOKEN' Credential
+### Step 3: Create a 'TOKEN' Credential And Download Plugin 'HTML Publisher'
 
 In the Jenkins web interface:
 
@@ -95,6 +95,8 @@ In the Jenkins web interface:
    - Scope: Global
    - ID: TOKEN
    - Secret: ****************
+4. Go to Manage Jenkins > Plugins > Available plugins.
+5. Search 'HTML Publisher' and Download
 
 ### Step 4: Configure a Job (Pipeline)
 
