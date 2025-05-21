@@ -35,6 +35,5 @@ pipeline {
         // sh 'python3 -m http.server 8082 --directory ecomus/report/'
       }
     }
-  }    }
   }
 }
