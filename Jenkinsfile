@@ -29,6 +29,9 @@ pipeline {
     stage('Run tests') {
       steps {
         sh 'TOKEN=$TOKEN pytest ecomus/test -k "end_to_end" --html=ecomus/report/report.html --self-contained-html || true'
+        sh 'python3 ecomus/report/fix_report.py ecomus/report/report.html || true'
+        sh 'mkdir -p /var/www/html/reports || true'
+        sh 'cp ecomus/report/report.html /var/www/html/reports/ || true'
       }
     }
     
