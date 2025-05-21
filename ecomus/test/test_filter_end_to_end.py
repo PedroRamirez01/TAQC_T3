@@ -40,12 +40,9 @@ async def test_successful_filter(register_page: Page, login_page: Page, homeTo_p
     await filter_page.pop_up()
     await filter_page.order_by()
     await expect(filter_page.page.locator("div.card-product:nth-child(1) > div:nth-child(2) > span:nth-child(2)")).to_have_text("$14.95")
-    
-    #await filter_page.out_of_stock() #Bug 1 es posible añadir al carrito un producto que no tiene stock
 
     color_element = await filter_page.click_color()
     await expect(color_element).to_have_text("Brown")
-
     await filter_page.click_Brand()
 
     size_element = await filter_page.size_XL()
@@ -73,3 +70,8 @@ async def test_successful_filter(register_page: Page, login_page: Page, homeTo_p
     await checkout_page.clickPlaceOrderButton()
 
     await expect(checkout_page.successMessage).to_contain_text("Order saved successfully! Your order ID is:")
+    
+    #await homeTo_page.search_icon_click()
+    #await homeTo_page.fashion_search()
+    #
+    #await filter_page.out_of_stock() #Bug 1 es posible añadir al carrito un producto que no tiene stock
