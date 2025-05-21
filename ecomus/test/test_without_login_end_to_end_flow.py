@@ -11,7 +11,6 @@ async def test_successful(homeTo_page: Page, add_to_cart: Page, checkout_page: P
 
     await expect(homeTo_page.page).to_have_url("https://automation-portal-bootcamp.vercel.app/")
 
-    await homeTo_page.click_ecomus()
     await homeTo_page.close_pop_up_home()
     await add_to_cart.clickThirdPaddle()
     await add_to_cart.changeColor("Black")
