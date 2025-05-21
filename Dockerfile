@@ -34,5 +34,10 @@ RUN venv/bin/pip install --upgrade pip \
 RUN venv/bin/pip install playwright \
     && venv/bin/playwright install --with-deps chromium
 
+# Asegurar que el usuario jenkins tenga permisos sobre los directorios de trabajo
+RUN mkdir -p /var/jenkins_home/workspace/ecomus \
+    && chown -R jenkins:jenkins /var/jenkins_home/workspace \
+    && chmod -R 755 /var/jenkins_home/workspace
+
 # Volver al usuario jenkins para mejor seguridad
 USER jenkins
