@@ -25,17 +25,10 @@ pipeline {
         sh 'pip install --break-system-packages -r requirements.txt'
       }
     }    
-    
+
     stage('Run tests') {
       steps {
-        sh 'TOKEN=$TOKEN pytest ecomus/test -k "end_to_end" --html=ecomus/report/report.html --self-contained-html || true'
-      }
-    }
-    
-    stage('Test') {
-      steps {
-        sh """. ../venv/bin/activate
-        pytest --junitxml=results.xml"""
+        sh 'TOKEN=$TOKEN pytest ecomus/test -k "end_to_end" --junitxml=results.xml || true'
       }
       post {
         always {
