@@ -32,16 +32,15 @@ pipeline {
       }
     }
     
-    stage('Publish HTML Reports') {
+    stage('Test') {
       steps {
-        publishHTML(target: [
-          allowMissing: false,
-          alwaysLinkToLastBuild: true,
-          keepAll: true,
-          reportDir: 'ecomus/report',
-          reportFiles: 'report.html',
-          reportName: 'Report'
-        ])
+        sh """. ../venv/bin/activate
+        pytest --junitxml=results.xml"""
+      }
+      post {
+        always {
+          junit 'results.xml'
+        }
       }
     }
   }
