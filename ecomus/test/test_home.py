@@ -1,8 +1,10 @@
 import pytest
-from playwright.async_api import expect
+from playwright.async_api import expect , Page
+from pages.home_page import HomeToPage
 
 @pytest.mark.asyncio
-async def test_search_product(homeTo_page):
+async def test_search_product(page:Page):
+    homeTo_page = HomeToPage(page)
     """
     Verifies that the search by magnifying glass works.
     """
@@ -14,7 +16,8 @@ async def test_search_product(homeTo_page):
     await expect(homeTo_page.page).not_to_have_url(final_url,timeout=3000)
 
 @pytest.mark.asyncio
-async def test_hover_add_cart(homeTo_page):
+async def test_hover_add_cart(page:Page):
+    homeTo_page = HomeToPage(page)
     """
     Verifies that the Quick Add popup displays correctly when hovering and clicking on the first product.
     """
@@ -26,7 +29,8 @@ async def test_hover_add_cart(homeTo_page):
     await expect(homeTo_page.quickAddPopupContent).to_be_visible(timeout=3000)
 
 @pytest.mark.asyncio
-async def test_hover_add_fav(homeTo_page):
+async def test_hover_add_fav(page:Page):
+    homeTo_page = HomeToPage(page)
     """
     Verifies that the Quick Fav popup displays correctly when hovering and clicking on the first product.
     """
@@ -38,7 +42,8 @@ async def test_hover_add_fav(homeTo_page):
     await expect(homeTo_page.quickAddFavPopupContent).to_be_visible(timeout=3000)
 
 @pytest.mark.asyncio
-async def test_hover_add_compare(homeTo_page):
+async def test_hover_add_compare(page:Page):
+    homeTo_page = HomeToPage(page)
     """
     Verifies that the Quick Compare popup displays correctly when hovering and clicking on the first product.
     """
@@ -52,7 +57,8 @@ async def test_hover_add_compare(homeTo_page):
 
 
 @pytest.mark.asyncio
-async def test_hover_view(homeTo_page):
+async def test_hover_view(page:Page):
+    homeTo_page = HomeToPage(page)
     """
     Verifies that the Quick View popup displays correctly when hovering and clicking on the first product.
     """

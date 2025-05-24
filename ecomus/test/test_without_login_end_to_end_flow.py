@@ -1,12 +1,18 @@
 import pytest
-from playwright.async_api import Page
-from playwright.async_api import expect
+from playwright.async_api import Page , expect
+from pages.home_page import HomeToPage
+from pages.addToCart_page import AddToCart
+from pages.checkout_page import CheckoutPage
+
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("auto_delete_user_e2e", [{
     "email": "luis.rodriguez@gmail.com"
 }], indirect=True)
-async def test_successful(homeTo_page: Page, add_to_cart: Page, checkout_page: Page, auto_delete_user_e2e):
+async def test_successful(page: Page, auto_delete_user_e2e):
+    homeTo_page = HomeToPage(page)
+    add_to_cart = AddToCart(page)
+    checkout_page = CheckoutPage(page)
     await homeTo_page.navigate()
 
     await expect(homeTo_page.page).to_have_url("https://automation-portal-bootcamp.vercel.app/")

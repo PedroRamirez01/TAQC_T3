@@ -14,6 +14,7 @@ class CheckoutPage:
         :param page: Instance of Playwright Page.
         """
         self.page = page
+        self.url = Config.URL_BASE
         self.termsAndConditionsCheckbox = self.page.locator('#CartDrawer-Form_agree')
         self.proceedToCheckoutButton = self.page.locator('a.tf-btn.btn-fill.animate-hover-btn.radius-3.w-100.justify-content-center[href="/checkout"]')
         self.fieldFirstName = self.page.locator("#first-name")
@@ -32,12 +33,10 @@ class CheckoutPage:
         self.placeOrderButton = self.page.locator("#wrapper > section > div > div > div.tf-page-cart-footer > div > form > button")
         self.successMessage = self.page.locator('p[style*="color: green"]:has-text("Order saved successfully!")')
 
-    async def navigate(self, url: str) -> None:
-        """
-        Navigates to the specified URL and waits for the DOM to be loaded.
-        :param url: Target URL.
-        """
-        await self.page.goto(url, wait_until="domcontentloaded")
+    async def navigate(self) -> None:
+        """Navigates to the HomePage."""
+        await self.page.goto(self.url, wait_until="domcontentloaded")
+        await expect(self.page).to_have_url(self.url)
 
     async def clickTermsAndConditionsCheckbox(self):
         await expect(self.termsAndConditionsCheckbox).to_be_visible()

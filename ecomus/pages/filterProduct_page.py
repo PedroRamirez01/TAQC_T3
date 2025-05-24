@@ -15,8 +15,8 @@ class FilterProductPage:
 
     """
     def __init__(self, page: Page):
-        self.page = page
         self.url = Config.URL_FILTER
+        self.page = page
         self.popUpHome = self.page.locator("span.btn-hide-popup")
         self.filterBttn = self.page.locator(".tf-btn-filter")
         self.filterMen = self.page.locator("li.cate-item:nth-child(2) > a:nth-child(1) > span:nth-child(1)")
@@ -42,12 +42,10 @@ class FilterProductPage:
         self.clearFilter = self.page.locator("a.tf-btn:nth-child(4)")
         self.productThree = self.page.locator("div.card-product:nth-child(3) > div:nth-child(1) > a:nth-child(1) > img:nth-child(2)")
 
-    async def navigate(self, url: str) -> None:
-        """
-        Navigates to the specified URL and waits for the page to be fully loaded.
-        Args:url (str): The URL to navigate to
-        """
-        await self.page.goto(url, wait_until="domcontentloaded")
+    async def navigate(self) -> None:
+        """Navigates to the filterPage."""
+        await self.page.goto(self.url, wait_until="domcontentloaded")
+        await expect(self.page).to_have_url(self.url)
     
     async def click_color(self):
         """
@@ -128,6 +126,20 @@ class FilterProductPage:
         await self.clearFilter.click()
         await self.closePopUpFilter.click()
         return await self.page.locator(".wrapper-control-shop > div:nth-child(2)")
+    
+    async def do_filter_men_div(self):
+        await self.navigate()
+        await self.filterBttn.click()
+        await self.filterMen.click()
+        await self.pop_up()
+        return await self.page.locator("div.card-product:nth-child(1) > div:nth-child(2) > a:nth-child(1)").inner_text()
+
+    async def do_filter_women_div(self):
+        await self.navigate()
+        await self.filterBttn.click()
+        await self.filterWomen.click()
+        await self.pop_up()
+        return await self.page.locator("div.card-product:nth-child(1) > div:nth-child(2) > a:nth-child(1)").inner_text()
 
     async def do_filter_men(self):
         """
@@ -156,7 +168,7 @@ class FilterProductPage:
         Returns:
             str: The URL after applying the Men filter, useful for verifying proper navigation
         """
-
+        await self.navigate()
         await self.filterBttn.click()
         await self.filterMen.click()
         await self.closePopUpFilter.click()
@@ -169,6 +181,7 @@ class FilterProductPage:
         Returns:
             str: The URL after applying the Women filter, useful for verifying proper navigation
         """
+        await self.navigate()
         await self.filterBttn.click()
         await self.filterWomen.click()
         await self.closePopUpFilter.click()
@@ -181,6 +194,7 @@ class FilterProductPage:
         Applies the Women category filter, then availability, brand, color, and size filters
         to demonstrate compound filtering functionality.
         """
+        await self.navigate()
         await self.filterBttn.click()
         await self.filterWomen.click()
         await self.closePopUpFilter.click()
@@ -202,6 +216,7 @@ class FilterProductPage:
         Returns:
             str: The URL after applying the Denim filter
         """
+        await self.navigate()
         await self.filterBttn.click()
         for attempy in range(Config.MAX_ATTEMPTS):
             try:
@@ -223,6 +238,7 @@ class FilterProductPage:
         Returns:
             str: The URL after applying the Dress filter
         """
+        await self.navigate()
         await self.filterBttn.click()
         for attempy in range(Config.MAX_ATTEMPTS):
             try:
@@ -240,12 +256,17 @@ class FilterProductPage:
         Applies the out-of-stock filter, attempts to add a product to cart,
         and verifies that the cart total remains at zero.
         """
+        await self.navigate()
         await self.filterBttn.click()
         await self.outOfStockFilter.click()
         await self.pop_up()
         await self.add_cart()
         value = self.page.locator(".tf-totals-total-value")
         await expect(value).to_have_text("0.00") 
+    
+    async def initial_url(self):
+        await self.navigate()
+        return self.page.url
 
     async def add_cart(self):
         """
@@ -272,25 +293,6 @@ class FilterProductPage:
 
     #Main Flows 
 
-    async def out_of_stock_flow(self):
-        """
-        Tests the complete out-of-stock product workflow.
-
-        Verifies that products marked as out-of-stock cannot be added to cart
-        and that appropriate feedback is provided to the user. Includes error
-        handling for robustness.
-
-        Returns:
-            Result of the add_cart operation, expected to fail for out-of-stock items
-        """
-        total_value = []
-        try:
-            await self.out_of_stock()
-            await self.pop_up()
-            return await self.add_cart()
-        except Exception as e:
-            print(f"Error: {e}")
-
     async def do_clear_filter(self):
         """
         Tests the filter clearing functionality.
@@ -301,7 +303,8 @@ class FilterProductPage:
         Returns:
             Locator: The clear filter button locator for verification
         """
-        try:
+        
+        try: 
             await self.do_multiplies_filter()
             await self.filterBttn.click()
             filter_button = self.page.locator("a.tf-btn:nth-child(4)")

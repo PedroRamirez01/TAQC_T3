@@ -1,11 +1,23 @@
 import pytest
 from playwright.async_api import Page , expect
+from pages.register_page import RegisterPage
+from pages.login_page import LoginPage
+from pages.home_page import HomeToPage
+from pages.filterProduct_page import FilterProductPage
+from pages.checkout_page import CheckoutPage
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("auto_delete_user_e2e", [{
     "email": "luis.rodriguez@gmail.com"
 }], indirect=True)
-async def test_successful_filter(register_page: Page, login_page: Page, homeTo_page: Page, filter_page: Page,checkout_page: Page, auto_delete_user_e2e): #, home_page: Page, add_to_cart: Page, checkout_page: Page
+async def test_successful_filter(page : Page, auto_delete_user_e2e):
+
+    register_page = RegisterPage(page)
+    login_page = LoginPage(page)
+    homeTo_page = HomeToPage(page)
+    filter_page = FilterProductPage(page)
+    checkout_page = CheckoutPage(page)
+
     await register_page.navigate()
     await register_page.fill_register_form({
         "first_name": "Luis",
