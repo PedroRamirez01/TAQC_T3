@@ -1,56 +1,64 @@
 import pytest
-from pages.addToCart import AddToCart
-from pages.checkoutPage import CheckoutPage
+from pages.addToCart_page import AddToCart
 from utils.test_data import valid_checkout_data, invalid_checkout_data
-
-product_id = 1
-URL = f"https://automation-portal-bootcamp.vercel.app/product-detail/{product_id}"
+from playwright.async_api import expect
 
 test_data = valid_checkout_data + invalid_checkout_data
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio 
 @pytest.mark.parametrize("label,data", test_data)
-async def test_checkout_flow(label,data,page):
-        await page.goto(URL, wait_until="domcontentloaded")
-        addToCart = AddToCart(page)
-        await addToCart.changeColor()
-        await addToCart.changeSize()
-        await addToCart.incrementQuantity()
-        await addToCart.incrementQuantity()
-        await addToCart.incrementQuantity()
-        await addToCart.incrementQuantity()
-        await addToCart.incrementQuantity()
-        await addToCart.decrementQuantity()
-        await addToCart.addToCart()
+async def test_checkout_flow(label, data,checkout_page, add_to_cart):
+       
+        await add_to_cart.closeModal()
+        await add_to_cart.clickFirstPaddle()
+        await add_to_cart.performAddToCartActions()
 
-        checkoutpage = CheckoutPage(page)
-        await checkoutpage.clickTermsAndConditionsCheckbox()
-        await checkoutpage.clickProceedToCheckoutButton()
+        await checkout_page.clickTermsAndConditionsCheckbox()
+        await checkout_page.clickProceedToCheckoutButton()
 
-        await checkoutpage.fill_checkout_form(data)
-        await checkoutpage.clickAgreeCheckbox()
-        await checkoutpage.clickPlaceOrderButton()
+        await checkout_page.fillCheckoutForm(data)
+        await checkout_page.clickAgreeCheckbox()
+        await checkout_page.clickPlaceOrderButton()
 
-        await page.wait_for_timeout(5000) 
+        await checkout_page.page.wait_for_timeout(5000) 
 
-        await checkoutpage.assert_success_message(label)
+        if label.startswith("valid"):
+            await expect(checkout_page.successMessage).to_contain_text("Order saved successfully! Your order ID is:")
+        else:
+            await expect(checkout_page.successMessage).not_to_be_visible()
+
+        order_id = await checkout_page.getOrderId()
+        print(f"Order ID: {order_id}")
+
+        order = await checkout_page.getOrderbyId(order_id)
+        print(f"Order: {order}")
+
+        assert order["items"][0]["title"] == 'Franklin Signature Pickleball Paddle'
+        assert order["items"][0]["quantity"] == 5
+        assert order["items"][0]["price"] == 100
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("label,data", valid_checkout_data)
-async def test_checkout_with_empty_cart(label,data,page):
-        await page.goto(URL, wait_until="domcontentloaded")
+async def test_checkout_with_empty_cart(label, data,checkout_page, add_to_cart):
 
-        cart_button = page.locator("#header > div > div > div.col-xl-3.col-md-4.col-3 > ul > li.nav-cart > a")
-        await cart_button.click()
-        await page.wait_for_timeout(2000)
+        await add_to_cart.closeModal()
+        await add_to_cart.clickCartButton()
 
-        checkoutpage = CheckoutPage(page)
-        await checkoutpage.clickTermsAndConditionsCheckbox()
-        await checkoutpage.clickProceedToCheckoutButton()
-        await checkoutpage.fill_checkout_form(data)
-        await checkoutpage.clickAgreeCheckbox()
-        await checkoutpage.clickPlaceOrderButton()
+        await checkout_page.page.wait_for_timeout(2000)
+        await checkout_page.clickTermsAndConditionsCheckbox()
+        await checkout_page.clickProceedToCheckoutButton()
+        await checkout_page.fillCheckoutForm(data)
+        await checkout_page.clickAgreeCheckbox()
+        await checkout_page.clickPlaceOrderButton()
 
-        await page.wait_for_timeout(5000) 
+        await checkout_page.page.wait_for_timeout(5000)
 
-        await checkoutpage.assert_success_message(label)
+        await expect(checkout_page.successMessage).not_to_be_visible()
+
+        order_id = await checkout_page.getOrderId()
+        print(f"Order ID: {order_id}")
+
+        order = await checkout_page.getOrderbyId(order_id)
+        print(f"Order: {order}")
+
+

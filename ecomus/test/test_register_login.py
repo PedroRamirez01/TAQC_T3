@@ -1,7 +1,7 @@
 import pytest
 from playwright.async_api import Page
 from models.register_login_users import RegisterLoginUser
-from utils.users_data import register_login_valid_new_users, register_login_invalid_new_users
+from utils.register_login_data import register_login_valid_new_users, register_login_invalid_new_users
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
@@ -10,13 +10,11 @@ from utils.users_data import register_login_valid_new_users, register_login_inva
     indirect=["auto_delete_user"]
 )
 async def test_successful_registration_login_valid(register_page: Page, login_page: Page, user: RegisterLoginUser, auto_delete_user):
-    """
-    Verifica que el registro sea exitoso y redirija a la página de inicio de sesión.
-    """
+    """Test for successful registration and login."""
     await register_page.register(user.register)
-    assert "/login" in register_page.page.url, f"Usuario valido no creado: {user.register}"
+    assert "/login" in register_page.page.url, f"Valid user not created: {user.register}."
     await login_page.login(user.login)
-    assert "/my-account" in login_page.page.url, f"El inicio de sesión no fue exitoso: {user.login}"
+    assert "/my-account" in login_page.page.url, f"The login was not successful: {user.login}."
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
@@ -25,9 +23,7 @@ async def test_successful_registration_login_valid(register_page: Page, login_pa
     indirect=["auto_delete_user"]
 )
 async def test_successful_registration_login_invalid(register_page: Page, login_page: Page, user: RegisterLoginUser, auto_delete_user):
-    """
-    Verifica que el registro falle si hay campos vacíos o inválidos.
-    """
+    """Test for registration and login with invalid credentials."""
     await register_page.register(user.register)
     await login_page.login(user.login)
-    assert "/my-account" in login_page.page.url, f"Se inició sesión con credenciales inválidas: {user.register}"
+    assert "/my-account" in login_page.page.url, f"You logged in with invalid credentials: {user.register}."

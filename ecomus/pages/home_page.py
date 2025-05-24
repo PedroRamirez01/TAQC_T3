@@ -1,48 +1,27 @@
-from playwright.async_api import Page
+from playwright.async_api import Page, expect
 from config.config import Config
 
 class HomeToPage:
     """
-        Modelo de Objeto de Página (POM) para la página principal de Ecomus e-commerce.
+    This class implements the Page Object Model pattern for the Ecomus website's home page.
+    It provides methods to interact with key elements such as:
 
-        Esta clase implementa el patrón Page Object Model para la página principal del sitio web Ecomus.
-        Proporciona métodos para interactuar con elementos clave como:
-
-        - Botones de navegación y categorías
-        - Funcionalidad de búsqueda
-        - Acciones rápidas (Agregar al carrito, favoritos, comparar)
-        - Características de descubrimiento de productos
-        - Gestión de ventanas emergentes
-
-        Características principales:
-
-        - Navegación por categorías (Ropa, Paddles, Accesorios, Hombres)
-        - Búsqueda y filtrado de productos
-        - Funcionalidad de vista rápida y agregar al carrito
-        - Funciones de lista de deseos y comparación de productos
-        - Secciones de descubrimiento (Nuevos Artículos, Super Store, Serie SLK, Motion Pro)
-
-        Flujos principales:
-
-        - search_for_item: Realiza búsqueda de productos usando el icono y campo de búsqueda
-        - navigate_and_collect_discovery_urls: Navega por las secciones destacadas y recolecta URLs
-        - navigate_and_collect_category_urls: Navega por las categorías principales y recolecta URLs
-        - hover_product_and_quick_add: Agrega producto al carrito mediante acción rápida
-        - hover_product_and_add_fav: Agrega producto a favoritos mediante acción rápida
-        - hover_product_and_add_compare: Agrega producto a comparación mediante acción rápida
-        - hover_product_and_view: Muestra vista rápida del producto
+    Navigation buttons and category links
+    Search functionality
+    Quick actions (Add to cart, add to favorites, compare)
+    Product discovery features
+    Popup management
     """
 
     def __init__(self, page: Page):
         self.page = page
-        self.popUpHome = self.page.locator("#newsletterPopup span.icon.icon-close.btn-hide-popup") 
-        self.searchIcon = self.page.locator("#header .nav-search")
-        self.searchInput = self.page.locator('#canvasSearch input[placeholder="Search"]')
-        self.newItems = self.page.locator(".discovery-new-item > a:nth-child(2)")
-        self.superStore = self.page.locator(".btn-outline-dark")
-        self.slkSeries = self.page.locator(".tf-sw-lookbook > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(3)")
-        self.motionPro = self.page.locator(".tf-sw-lookbook > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(3)")
-        self.ecomus = self.page.locator(".logo")
+        self.url = Config.URL_BASE
+        self.popUpHome = self.page.locator("span.btn-hide-popup")
+        self.searchIcon = self.page.locator(".nav-search > a:nth-child(1) > i:nth-child(1)")
+        self.searchInput = self.page.locator("fieldset.text > input:nth-child(1)")
+        self.fashionSearch = page.locator("li.tf-quicklink-item:nth-child(1) > a:nth-child(1)")
+        self.ecomus = self.page.locator("#header > div > div > div.col-xl-3.col-md-4.col-6 > a")
+        self.products = self.page.locator("div.card-product:nth-child(1) > div:nth-child(1) > a:nth-child(1) > img:nth-child(2)")
         self.franklinSiganture = self.page.locator("div.card-product:nth-child(1) > div:nth-child(1) > a:nth-child(1) > img:nth-child(2)")
         self.quickAdd = self.page.locator("div.card-product:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)")
         self.quickAddFav = self.page.locator("div.card-product:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2)")
@@ -54,240 +33,139 @@ class HomeToPage:
         self.quickAddFavPopupContent = page.locator("div.card-product:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(2) > span:nth-child(2)")
         self.quickAddComparePopupContent = page.locator("#compare > div:nth-child(1) > div:nth-child(2)")
         self.quickViewPopupContent = page.locator("div.tf-product-info-list:nth-child(1)")
-        self.clothingButton = page.locator(".tf-sw-collection > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)")
-        self.paddlesButton = page.locator(".tf-sw-collection > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)")
-        self.accesoriesButton = page.locator(".tf-sw-collection > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)")
-        self.nextButton = page.locator("div.nav-prev-slider:nth-child(2)")
-        self.menButton = page.locator(".tf-sw-collection > div:nth-child(1) > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)")
 
-    async def navigate(self, url: str) -> None:
-        assert await self.page.goto(url, wait_until="domcontentloaded")
+    async def navigate(self) -> None:
+        """
+        Navigates to the base URL of the Ecomus website.
+        
+        Loads the home page and verifies that the correct URL is reached.
+        Uses 'domcontentloaded' event to ensure the page is ready for interaction.
+        """
+        await self.page.goto(self.url, wait_until="domcontentloaded")
+        await expect(self.page).to_have_url(self.url)
     
-    async def closePopUpHome(self):
+    async def fashion_search(self):
+        """
+        Clicks on the fashion category search link.
+        
+        Waits for 2 seconds to ensure the page is stable before clicking on the
+        fashion category quick link to filter products by fashion category.
+        """
         await self.page.wait_for_timeout(2000)
+        await self.fashionSearch.click()
+    
+    async def hover_product_and_quick_add(self):
+        """
+        Performs the hover and quick add workflow for the first product.
+        
+        Scrolls to make the product visible, hovers over it to reveal quick actions,
+        verifies that the quick add popup content is visible, and clicks
+        the quick add button to add the product to cart.
+        """
+        await self.products.scroll_into_view_if_needed()
+        await self.products.wait_for(state="visible")
+        await self.products.hover()
+        await expect(self.quickAddPopupContent).to_be_visible()
+        await self.quickAdd.click()
+        
+    async def close_pop_up_home(self) -> None:
+        """
+        Handles the newsletter popup on the home page.
+        
+        Waits for the popup to be visible, ensures all network activity is complete,
+        clicks the close button, and verifies that the popup is properly hidden.
+        This improves test reliability by ensuring popups don't interfere with subsequent actions.
+        """
+        await self.popUpHome.wait_for(state="visible")
+        await expect(self.popUpHome).to_be_visible()
+        await self.page.wait_for_timeout(1000)
+        #await self.page.wait_for_load_state("networkidle")
         await self.popUpHome.click()
+        #await expect(self.popUpHome).to_be_hidden()
 
-    async def closerQuickView(self):
+    async def closer_quick_view(self) -> None:
+        """
+        Closes the quick view product popup.
+        
+        Waits for 2 seconds to ensure the popup is fully loaded before
+        clicking the close button to dismiss the quick view dialog.
+        """
         await self.page.wait_for_timeout(2000)
         await self.closerQuick.click()
     
-    async def click_clothingButton(self):
-        await self.clothingButton.click()
-        await self.page.wait_for_timeout(1000)
-        return self.page.url
-    
-    async def click_paddlesButton(self):
-        await self.paddlesButton.click()
-        await self.page.wait_for_timeout(1000)
-        return self.page.url
-    
-    async def click_accesoriesButton(self):
-        await self.accesoriesButton.click()
-        await self.page.wait_for_timeout(1000)
-        return self.page.url
-    
-    async def click_menButton(self):
-        await self.menButton.click()
-        await self.page.wait_for_timeout(1000)
-        return self.page.url
-
-    async def click_newItems(self):
-        await self.newItems.click()
-        await self.page.wait_for_timeout(1000)
-        return self.page.url
-
-    async def click_superStore(self):
-        await self.superStore.scroll_into_view_if_needed()
-        await self.superStore.click()
-        await self.page.wait_for_timeout(1000)
-        return self.page.url
-
-    async def click_slkSeries(self):
-        await self.slkSeries.scroll_into_view_if_needed()
-        await self.slkSeries.click()
-        await self.page.wait_for_timeout(1000)
-        return self.page.url
-
-    async def click_motionPro(self):
-        await self.motionPro.scroll_into_view_if_needed()
-        await self.motionPro.click()
-        await self.page.wait_for_timeout(1000)
-        return self.page.url
-
-    async def click_ecomus(self):
+    async def click_ecomus(self) -> None:
+        """
+        Clicks on the Ecomus logo to return to the home page.
+        
+        Simulates clicking on the site logo (a common navigation pattern)
+        and waits for 1 second for navigation to complete.
+        """
         await self.ecomus.click()
         await self.page.wait_for_timeout(1000)
 
-    async def searchIconClick(self):
+    async def search_icon_click(self) -> str:
+        """
+        Clicks on the search icon to open the search interface.
+        
+        Clicks the search icon in the navigation bar and waits for 1 second
+        for the search input to appear.
+        
+        Returns:
+            str: The current page URL after clicking the search icon
+        """
         await self.searchIcon.click()
         await self.page.wait_for_timeout(1000)
         return self.page.url
 
-    async def searchInputFill(self, item: str = "Paddle"):
+    async def search_input_fill(self, item: str = "Paddle") -> str:
+        """
+        Enters a search term into the search input field.
+        
+        Fills the search input with the specified term (defaults to "Paddle")
+        and waits for 1 second for search results to update.
+        
+        Args:
+            item (str, optional): The search term to enter. Defaults to "Paddle".
+            
+        Returns:
+            str: The current page URL after entering the search term
+        """
         await self.searchInput.fill(item)
         await self.page.wait_for_timeout(1000)
         return self.page.url
 
-    # Flujos de los test
-
-    async def search_for_item(self):
+    # Main Flows
+    
+    async def search_for_item(self) -> str:
         """
-        Realiza el flujo de búsqueda de un ítem usando el icono y el campo de búsqueda.
-        :return: Lista de URLs visitadas durante el flujo.
+        Executes the complete search workflow with retry mechanism.
+        
+        Attempts to perform a search operation multiple times if needed:
+        1. Closes any popup that might be visible
+        2. Clicks on the search icon to open the search box
+        3. Enters the default search term
+        4. Collects and returns URLs at different stages of the search process
+        
+        Includes error handling with configurable retry attempts and delays.
+        
+        Returns:
+            list: A list containing URLs at different stages of the search process
         """
         urls = []
         for attempt in range(Config.MAX_ATTEMPTS):
-            await self.closePopUpHome()
             try:
-                url1 = await self.searchIconClick()
-                if url1: urls.append(url1)
+                await self.close_pop_up_home()
+                url1 = await self.search_icon_click()
+                if url1:
+                    urls.append(url1)
                 await self.page.wait_for_timeout(1000)
 
-                url2 = await self.searchInputFill()
-                if url2: urls.append(url2)
+                url2 = await self.search_input_fill()
+                if url2:
+                    urls.append(url2)
 
                 return urls
             except Exception as e:
                 print(f"Attempt {attempt + 1} failed: {e}")
                 if attempt < Config.MAX_ATTEMPTS - 1:
                     await self.page.wait_for_timeout(Config.DELAY)
-    
-    async def navigate_and_collect_discovery_urls(self):
-        """
-        Navega por los elementos destacados y recolecta las URLs visitadas.
-        :return: Lista de URLs visitadas.
-        """
-        collected_urls = []
-        try:
-            await self.closePopUpHome()
-
-            url1 = await self.click_newItems()
-            if url1: collected_urls.append(url1)
-
-            await self.click_ecomus()
-            await self.closePopUpHome()
-
-            url2 = await self.click_superStore()
-            if url2: collected_urls.append(url2)
-
-            await self.click_ecomus()
-            await self.closePopUpHome()
-
-            url3 = await self.click_slkSeries()
-            if url3: collected_urls.append(url3)
-
-            await self.click_ecomus()
-            await self.closePopUpHome()
-
-            url4 = await self.click_motionPro()
-            if url4: collected_urls.append(url4)
-
-        except Exception as e:
-            print(f"Error durante la secuencia de navegación: {e}")
-        return collected_urls
-
-    async def navigate_and_collect_category_urls(self):
-        """
-        Navega por las categorías principales y recolecta las URLs visitadas.
-        :return: Lista de URLs visitadas.
-        """
-        collected_urls = []
-        try:
-            await self.closePopUpHome()
-            url1 = await self.click_clothingButton()
-            if url1: collected_urls.append(url1)
-
-            await self.click_ecomus()
-            await self.closePopUpHome()
-
-            url2 = await self.click_paddlesButton()
-            if url2: collected_urls.append(url2)
-
-            await self.click_ecomus()
-            await self.closePopUpHome()
-
-            url3 = await self.click_accesoriesButton()
-            if url3: collected_urls.append(url3)
-
-            await self.click_ecomus()
-            await self.closePopUpHome()
-            await self.nextButton.click()
-
-            url4 = await self.click_menButton()
-            if url4: collected_urls.append(url4)
-        except Exception as e:
-            print(f"Error al recolectar urls: {e}")
-        return collected_urls
-
-    async def hover_product_and_quick_add(self):
-        """
-        Hace hover sobre el primer producto y realiza un 'Quick Add' al carrito.
-        :return: True si la acción fue exitosa, False en caso contrario.
-        """
-        try:
-            await self.closePopUpHome()
-            await self.franklinSiganture.scroll_into_view_if_needed()
-            await self.franklinSiganture.hover()
-            await self.quickAdd.wait_for(state="visible", timeout=2000)
-            await self.quickAdd.click()
-            await self.quickAddPopupContent.wait_for(state="visible", timeout=2000)
-            print("Contenido del Quick Add visible")
-            return True
-        except Exception as e:
-            print(f"Error al intentar hacer hover y añadir al carrito: {e}")
-            return False
-    
-    async def hover_product_and_add_fav(self):
-        """
-        Hace hover sobre el primer producto y lo añade a favoritos.
-        :return: True si la acción fue exitosa, False en caso contrario.
-        """
-        try:
-            await self.closePopUpHome()
-            await self.franklinSiganture.scroll_into_view_if_needed()
-            await self.franklinSiganture.hover()
-            await self.quickAddFav.wait_for(state="visible", timeout=2000)
-            await self.quickAddFav.click()
-            await self.quickAddFavPopupContent.wait_for(state="visible", timeout=2000)
-            print("Contenido del Quick Fav visible")
-            return True
-        except Exception as e:
-            print(f"Error al intentar hacer hover y añadir a favoritos: {e}")
-            return False
-    
-    async def hover_product_and_add_compare(self):
-        """
-        Hace hover sobre el primer producto y lo añade a comparar.
-        :return: True si la acción fue exitosa, False en caso contrario.
-        """
-        try:
-            await self.closePopUpHome()
-            await self.franklinSiganture.scroll_into_view_if_needed()
-            await self.franklinSiganture.hover()
-            await self.quickAddCompare.wait_for(state="visible", timeout=2000)
-            await self.quickAddCompare.click()
-            await self.closerCompare.click()
-            await self.quickAddComparePopupContent.wait_for(state="visible", timeout=2000)
-            print("Contenido del Quick Compare visible")
-            return True
-        except Exception as e:
-            print(f"Error al intentar hacer hover y añadir a comparar: {e}")
-            return False
-    
-    async def hover_product_and_view(self):
-        """
-        Hace hover sobre el primer producto y abre el Quick View.
-        :return: True si la acción fue exitosa, False en caso contrario.
-        """
-        try:
-            await self.closePopUpHome()
-            await self.franklinSiganture.scroll_into_view_if_needed()
-            await self.franklinSiganture.hover()
-            await self.quickView.wait_for(state="visible", timeout=2000)
-            await self.quickView.click()
-            await self.quickViewPopupContent.wait_for(state="visible", timeout=2000)
-            print("Contenido del Quick View visible")
-            return True
-        except Exception as e:
-            print(f"Error al intentar hacer hover y ver el producto: {e}")
-            return False

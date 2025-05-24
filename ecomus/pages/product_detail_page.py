@@ -3,35 +3,35 @@ from config.config import Config
 
 class ProductDetailPage:
     """
-    Clase que representa la página de detalles del producto en el sitio web de prueba.
-    Proporciona métodos para interactuar con los elementos de la página y realizar acciones como
-    navegar a la página, agregar productos al carrito y verificar descuentos.
-    Atributos:
-        url (str): URL de la página de detalles del producto.
-        page (Page): Instancia de la página de Playwright.
-        title (Locator): Localizador para el título del producto.
-        price (Locator): Localizador para el precio del producto.
-        discount (Locator): Localizador para el descuento del producto.
-        price_on_sale (Locator): Localizador para el precio en oferta del producto.
-        span_color (Locator): Localizador para el color del producto.
-        checked_input (Locator): Localizador para el input de color seleccionado.
-        span_size (Locator): Localizador para el tamaño del producto.
-        size_selected (Locator): Localizador para el tamaño seleccionado.
-        input_quantity (Locator): Localizador para la cantidad del producto.
-        add_to_cart (Locator): Localizador para el botón "Agregar al carrito".
-        buy_with_btn (Locator): Localizador para el botón "Comprar con botón".
-        cart_add_btn (Locator): Localizador para el botón "Agregar al carrito" en la vista emergente.
-        cart_input (Locator): Localizador para la entrada de cantidad en la vista emergente del carrito.
-        cart_close (Locator): Localizador para cerrar la vista emergente del carrito.
-        shipping_text (Locator): Localizador para el texto de envío gratuito en la vista emergente del carrito.
-    Métodos:
-        navigate(): Navega a la página de detalles del producto.
-        press_cart(): Presiona el botón "Agregar al carrito".
-        cart_add_product(quantity: int): Agrega un producto al carrito con la cantidad especificada.
-        verify_free_shipping(quantity: int): Verifica si el envío gratuito se aplica después de agregar productos al carrito.
-        cart_add_cart(quantity: int): Verifica si la cantidad en el carrito se actualiza correctamente después de agregar productos.
-        verify_discount(): Verifica si el descuento aplicado es correcto.
-        add_to_cart_with_input(quantity: int): Agrega un producto al carrito utilizando un campo de entrada para la cantidad.
+    Class that represents the product detail page on the test website.
+    Provides methods for interacting with page elements and performing actions such as
+    navigating to the page, adding products to the cart, and checking discounts.
+    Attributes:
+        url (str): URL of the product detail page.
+        page (Page): Instance of the Playwright page.
+        title (Locator): Locator for the product title.
+        price (Locator): Locator for the product price.
+        discount (Locator): Locator for the product discount.
+        price_on_sale (Locator): Locator for the product's sale price.
+        span_color (Locator): Locator for the product's color.
+        checked_input (Locator): Locator for the selected color input.
+        span_size (Locator): Locator for the product's size.
+        size_selected (Locator): Locator for the selected size.
+        input_quantity (Locator): Locator for the product quantity.
+        add_to_cart (Locator): Locator for the "Add to Cart" button.
+        buy_with_btn (Locator): Locator for the "Buy with Button" button.
+        cart_add_btn (Locator): Locator for the "Add to Cart" button in the popup.
+        cart_input (Locator): Locator for the quantity input in the cart popup.
+        cart_close (Locator): Locator for closing the cart popup.
+        shipping_text (Locator): Locator for the free shipping text in the cart popup.
+    Methods:
+        navigate(): Navigates to the product detail page.
+        press_cart(): Presses the "Add to Cart" button.
+        cart_add_product(quantity: int): Adds a product to the cart with the specified quantity.
+        verify_free_shipping(quantity: int): Checks if free shipping is applied after adding products to the cart.
+        cart_add_cart(quantity: int): Checks if the cart quantity is updated correctly after adding products.
+        verify_discount(): Checks if the discount is applied correctly.
+        add_to_cart_with_input(quantity: int): Adds a product to the cart using a quantity input field.
     """
 
     def __init__(self, page: Page) -> None:
@@ -56,18 +56,22 @@ class ProductDetailPage:
         self.quantity_cart = self.page.locator("#shoppingCart > div > div > div.wrap > div.tf-mini-cart-wrap > div.tf-mini-cart-main > div > div.tf-mini-cart-items > div > div.tf-mini-cart-info > div.tf-mini-cart-btns > div.wg-quantity.small > input[type=text]")
 
     async def navigate(self) -> None:
+        """Navigate to the product detail page."""
         await self.page.goto(self.url, wait_until="domcontentloaded")
 
     async def press_cart(self) -> None:
+        """Press the 'Add to Cart' button."""
         await self.add_to_cart.click()
         await self.page.wait_for_timeout(2000)
 
     async def cart_add_product(self, quantity: int) -> None:
+        """Add a product to the cart with the specified quantity."""
         await self.press_cart()
         for _ in range(quantity):
             await self.cart_add_btn.click()
 
     async def verify_free_shipping(self, quantity: int) -> bool:
+        """Check if free shipping is applied after adding products to the cart."""
         await self.navigate()
         shipping_text_t1 = await self.shipping_text.inner_text()
         await self.cart_add_product(quantity)
@@ -75,6 +79,7 @@ class ProductDetailPage:
         return shipping_text_t1 != shipping_text_t2
 
     async def cart_add_cart(self, quantity: int) -> bool:
+        """Check if the cart quantity is updated correctly after adding products."""
         await self.navigate()
         await self.add_to_cart_with_input(quantity)
         input_t1 = await self.cart_input.input_value()
@@ -84,6 +89,7 @@ class ProductDetailPage:
         return int(input_t1)*2 == int(input_t2)
 
     async def verify_discount(self) -> bool:
+        """Check if the discount is applied correctly."""
         await self.navigate()
         price = await self.price.inner_text()
         discount = await self.discount.inner_text()
@@ -95,6 +101,7 @@ class ProductDetailPage:
         return price_on_sale == expected_price_on_sale
 
     async def add_to_cart_with_input(self, quantity: int) -> bool:
+        """Add a product to the cart using a quantity input field."""
         try:
             await self.navigate()
             if quantity == 0:
@@ -104,5 +111,5 @@ class ProductDetailPage:
             input_value = await self.cart_input.input_value()
             return int(float(input_value)) == quantity
         except Exception as e:
-            print(f"Error al añadir al carrito: {e}")
+            print(f"Error adding to cart: {e}")
             return False
