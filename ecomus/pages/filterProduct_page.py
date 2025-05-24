@@ -327,11 +327,9 @@ class FilterProductPage:
             div1 = await self.do_filter_men_div()
             if div1:
                 divs.append(div1)
-                print(div1)
             div2 = await self.do_filter_women_div()
             if div2:
                 divs.append(div2)
-                print(div2)
             return divs
         except Exception as e:
             print(f"Error: {e}")
@@ -351,12 +349,10 @@ class FilterProductPage:
             url1 = await self.initial_url()
             if url1:
                 urls.append(url1)
-            print(url1)
             
             url2 = await self.do_filter_women_url()
             if url2:
                 urls.append(url2)
-            print(url2)
             return urls
         except Exception as e :
             print(f"Error : {e}")
@@ -376,12 +372,10 @@ class FilterProductPage:
             url1 = await self.initial_url()
             if url1:
                 urls.append(url1)
-            print(url1)
 
             url2 = await self.do_filter_men_url()
             if url2:
                 urls.append(url2)
-            print(url2)
             return urls
         except Exception as e :
             print(f"Error : {e}")
@@ -401,12 +395,10 @@ class FilterProductPage:
             url1 = await self.initial_url()
             if url1:
                 urls.append(url1)
-            print(url1)
 
             url2 = await self.do_filter_denim_url()
             if url2:
                 urls.append(url2)
-            print(url2)
             return urls
         except Exception as e :
             print(f"Error : {e}")
@@ -426,12 +418,10 @@ class FilterProductPage:
             url1 = await self.initial_url()
             if url1:
                 urls.append(url1)
-            print(url1)
 
             url2 = await self.do_filter_dress_url()
             if url2:
                 urls.append(url2)
-            print(url2)
             return urls
         except Exception as e :
             print(f"Error : {e}")
