@@ -28,7 +28,7 @@ pipeline {
 
     stage('Run tests') {
       steps {
-        sh 'TOKEN=$TOKEN pytest ecomus/test -k "end_to_end" --junitxml=results.xml || true'
+        sh 'TOKEN=$TOKEN pytest ecomus/test -k "end_to_end" --junitxml=results.xml'
       }
       post {
         always {
