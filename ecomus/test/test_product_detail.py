@@ -1,9 +1,11 @@
 import pytest
 from playwright.async_api import Page
+from pages.product_detail_page import ProductDetailPage
 from utils.product_details_data import product_detail_quantity_input, product_detail_negative_quantity_input, product_detail_free_shipping, product_detail_cart_close_cart
 
 @pytest.mark.asyncio
-async def test_verify_discount(product_detail_page: Page):
+async def test_verify_discount(page: Page):
+    product_detail_page = ProductDetailPage(page)
     """Verifies that the discount is applied correctly on the product details page."""
     assert await product_detail_page.verify_discount(), (
         f"The discount is not correct. "
@@ -14,7 +16,8 @@ async def test_verify_discount(product_detail_page: Page):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("quantity", product_detail_quantity_input)
-async def test_product_detail_quantity_with_input_normal_quantity(product_detail_page: Page, quantity: int):
+async def test_product_detail_quantity_with_input_normal_quantity(page: Page, quantity: int):
+    product_detail_page = ProductDetailPage(page)
     """Verifies that a regular amount can be added to the cart from the product details page."""
     assert await product_detail_page.add_to_cart_with_input(quantity), f"The quantity could not be added correctly: {quantity}."
     cantidad = int(float(await product_detail_page.quantity_cart.input_value()))
@@ -23,7 +26,8 @@ async def test_product_detail_quantity_with_input_normal_quantity(product_detail
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("quantity", product_detail_negative_quantity_input)
-async def test_product_detail_negative_quantity_with_input_normal_quantity(product_detail_page: Page, quantity: int):
+async def test_product_detail_negative_quantity_with_input_normal_quantity(page: Page, quantity: int):
+    product_detail_page = ProductDetailPage(page)
     """Verifies that a negative or zero amount cannot be added to the cart from the product details page."""
     assert not await product_detail_page.add_to_cart_with_input(quantity), "A negative amount or 0 was accepted."
     cantidad = int(float(await product_detail_page.quantity_cart.input_value()))
@@ -31,7 +35,8 @@ async def test_product_detail_negative_quantity_with_input_normal_quantity(produ
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("quantity", product_detail_free_shipping)
-async def test_verify_free_shipping(product_detail_page: Page, quantity: int):
+async def test_verify_free_shipping(page: Page, quantity: int):
+    product_detail_page = ProductDetailPage(page)
     """Verifies that the 'Free Shipping' value changes when adding products to the cart from the product details page."""
     assert await product_detail_page.verify_free_shipping(quantity), (
         "The value shown in 'Free Shipping' does not change after adding more products."
@@ -39,7 +44,8 @@ async def test_verify_free_shipping(product_detail_page: Page, quantity: int):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("quantity", product_detail_cart_close_cart)
-async def test_product_detail_add_to_cart_close_add_to_cart(product_detail_page: Page, quantity: int):
+async def test_product_detail_add_to_cart_close_add_to_cart(page: Page, quantity: int):
+    product_detail_page = ProductDetailPage(page)
     """Verifies that a product can be added to the cart, closed, and then added the same amount to the cart again
     from the product details page."""
     assert await product_detail_page.cart_add_cart(quantity), (

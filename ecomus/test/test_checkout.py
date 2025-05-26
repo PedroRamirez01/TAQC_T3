@@ -1,14 +1,19 @@
 import pytest
-from pages.addToCart_page import AddToCart
 from utils.test_data import valid_checkout_data, invalid_checkout_data
-from playwright.async_api import expect
+from pages.addToCart_page import AddToCart
+from pages.checkout_page import CheckoutPage
+from playwright.async_api import expect , Page
+import time
 
 test_data = valid_checkout_data + invalid_checkout_data
 
 @pytest.mark.asyncio 
 @pytest.mark.parametrize("label,data", test_data)
-async def test_checkout_flow(label, data,checkout_page, add_to_cart):
-       
+async def test_checkout_flow(label, data, page:Page):
+        
+        add_to_cart = AddToCart(page)
+        checkout_page = CheckoutPage(page)
+
         await add_to_cart.closeModal()
         await add_to_cart.clickFirstPaddle()
         await add_to_cart.performAddToCartActions()
@@ -39,7 +44,9 @@ async def test_checkout_flow(label, data,checkout_page, add_to_cart):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("label,data", valid_checkout_data)
-async def test_checkout_with_empty_cart(label, data,checkout_page, add_to_cart):
+async def test_checkout_with_empty_cart(label, data, page:Page):
+        add_to_cart = AddToCart(page)
+        checkout_page = CheckoutPage(page)
 
         await add_to_cart.closeModal()
         await add_to_cart.clickCartButton()

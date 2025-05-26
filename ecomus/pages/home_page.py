@@ -76,6 +76,7 @@ class HomeToPage:
         clicks the close button, and verifies that the popup is properly hidden.
         This improves test reliability by ensuring popups don't interfere with subsequent actions.
         """
+        await self.navigate()
         await self.popUpHome.wait_for(state="visible")
         await expect(self.popUpHome).to_be_visible()
         await self.page.wait_for_timeout(1000)

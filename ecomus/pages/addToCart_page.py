@@ -1,4 +1,5 @@
 from playwright.async_api import Page, expect
+from config.config import Config
 
 class AddToCart:
 
@@ -13,6 +14,7 @@ class AddToCart:
         :param page: Instance of Playwright Page.
         """
         self.page = page
+        self.url = Config.URL_BASE
         self.changeColorButton = '.tf-product-info-list.other-image-zoom .tf-product-info-variant-picker form.variant-picker-values label:has(span.tooltip:has-text("{color}"))'
         self.changeSizeButton = '#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-variant-picker form > label:has-text("{size}")'
         self.incrementButton = self.page.locator('#wrapper > section:nth-child(3) > div.tf-main-product.section-image-zoom > div > div > div:nth-child(2) > div > div.tf-product-info-list.other-image-zoom > div.tf-product-info-quantity > div.wg-quantity > span.btn-quantity.plus-btn')
@@ -25,12 +27,10 @@ class AddToCart:
         self.cartButton = self.page.locator('#header > div > div > div.col-xxl-5.col-md-4.col-3 > ul > li.nav-cart > a')
         self.closeCartButton = self.page.locator('#shoppingCart > div > div > div.header > span')
 
-    async def navigate(self, url: str) -> None:
-        """
-        Navigates to the specified URL and waits for the DOM to be loaded.
-        :param url: Target URL.
-        """
-        await self.page.goto(url, wait_until="domcontentloaded")
+    async def navigate(self) -> None:
+        """Navigates to the filterPage."""
+        await self.page.goto(self.url, wait_until="domcontentloaded")
+        await expect(self.page).to_have_url(self.url)
 
     async def changeColor(self, color: str):
         """
@@ -80,8 +80,8 @@ class AddToCart:
         """
         Performs a series of actions to add a product to the cart.
         """
-        await self.changeColor()
-        await self.changeSize()
+        await self.changeColor("Beige")
+        await self.changeSize("M")
         await self.incrementQuantity()
         await self.incrementQuantity()
         await self.incrementQuantity()
@@ -108,6 +108,7 @@ class AddToCart:
         """
         Closes the modal if it is open.
         """
+        await self.navigate()
         await expect(self.closeModalButton).to_be_visible()
         await self.closeModalButton.click()
 
